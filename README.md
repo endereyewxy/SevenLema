@@ -1,2 +1,4 @@
-# ProjectPlaceHolder
-Just a place holder.
+# 吃了么
+重庆大学小学期实践项目。
+
+项目英文名SevenLema取自“吃了么”的谐音“7Lema”。
