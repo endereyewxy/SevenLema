@@ -6,7 +6,8 @@ from django.core.paginator import Paginator, EmptyPage
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 
-from cmdb.models import Shop, Dish
+from cmdb.models.dish import Dish
+from cmdb.models.shop import Shop
 
 
 def shop_to_json(order, obj):

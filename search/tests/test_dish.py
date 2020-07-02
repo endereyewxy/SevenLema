@@ -4,7 +4,9 @@ import json
 
 from django.test import TestCase, RequestFactory
 
-from cmdb.models import User, Shop, Dish
+from cmdb.models.dish import Dish
+from cmdb.models.shop import Shop
+from cmdb.models.user import User
 from search.views import dish
 
 
