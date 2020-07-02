@@ -6,13 +6,13 @@ from .shop import Shop
 
 
 class Dish(models.Model):
-    shop_id = models.ForeignKey(Shop, models.CASCADE)
+    shop = models.ForeignKey(Shop, models.CASCADE)
     name = models.CharField(max_length=50)
     image = models.CharField(max_length=16)
     desc = models.TextField()
     price = models.IntegerField()
     sales = models.IntegerField()
-    serving = models.BooleanField()
+    serving = models.BooleanField(default=True)
 
     def get_actual_price(self):
         """Get the actual price unit by yuan"""

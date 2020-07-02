@@ -10,12 +10,12 @@ class User(models.Model):
     addr = models.CharField(max_length=50, null=True)
     loc_lng = models.DecimalField(max_digits=9, decimal_places=5, null=True)
     loc_lat = models.DecimalField(max_digits=9, decimal_places=5, null=True)
-    phone = models.CharField(11)
+    phone = models.CharField(max_length=11)
 
     def check_password(self, password):
         """Check if the given password matches"""
-        return md5(password + ':' + self.salt).hexdigest()[8:-8] == self.password
+        return md5((password + ':' + self.salt).encode('utf-8')).hexdigest()[8:-8] == self.password
 
     def set_password(self, password):
         """Set the current password to the given one"""
-        self.password = md5(password + ':' + self.salt).hexdigest()[8:-8]
+        self.password = md5((password + ':' + self.salt).encode('utf-8')).hexdigest()[8:-8]

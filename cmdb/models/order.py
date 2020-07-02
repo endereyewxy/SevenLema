@@ -5,8 +5,8 @@ from .user import User
 
 
 class Order(models.Model):
-    user_id = models.ForeignKey(User, models.CASCADE)
-    shop_id = models.ForeignKey(Shop, models.CASCADE)
+    user = models.ForeignKey(User, models.CASCADE)
+    shop = models.ForeignKey(Shop, models.CASCADE)
     remarks = models.CharField(max_length=50)
     addr = models.CharField(max_length=50)
     loc_lng = models.DecimalField(max_digits=9, decimal_places=5)
