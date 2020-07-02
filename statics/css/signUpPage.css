@@ -1,0 +1,102 @@
+
+*{
+    margin: 0;
+    padding: 0;
+}
+        /*更改默认值*/
+html,body{
+    width: 100%;
+    height: 100%;
+}
+/*添加背景图片*/
+.main{
+    width: 100%;
+    height: 100%;
+    background: url("../img/signUp_background_pic1.jpg") no-repeat center;
+}
+        /*让输入框居中*/
+.loginFrame{
+    width: 700px;
+    height: 600px;
+    background: rgba(0,0,0,0.3);
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto ;
+    /*添加边框圆角*/
+    border-radius: 10px;
+    /*添加边距挤下去*/
+    padding: 50px 0;
+    box-sizing: border-box;
+    /*添加阴影*/
+    box-shadow: 0 0 5px 5px rgba(0,0,0,0.4);
+
+}
+        /*改变盒子下方的输入框位置*/
+.loginFrame > div{
+    width: 350px;
+    height: 50px;
+    margin: 40px auto;
+    /*改变字体颜色*/
+    color: white;
+}
+
+        /*改变标题居中, 并且改颜色*/
+.loginFrame > p{
+    text-align: center;
+    color: white;
+    font-size: 25px;
+}
+
+        /*改变输入框文字*/
+.loginFrame > div span{
+    display: inline-block;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+        /*改变输入框样式*/
+.loginFrame > div input{
+    width: 100%;
+    height: 30px;
+    /*透明色*/
+    background: transparent;
+    /*清除默认边框*/
+    border: none;
+    /*添加底部边框*/
+    border-bottom: 1px solid white;
+    /*清除蓝色点击框*/
+    outline: none ;
+    /*改变文字颜色*/
+    color: white;
+}
+        /*改变点击登录按钮样式*/
+.loginFrame .enterBut{
+    width: 200px;
+    height: 50px;
+    /*添加圆角*/
+    border-radius: 50px;
+    /*设置背景颜色  渐变*/
+    background-image: linear-gradient(to right ,orange,orangered);
+    text-align: center;
+    padding-top: 10px;
+    box-sizing: border-box;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+        /*给登录按钮添加 鼠标放上效果 */
+.loginFrame .enterBut:hover{
+    box-shadow: 0 0 10px rgba(0,0,0,0.5) inset;
+}
+        /*给输入框提醒文字改变颜色*/
+        /*适配谷歌*/
+input::-webkit-input-placeholder{
+    color: #BDCADA;
+}
+
+svg{
+    vertical-align: middle;
+}
