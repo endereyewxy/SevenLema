@@ -1,3 +1,5 @@
+# Developer: endereye <endereyewxy@gmail.com>
+
 import json
 
 from django.test import TestCase, RequestFactory

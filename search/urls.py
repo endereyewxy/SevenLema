@@ -1,3 +1,5 @@
+# Developer: endereye <endereyewxy@gmail.com>
+
 from django.urls import path
 
 from . import views
