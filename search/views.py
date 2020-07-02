@@ -41,6 +41,17 @@ def dish_to_json(obj):
     }
 
 
+def add_page_info(qs, page, limit):
+    max_page = 0
+    try:
+        paginator = Paginator(qs, limit)
+        max_page = paginator.num_pages
+        qs       = paginator.page(page)
+    except EmptyPage:
+        qs       = []
+    return qs, max_page
+
+
 @require_GET
 def shop(request):
     # Fetch general parameters
@@ -101,14 +112,9 @@ def shop(request):
     else:
         return JsonResponse({'code': 101, 'msg': '排序方式不支持'})
 
-    # Add page information
-    try:
-        qs = Paginator(qs, limit).page(page)
-    except EmptyPage:
-        qs = []
-
     # Change query set into dictionaries
-    return JsonResponse({'code': 0, 'msg': '', 'data': [shop_to_json(order, obj) for obj in qs]})
+    qs, max_page = add_page_info(qs, page, limit)
+    return JsonResponse({'code': 0, 'msg': '', 'page': max_page, 'data': [shop_to_json(order, obj) for obj in qs]})
 
 
 @require_GET
@@ -148,11 +154,6 @@ def dish(request):
     else:
         return JsonResponse({'code': 101, 'msg': '排序方式不支持'})
 
-    # Add page information
-    try:
-        qs = Paginator(qs, limit).page(page)
-    except EmptyPage:
-        qs = []
-
     # Change query into dictionaries
+    qs, max_page = add_page_info(qs, page, limit)
     return JsonResponse({'code': 0, 'msg': '', 'data': [dish_to_json(obj) for obj in qs]})

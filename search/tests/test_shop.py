@@ -52,3 +52,9 @@ class SearchShopTestCase(TestCase):
     def test_order_dist(self):
         resp = shop(self.factory.get("/search/shop?name=&order=dist&loc_lng=114.30433&loc_lat=30.59405&page=1&limit=20"))
         self.assertEqual([int(obj['name']) for obj in json.loads(resp.content)['data']], [3, 0, 2, 1])
+
+    def test_pagination(self):
+        resp = shop(self.factory.get("/search/shop?name=&order=sales&page=1&limit=2"))
+        self.assertEqual(json.loads(resp.content)['page'], 2)
+        resp = shop(self.factory.get("/search/shop?name=&order=sales&page=1&limit=3"))
+        self.assertEqual(json.loads(resp.content)['page'], 2)
