@@ -1,8 +1,6 @@
 from django.test import TestCase
 
-from .models.order import Order
-from .models.shop import Shop
-from .models.user import User
+from .models import Order, Shop, User
 
 
 class ModelTestCase(TestCase):
