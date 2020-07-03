@@ -1,4 +1,4 @@
-let map, marker, geocoder;
+let locator;
 
 
 function register() {
@@ -6,8 +6,8 @@ function register() {
         "username": $('#username').val(),
         "password": $('#password').val(),
         "addr": $('#addr').val(),
-        "loc_lng": marker.getPosition().longitude,
-        "loc_lat": marker.getPosition().latitude,
+        "loc_lng": locator.lng,
+        "loc_lat": locator.lat,
         "phone": $('#phone').val()
     };
     $.ajax({
@@ -25,27 +25,13 @@ function register() {
 }
 
 $(document).ready(function () {
-    let locator = new Locator();
+    locator = new Locator();
     locator.change = function (lng, lat, addr) {
-        $('#locator-addr').text(addr)
+        $('#locator-addr').text(addr).removeAttr('hidden');
     };
-    geocoder = new BMap.Geocoder();
-    // Try to locate the user
-    new BMap.Geolocation().getCurrentPosition(function (resp) {
-        createMap(this.getStatus() === BMAP_STATUS_SUCCESS
-            ? resp.point
-            : new BMap.Point(106.30557, 29.59899)); // Set to Chongqing University's location by default
-    });
+    locator.create(106.30557, 29.59899, true);
     $('#register').click(register);
     $('#locator-show').click(function () {
-        $('#locator-modal').modal('show');
-        let addr = $('#addr').val();
-        if (marker && addr !== '') {
-            geocoder.getPoint(addr, function (point) {
-                if (point) {
-                    onLocationChanged({point: point});
-                }
-            });
-        }
+        locator.show($('#addr').val());
     });
 });

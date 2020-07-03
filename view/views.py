@@ -6,6 +6,11 @@ from cmdb.models.user import User
 
 
 @require_GET
+def register(request):
+    return render(request, 'register.html')
+
+
+@require_GET
 def shop(request):
     user = User.objects.get(id=1)
     return render(request, 'shop.html', model_to_dict(user))

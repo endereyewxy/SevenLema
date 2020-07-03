@@ -23,7 +23,7 @@ class Locator {
         this._on_location_changed = this._on_location_changed.bind(this);
     }
 
-    create(default_lng = 106.30557, default_lat = 29.59899, use_geo = false) {
+    create(default_lng, default_lat, use_geo = false) {
         // Create geo-locator
         this.geocoder = new BMap.Geocoder();
 
