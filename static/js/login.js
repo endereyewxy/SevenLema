@@ -1,23 +1,22 @@
-function login(username,password){
-    const data{
-        "username" : username,
-        "password" : password
+function login() {
+    const data = {
+        "username": $('#username').val(),
+        "password": $('#password').val()
     };
     $.ajax({
-        url:"/user/login",
-        data:data,
-        type:"post",
-        success:function(data){
-            if(data.code === 0){
-                window.location.href ="/index.html";
-            }
-            else{
-                alert(data.msg);
+        url: "/user/login",
+        data: data,
+        type: "post",
+        success: function (data) {
+            if (data.code === 0) {
+                window.location.href = "/index.html";
+            } else {
+                $('#alert').text(data.msg).removeAttr('hidden');
             }
         }
     });
 }
 
-$(document).load(function () {
+$(document).ready(function () {
     $('#login').click(login);
 });
