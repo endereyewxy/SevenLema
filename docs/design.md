@@ -261,7 +261,7 @@ order的可能取值：
 | --------- | ------- | ---------------- | ---------------------------------- |
 | shop_id   | INTEGER | 商户ID           |                                    |
 | name      | STRING  | 商户名称         |                                    |
-| image     | STRING  | 商户图片         | static目录下的文件名，不包含扩展名 |
+| image     | STRING  | 商户图片         | static目录下的文件名，包含扩展名 |
 | desc      | STRING  | 商户描述         |                                    |
 | addr      | STRING  | 商户地址         |                                    |
 | loc_lng   | FLOAT   | 商户位置经度     |                                    |
