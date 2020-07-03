@@ -1,5 +1,4 @@
-// Initial location of Chongqing University
-var v_loc_lng = 106.30557, v_loc_lat = 29.59899, v_addr = '', loc_lng = v_loc_lng, loc_lat = v_loc_lat;
+let map, marker, geocoder;
 
 
 function register() {
@@ -7,6 +6,8 @@ function register() {
         "username": $('#username').val(),
         "password": $('#password').val(),
         "addr": $('#addr').val(),
+        "loc_lng": marker.getPosition().longitude,
+        "loc_lat": marker.getPosition().latitude,
         "phone": $('#phone').val()
     };
     $.ajax({
@@ -23,14 +24,25 @@ function register() {
     });
 }
 
-function createMap() {
+function onLocationChanged(evt) {
+    marker.setPosition(evt.point);
+    map.centerAndZoom(evt.point, 16);
+    geocoder.getLocation(evt.point, function (rs) {
+        marker.openInfoWindow(new BMap.InfoWindow(rs.address, {
+            width: 250,
+            height: 150,
+            title: "当前位置"
+        }));
+        $('#located').text('定位到：' + rs.address).removeAttr('hidden');
+    });
+}
+
+function createMap(point) {
     // Create map and configure basic settings
-    const map = new BMap.Map("baidu-map");
+    map = new BMap.Map("baidu-map");
     map.setDefaultCursor("pointer");
     map.enableScrollWheelZoom();
-    const point = new BMap.Point(v_loc_lng, v_loc_lat);
     map.centerAndZoom(point, 13);
-    const gc = new BMap.Geocoder();
 
     // Add controls
     map.addControl(new BMap.NavigationControl());
@@ -39,48 +51,38 @@ function createMap() {
     map.addControl(new BMap.MapTypeControl());
     map.addControl(new BMap.CopyrightControl());
 
-    function onLocationChanged(evt) {
-        v_loc_lng = evt.point.lng;
-        v_loc_lat = evt.point.lat;
-        gc.getLocation(evt.point, function (rs) {
-            const opts = {
-                width: 250,
-                height: 150,
-                title: "当前位置"
-            };
-            rs = rs.addressComponents;
-            v_addr = [rs.province, rs.city, rs.district, rs.street, rs.streetNumber].join();
-            $('#located').text('定位到：' + v_addr).removeAttr('hidden');
-            marker.openInfoWindow(new BMap.InfoWindow(v_addr, opts));
-        });
-    }
-
     // Add marker
-    const marker = new BMap.Marker(point);
+    marker = new BMap.Marker(point);
     map.addOverlay(marker);
     marker.addEventListener("click", onLocationChanged);
     marker.enableDragging();
     marker.addEventListener("dragend", onLocationChanged);
 
-    // Initialize v_addr
+    // Add click event listener to the map
+    map.addEventListener("click", onLocationChanged);
+
+    // Initialize address display
     onLocationChanged({point: point});
 }
 
 $(document).ready(function () {
+    geocoder = new BMap.Geocoder();
     // Try to locate the user
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function (position) {
-            v_loc_lng = position.longitude;
-            v_loc_lat = position.latitude;
-            createMap();
-        }, createMap);
-    } else {
-        createMap();
-    }
+    new BMap.Geolocation().getCurrentPosition(function (resp) {
+        createMap(this.getStatus() === BMAP_STATUS_SUCCESS
+            ? resp.point
+            : new BMap.Point(106.30557, 29.59899)); // Set to Chongqing University's location by default
+    });
     $('#register').click(register);
-    $('#confirm').click(function () {
-        loc_lng = v_loc_lng;
-        loc_lat = v_loc_lat;
-        $('#select-location').modal('hide');
-    })
+    $('#locator-show').click(function () {
+        $('#locator-modal').modal('show');
+        let addr = $('#addr').val();
+        if (marker && addr !== '') {
+            geocoder.getPoint(addr, function (point) {
+                if (point) {
+                    onLocationChanged({point: point});
+                }
+            });
+        }
+    });
 });
