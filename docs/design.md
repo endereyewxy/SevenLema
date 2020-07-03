@@ -266,7 +266,7 @@ order的可能取值：
 | addr      | STRING  | 商户地址         |                                    |
 | loc_lng   | FLOAT   | 商户位置经度     |                                    |
 | loc_lat   | FLOAT   | 商户位置纬度     |                                    |
-| dist      | FLOAT   | 距查询位置距离   | 单位：米                           |
+| dist      | FLOAT   | 距查询位置距离   | 单位：米  x                         |
 | avg_price | FLOAT   | 商户人均消费     | 单位：元（**不是分**）             |
 | sales     | INTEGER | 商户销量         |                                    |
 | phone     | STRING  | 商户电话号码     |                                    |

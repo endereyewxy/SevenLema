@@ -35,7 +35,7 @@
         }
     </style>
 </head>
-<body class="d-f">
+<body>
 <div class="container d-flex flex-column justify-content-between">
     <div class="row">
         <a class="col-4"
@@ -44,7 +44,7 @@
         <div class="col-8">
             <div class="row">
                 <div class="col-6">
-                    <button type="button" class="btn btn-outline-dark" id="located" style="width: 100%">&nbsp;</button>
+                    <button type="button" class="btn btn-outline-dark" id="locator-addr" style="width: 100%">&nbsp;</button>
                 </div>
                 <div class="col-6">
                     <div class="btn-group" role="group">
@@ -104,10 +104,10 @@
         </label>
     </div>
     <span>&nbsp;</span>
-    <div class="flex-grow-1" id="container"></div>
+    <div class="flex-grow-1" id="data-container"></div>
     <ul class="pagination justify-content-center"></ul>
 </div>
-<script id="template" type="text/x-jquery-tmpl">
+<script id="data-template" type="text/x-jquery-tmpl">
     <div class="card mb-3">
         <a class="row no-gutters stretched-link text-decoration-none" href="/shop/${shop_id}">
             <div class="col-md-4">
@@ -126,8 +126,8 @@
     </div>
 </script>
 <script type="text/javascript">
-    loc_lng = {{ loc_lng }};
-    loc_lat = {{ loc_lat }};
+    default_lng = {{ loc_lng }};
+    default_lat = {{ loc_lat }};
 </script>
 </body>
 </html>
