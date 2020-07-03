@@ -14,3 +14,11 @@ def register(request):
 def shop(request):
     user = User.objects.get(id=1)
     return render(request, 'shop.html', model_to_dict(user))
+
+
+@require_GET
+def dish(request, shop_id):
+    user = User.objects.get(id=1)
+    ctx = model_to_dict(user)
+    ctx['shop_id'] = shop_id
+    return render(request, 'dish.html', ctx)
