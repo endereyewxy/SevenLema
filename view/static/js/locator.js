@@ -2,39 +2,32 @@ class Locator {
     // Please make sure that one HTML page has at most one instance!
     constructor() {
         // Add modal dialog
-        const modal = '<div class="modal fade" id="locator-modal" tabindex="-1" role="dialog" aria-labelledby="selectLocation"\n' +
-            '           aria-hidden="true">\n' +
-            '               <div class="modal-dialog">\n' +
-            '                   <div class="modal-content">\n' +
-            '                       <div class="modal-header">\n' +
-            '                           <h5 class="modal-title">选择位置</h5>\n' +
-            '                       </div>\n' +
-            '                       <div class="modal-body" id="baidu-map" style="height: 400px"></div>\n' +
-            '                       <div class="modal-footer">\n' +
-            '                           <button type="button" class="btn btn-primary" data-dismiss="modal">确定</button>\n' +
-            '                       </div>\n' +
-            '                   </div>\n' +
-            '               </div>\n' +
+        const modal = '<div class="modal fade" id="locator-modal" tabindex="-1" role="dialog" aria-hidden="true">"' +
+            '               <div class="modal-dialog">' +
+            '                   <div class="modal-content">' +
+            '                       <div class="modal-header">' +
+            '                           <h5 class="modal-title">选择位置</h5>' +
+            '                       </div>' +
+            '                       <div class="modal-body" id="locator-map" style="height: 500px"></div>' +
+            '                       <div class="modal-footer">' +
+            '                           <button type="button" class="btn btn-primary" data-dismiss="modal">确定</button>' +
+            '                       </div>' +
+            '                   </div>' +
+            '               </div>' +
             '           </div>';
-        $('html').append(modal);
+        $('body').append(modal);
 
-        // Create map and configure basic settings
-        this.map = new BMap.Map("baidu-map");
-        this.map.setDefaultCursor("pointer");
-        this.map.enableScrollWheelZoom();
-
-        // Add controls
-        this.map.addControl(new BMap.NavigationControl());
-        this.map.addControl(new BMap.OverviewMapControl());
-        this.map.addControl(new BMap.ScaleControl());
-        this.map.addControl(new BMap.MapTypeControl());
-        this.map.addControl(new BMap.CopyrightControl());
-
-        // Create geo-locator
-        this.geocoder = new BMap.Geocoder();
+        this.create = this.create.bind(this);
+        this.show = this.show.bind(this);
+        this._actual_create = this._actual_create.bind(this);
+        this._on_location_changed = this._on_location_changed.bind(this);
     }
 
     create(default_lng = 106.30557, default_lat = 29.59899, use_geo = false) {
+        // Create geo-locator
+        this.geocoder = new BMap.Geocoder();
+
+        // Actually create map
         const object = this;
         if (use_geo) {
             new BMap.Geolocation().getCurrentPosition(function (resp) {
@@ -44,6 +37,8 @@ class Locator {
             }, function () {
                 object._actual_create(new BMap.Point(default_lng, default_lat));
             });
+        } else {
+            object._actual_create(new BMap.Point(default_lng, default_lat));
         }
     }
 
@@ -59,10 +54,28 @@ class Locator {
         }
     }
 
-    change() {
+    get lng() {
+        return this.marker.getPosition().lng;
+    }
+
+    get lat() {
+        return this.marker.getPosition().lat;
     }
 
     _actual_create(point) {
+        // Create map and configure basic settings
+        this.map = new BMap.Map("locator-map");
+        this.map.centerAndZoom(point, 15);
+        this.map.setDefaultCursor("pointer");
+        this.map.enableScrollWheelZoom();
+
+        // Add controls
+        this.map.addControl(new BMap.NavigationControl());
+        this.map.addControl(new BMap.OverviewMapControl());
+        this.map.addControl(new BMap.ScaleControl());
+        this.map.addControl(new BMap.MapTypeControl());
+        this.map.addControl(new BMap.CopyrightControl());
+
         // Add marker
         this.marker = new BMap.Marker(point);
         this.map.addOverlay(this.marker);
@@ -77,7 +90,7 @@ class Locator {
         this._on_location_changed({point: point});
     }
 
-    _on_location_changed() {
+    _on_location_changed(evt) {
         this.marker.setPosition(evt.point);
         this.map.centerAndZoom(evt.point);
 

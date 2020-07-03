@@ -24,48 +24,11 @@ function register() {
     });
 }
 
-function onLocationChanged(evt) {
-    marker.setPosition(evt.point);
-    map.centerAndZoom(evt.point, 16);
-    geocoder.getLocation(evt.point, function (rs) {
-        marker.openInfoWindow(new BMap.InfoWindow(rs.address, {
-            width: 250,
-            height: 150,
-            title: "当前位置"
-        }));
-        $('#located').text('定位到：' + rs.address).removeAttr('hidden');
-    });
-}
-
-function createMap(point) {
-    // Create map and configure basic settings
-    map = new BMap.Map("baidu-map");
-    map.setDefaultCursor("pointer");
-    map.enableScrollWheelZoom();
-    map.centerAndZoom(point, 13);
-
-    // Add controls
-    map.addControl(new BMap.NavigationControl());
-    map.addControl(new BMap.OverviewMapControl());
-    map.addControl(new BMap.ScaleControl());
-    map.addControl(new BMap.MapTypeControl());
-    map.addControl(new BMap.CopyrightControl());
-
-    // Add marker
-    marker = new BMap.Marker(point);
-    map.addOverlay(marker);
-    marker.addEventListener("click", onLocationChanged);
-    marker.enableDragging();
-    marker.addEventListener("dragend", onLocationChanged);
-
-    // Add click event listener to the map
-    map.addEventListener("click", onLocationChanged);
-
-    // Initialize address display
-    onLocationChanged({point: point});
-}
-
 $(document).ready(function () {
+    let locator = new Locator();
+    locator.change = function (lng, lat, addr) {
+        $('#locator-addr').text(addr)
+    };
     geocoder = new BMap.Geocoder();
     // Try to locate the user
     new BMap.Geolocation().getCurrentPosition(function (resp) {

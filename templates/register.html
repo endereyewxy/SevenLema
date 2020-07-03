@@ -8,7 +8,8 @@
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script type="text/javascript"
             src="http://api.map.baidu.com/getscript?v=3.0&ak=tdfjfQq8B4ETmpg93UMWGWrL8yprpI5Q"></script>
-    <script src="/view/static/js/register.js"></script>
+    <script src="/static/js/locator.js"></script>
+    <script src="/static/js/register.js"></script>
     <style>
         html, body {
             height: 100%;
@@ -66,29 +67,15 @@
             </button>
         </div>
     </div>
-    <div class="alert alert-primary" role="alert" id="located" hidden></div>
+    <div class="alert alert-primary" role="alert" id="locator-addr" hidden></div>
     <div class="input-group mb-3">
         <div class="input-group-prepend">
             <div class="input-group-text" id="label-phone"><span>电话号码</span></div>
         </div>
         <input id="phone" type="text" class="form-control" aria-label="phone" aria-describedby="label-phone">
     </div>
-    <div class="alert alert-danger" role="alert" id="alert" hidden></div>
+    <div class="alert alert-danger" role="alert" id="err-msg" hidden></div>
     <button type="button" class="btn btn-primary btn-lg" id="register">注册</button>
-</div>
-<div class="modal fade" id="locator-modal" tabindex="-1" role="dialog" aria-labelledby="selectLocation"
-     aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">选择位置</h5>
-            </div>
-            <div class="modal-body" id="baidu-map"></div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
-            </div>
-        </div>
-    </div>
 </div>
 </body>
 </html>
