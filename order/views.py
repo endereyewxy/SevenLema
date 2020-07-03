@@ -1,9 +1,11 @@
 from django.shortcuts import render
 from django.views import View
 from django.http import JsonResponse
+from cmdb.models.user import User
 from cmdb.models.shop import Shop
 from cmdb.models.dish import Dish
 from datetime import datetime
+import json
 
 
 # from django.contrib.auth.mixins import LoginRequiredMixin
@@ -12,17 +14,20 @@ from datetime import datetime
 class OrderCommitView(View):
     def post(self, request):
         # user login in check
-        user = request.user
+        # user = request.user
         # if not user.is_authenticated:
         #     return JsonResponse({'code': 103, 'msg': '请先登录'})
         # get post parameters
-        shop_id = request.POST.get('shop_id')
-        dish_id = request.POST.get('dish_id')
-        amount = request.POST.get('amount')
-        addr = request.POST.get('addr')
-        loc_lng = request.POST.get('loc_lng')
-        loc_lat = request.POST.get('loc_lat')
-        remarks = request.POST.get('remarks')
+        data = request.body
+        res = json.loads(data)
+
+        shop_id = res['shop_id']
+        dish_id = res['dish_id']
+        amount = res['amount']
+        addr = res['addr']
+        loc_lng = res['loc_lng']
+        loc_lat = res['loc_lat']
+        remarks = res['remarks']
         # necessary parameters checks
         if not all([shop_id, dish_id, amount, addr, loc_lng, loc_lat, remarks]):
             return JsonResponse({'code': 101, 'msg': 'parameters lost'})
@@ -36,21 +41,24 @@ class OrderCommitView(View):
         except Shop.DoesNotExist:
             return JsonResponse({'code': 106, 'msg': 'shop no exist'})
 
-        # dish exist checks
-        disherror = {}
+        # dish connection and exist checks
+        dishError = {}
         for dish in dish_id:
             if not Dish.objects.filter(shop_id=shop_id, name=dish).exists():
-                disherror[str(dish)] = 'dish is not in this shop'
+                # dishError[str(dish)] = 'dish is not in this shop'
+                # 'dish {0} is not in the shop{1}'.format(dish, shop_id)
+                dishError.setdefault(105, []).append('dish {0} not in the shop {1}'.format(dish, shop_id))
                 continue
             dish_obj = Dish.objects.get(shop_id=shop_id, name=dish)
             if not dish_obj.serving:
-                disherror[str(dish)] = 'dish is not on sell'
-        if disherror:
-            # return JsonResponse({'code': 105, 'data': disherror})
-            return JsonResponse(disherror)
+                # dishError[str(dish)] = 'dish is not on sell'
+                dishError.setdefault(106, []).append('dish {0} not on sale'.format(dish))
+        if dishError:
+            data = json.dumps(dishError)
+            return JsonResponse(data, safe=False)
 
         # creating order_id by time and user info
-        order_id = datetime.now().strftime('%Y%m%d%H%M%S') + str(user.id)
+        order_id = datetime.now().strftime('%Y%m%d%H%M') + str(shop_id)
         return JsonResponse({'code': 0, 'msg': "creating order succeed", 'data': order_id})
 
 
@@ -58,13 +66,14 @@ class OrderCommitView(View):
 class OrderInfoView(View):
     def post(self, request):
         # post参数
-        order_id = request.POST.get('order_id')
-        shop_id = request.POST.get('shop_id')
-        page = request.POST.get('page')
-        limit = request.POST.get('limit')
-        unfinished = request.POST.get('unfinished')
-        tm_ordered = request.POST.get('tm_ordered')
-        tm_finished = request.POST.get('tm_finished')
+        res = request.body
+        order_id = res['order_id']
+        shop_id = res['shop_id']
+        page = res['page']
+        limit = res['limit']
+        unfinished = res['unfinished']
+        tm_ordered = res['tm_ordered']
+        tm_finished = res['tm_finished']
         # 参数检验
         context = {
             'user_id': 0,
@@ -87,7 +96,5 @@ class OrderInfoView(View):
 class OrderFinishView(View):
     def post(self, request):
         # post参数
-        order_id = request.POST.get('order_id')
         # 参数检验
-
-        return render(request, 'finished.html')
+        pass
