@@ -1,4 +1,4 @@
-let page = 1, loc_lng, loc_lat;
+let paginator, loc_lng, loc_lat;
 
 function get_order() {
     return $('label.active input').attr('id');
@@ -8,7 +8,7 @@ function load_shop() {
     const data = {
         "name": $('#header-search').val(),
         "order": get_order(),
-        "page": page,
+        "page": paginator.currPage,
         "limit": 5
     };
     if (get_order() === 'dist') {
@@ -20,16 +20,17 @@ function load_shop() {
         data: data,
         type: "get",
         success: function (data) {
-            createPages(page, data.page, function (new_page) {
-                page = new_page;
-                load_shop();
-            });
+            paginator.maxPages = data.page;
             $('#data-container').html($('#data-template').tmpl(data.data));
         }
     });
 }
 
 $(document).ready(function () {
+    // Create and configure paginator
+    paginator = new Paginator('.pagination');
+    paginator.change = load_shop;
+
     // Create and configure locator
     let locator = new Locator();
     locator.change = function (lng, lat, addr) {
