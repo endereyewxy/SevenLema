@@ -14,9 +14,10 @@ class Paginator {
         this._max_pages = 1;
         this.container = container;
         this._create_html();
-    }
 
-    change() {
+        this._create_html = this._create_html.bind(this);
+        this._add_page = this._add_page.bind(this);
+        this._add_dots = this._add_dots.bind(this);
     }
 
     get currPage() {
