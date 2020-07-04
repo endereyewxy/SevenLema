@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'cmdb',
     'search',
-    'view'
+    'view',
+    'user'
 ]
 
 MIDDLEWARE = [

@@ -1,5 +1,5 @@
 from django.forms import model_to_dict
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.decorators.http import require_GET
 
 from cmdb.models.user import User
@@ -8,6 +8,13 @@ from cmdb.models.user import User
 @require_GET
 def register(request):
     return render(request, 'register.html')
+
+
+@require_GET
+def login(request):
+    if 'id' in request.session:
+        return redirect('/')
+    return render(request, 'login.html')
 
 
 @require_GET
