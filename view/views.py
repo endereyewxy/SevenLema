@@ -14,7 +14,8 @@ def register(request):
 def login(request):
     if 'id' in request.session:
         return redirect('/')
-    return render(request, 'login.html')
+    else:
+        return render(request, 'login.html')
 
 
 @require_GET

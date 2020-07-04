@@ -18,3 +18,12 @@ def login(request):
     except User.DoesNotExist:
         pass
     return JsonResponse({'code': 103, 'msg': '登录失败'})
+
+
+@require_POST
+def logout(request):
+    if 'id' in request.session:
+        del request.session['id']
+        return JsonResponse({'code': 0, 'msg': '', 'data': None})
+    else:
+        return JsonResponse({'code': 103, 'msg': '用户尚未登录'})
