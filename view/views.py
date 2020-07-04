@@ -27,7 +27,9 @@ def login(request):
 
 def get_login_context(request):
     if 'id' in request.session:
-        return dict(model_to_dict(User.objects.get(id=request.session['id']).items()) + {'login': True}.items())
+        ctx = {'login': True}
+        ctx.update(model_to_dict(User.objects.get(id=request.session['id'])))
+        return ctx
     else:
         return {'login': False}
 
