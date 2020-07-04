@@ -1,4 +1,4 @@
-let paginator, locator;
+let paginator, locator, serving = false;
 
 function get_order() {
     return $('label.active input').attr('id');
@@ -6,10 +6,11 @@ function get_order() {
 
 function load_shop() {
     const data = {
-        "name": $('#header-search').val(),
-        "order": get_order(),
-        "page": paginator.currPage,
-        "limit": 5
+        name: $('#header-search').val(),
+        order: get_order(),
+        page: paginator.currPage,
+        limit: 5,
+        serving: serving
     };
     if (get_order() === 'dist') {
         data['loc_lng'] = locator.lng;
@@ -44,6 +45,12 @@ $(document).ready(function () {
     } else {
         locator.create(106.30557, 29.59899, true);
     }
+    $('#header-config-button').popover({
+        content: $('#serving-wrapper'),
+        placement: 'bottom',
+        trigger: 'click',
+        html: true
+    });
     $('#locator-show').click(function () {
         locator.show($('#addr').val());
     });

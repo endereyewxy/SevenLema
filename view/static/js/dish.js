@@ -1,4 +1,4 @@
-let paginator, locator, card_list = [];
+let paginator, locator, card_list = [], serving = false;
 
 function amount_change(dish_id) {
     const input = $("#dish-" + dish_id);
@@ -69,7 +69,8 @@ function load_dish() {
         name: $('#header-search').val(),
         order: get_order(),
         page: paginator.currPage,
-        limit: 5
+        limit: 5,
+        serving: serving
     };
     $.ajax({
         url: '/search/dish',
@@ -97,6 +98,12 @@ $(document).ready(function () {
     } else {
         locator.create(106.30557, 29.59899, true);
     }
+    $('#header-config-button').popover({
+        content: $('#serving-wrapper'),
+        placement: 'bottom',
+        trigger: 'click',
+        html: true
+    });
     $('#locator-show').click(function () {
         locator.show($('#addr').val());
     });

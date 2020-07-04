@@ -7,6 +7,7 @@
     <link href="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="{% static 'css/header.css' %}" rel="stylesheet">
     <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script type="text/javascript"
             src="http://api.map.baidu.com/getscript?v=3.0&ak=tdfjfQq8B4ETmpg93UMWGWrL8yprpI5Q"></script>
@@ -35,7 +36,7 @@
 </div>
 <script id="data-template" type="text/x-jquery-tmpl">
     <div class="card mb-3">
-        <a class="row no-gutters stretched-link text-decoration-none" href="/shop/${shop_id}">
+        <a class="row no-gutters stretched-link text-decoration-none" href="/shop/${shop_id}" style="color: black">
             <div class="col-md-4">
                 <img src="{% static 'images' %}/${image}" class="card-img" alt="${name}">
             </div>
@@ -44,14 +45,17 @@
                     <h5 class="card-title">${name}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">人均消费￥${avg_price} 销量 ${sales}</h6>
                     <p class="card-text">${desc}</p>
-                    <p class="card-text">地址：${addr}</p>
-                    <p class="card-text">电话号码：${phone}</p>
-                    <p class="card-text">${serving ? '营业中' : '休息中'}</p>
+                    <p class="card-text text-muted text-right">地址：${addr} &nbsp; 电话号码：${phone}</p>
+                    <p class="card-text text-right" style="font-weight: bold; color: red">${serving ? '' : '商家休息中'}</p>
                 </div>
             </div>
         </a>
     </div>
 </script>
 </body>
+<div id="serving-wrapper">
+    <input type="checkbox" id="serving" onchange="serving = $('#serving:checked').length === 1;load_shop();">
+    <label for="serving">只显示营业中的商家</label>
+</div>
 {% csrf_token %}
 </html>
