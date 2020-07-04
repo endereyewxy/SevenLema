@@ -3,7 +3,7 @@ let paginator, locator;
 function get_order() {
     return $('label.active input').attr('id');
 }
-
+2
 function load_shop() {
     const data = {
         "name": $('#header-search').val(),
@@ -33,6 +33,7 @@ $(document).ready(function () {
 
     // Create and configure locator
     locator = new Locator();
+
     locator.change = function (lng, lat, addr) {
         $('#locator-addr').text(addr);
         if (get_order() === 'dist') {
