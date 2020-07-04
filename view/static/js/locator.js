@@ -6,7 +6,7 @@ class Locator {
             '               <div class="modal-dialog">' +
             '                   <div class="modal-content">' +
             '                       <div class="modal-header">' +
-            '                           <h5 class="modal-title">选择位置</h5>' +
+            '                           <h5 class="modal-title"></h5>' +
             '                       </div>' +
             '                       <div class="modal-body" id="locator-map" style="height: 500px"></div>' +
             '                       <div class="modal-footer">' +
@@ -16,6 +16,12 @@ class Locator {
             '               </div>' +
             '           </div>';
         $('body').append(modal);
+        const object = this;
+        $('#locator-modal').on('shown.bs.modal', async function () {
+            // Make sure to center the map after a short amount of time, due to unknown issues
+            await new Promise(r => setTimeout(r, 150));
+            object.map.panTo(object.marker.getPosition());
+        });
 
         this.create = this.create.bind(this);
         this.show = this.show.bind(this);
@@ -43,14 +49,13 @@ class Locator {
     }
 
     show(addr) {
+        // Remove markers added by the previous searching
+        this.map.clearOverlays();
+        this.map.addOverlay(this.marker);
+
         $('#locator-modal').modal('show');
-        if (addr) {
-            const object = this;
-            this.geocoder.getPoint(addr, function (point) {
-                if (point) {
-                    object._on_location_changed({point: point});
-                }
-            });
+        if (typeof addr === 'string' && addr.length) {
+            this.local.search(addr);
         }
     }
 
@@ -66,10 +71,8 @@ class Locator {
         // Create map and configure basic settings
         this.map = new BMap.Map("locator-map");
         this.map.centerAndZoom(point, 15);
-        this.map.setDefaultCursor("pointer");
         this.map.enableScrollWheelZoom();
-
-        // Add controls
+        this.map.addEventListener("click", this._on_location_changed);
         this.map.addControl(new BMap.NavigationControl());
         this.map.addControl(new BMap.OverviewMapControl());
         this.map.addControl(new BMap.ScaleControl());
@@ -78,13 +81,20 @@ class Locator {
 
         // Add marker
         this.marker = new BMap.Marker(point);
-        this.map.addOverlay(this.marker);
         this.marker.addEventListener("click", this._on_location_changed);
         this.marker.enableDragging();
         this.marker.addEventListener("dragend", this._on_location_changed);
 
-        // Add click event listener to the map
-        this.map.addEventListener("click", this._on_location_changed);
+        // Add local searcher
+        const object = this;
+        this.local = new BMap.LocalSearch(this.map, {
+            renderOptions: {map: this.map},
+            onSearchComplete: function (result) {
+                if (result.getNumPois()) {
+                    object._on_location_changed({point: result.getPoi(0).point});
+                }
+            }
+        });
 
         // Initialize address display
         this._on_location_changed({point: point});
@@ -92,16 +102,11 @@ class Locator {
 
     _on_location_changed(evt) {
         this.marker.setPosition(evt.point);
-        this.map.centerAndZoom(evt.point);
-
         const object = this;
         this.geocoder.getLocation(evt.point, function (rs) {
-            object.marker.openInfoWindow(new BMap.InfoWindow(rs.address, {
-                width: 250,
-                height: 150,
-                title: "当前位置"
-            }));
-            object.change(evt.point.lng, evt.point.lat, rs.address);
+            const addr = rs ? rs.address : '未知';
+            $('#locator-modal h5').text('当前位置：' + addr);
+            object.change(evt.point.lng, evt.point.lat, addr);
         });
     }
 }
