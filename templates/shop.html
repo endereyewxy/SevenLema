@@ -49,8 +49,8 @@
                 </div>
                 <div class="col-6">
                     <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-secondary">注册</button>
-                        <button type="button" class="btn btn-secondary">登录</button>
+                        <a type="button" class="btn btn-secondary" style="color: aliceblue" href="/register">注册</a>
+                        <a type="button" class="btn btn-secondary" style="color: aliceblue" href="/login">登录</a>
                     </div>
                 </div>
             </div>
@@ -121,6 +121,7 @@
                     <p class="card-text">${desc}</p>
                     <p class="card-text">地址：${addr}</p>
                     <p class="card-text">电话号码：${phone}</p>
+                    <p class="card-text">${serving ? '营业中' : '休息中'}</p>
                 </div>
             </div>
         </a>
