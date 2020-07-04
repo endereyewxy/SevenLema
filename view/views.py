@@ -17,6 +17,14 @@ def register(request):
 
 
 @require_GET
+def login(request):
+    if 'id' in request.session:
+        return redirect('/')
+    else:
+        return render(request, 'login.html')
+
+
+@require_GET
 def shop(request):
     user = User.objects.get(id=1)
     return render(request, 'shop.html', model_to_dict(user))
