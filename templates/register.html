@@ -17,42 +17,49 @@
 </head>
 <body style="background-image: url('{% static 'images/background.png' %}'); background-size: 100% 100%">
 <div class="container">
-    <img src="{% static 'images/logo.svg' %}" alt="logo" class="mb-3" style="width: 100%; height: auto; background-size: 100% 100%">
-    <div class="input-group mb-3">
-        <div class="input-group-prepend">
-            <div class="input-group-text"><span>用户名</span></div>
+    <img src="{% static 'images/logo.svg' %}" alt="logo" class="mb-3"
+         style="width: 100%; height: auto; background-size: 100% 100%">
+    <form class="needs-validation" novalidate>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <div class="input-group-text"><span>用户名</span></div>
+            </div>
+            <input id="username" type="text" class="form-control" aria-label="username" pattern="\w{0,20}" required>
+            <div class="invalid-feedback">请输入用户名（不超过20个字符）</div>
         </div>
-        <input id="username" type="text" class="form-control" aria-label="username" required>
-    </div>
-    <div class="input-group mb-3">
-        <div class="input-group-prepend">
-            <div class="input-group-text"><span>密码</span></div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <div class="input-group-text"><span>密码</span></div>
+            </div>
+            <input id="password" type="password" class="form-control" aria-label="password" required>
+            <div class="invalid-feedback">请输入密码</div>
         </div>
-        <input id="password" type="password" class="form-control" aria-label="password">
-    </div>
-    <div class="input-group mb-3">
-        <div class="input-group-prepend">
-            <div class="input-group-text"><span>地址</span></div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <div class="input-group-text"><span>地址</span></div>
+            </div>
+            <input id="addr" type="text" class="form-control" aria-label="addr" placeholder="点击右侧按钮自动定位" required>
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" id="locator-show" type="button" data-toggle="tooltip"
+                        data-placement="bottom" title="点击自动定位">
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-geo-alt" fill="currentColor"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                              d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="invalid-feedback">请输入地址</div>
         </div>
-        <input id="addr" type="text" class="form-control" aria-label="addr" placeholder="点击右侧按钮自动定位">
-        <div class="input-group-append">
-            <button class="btn btn-outline-secondary" id="locator-show" type="button" data-toggle="tooltip"
-                    data-placement="bottom" title="点击自动定位">
-                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-geo-alt" fill="currentColor"
-                     xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd"
-                          d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path>
-                </svg>
-            </button>
+        <div class="alert alert-primary" role="alert" id="locator-addr" hidden></div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <div class="input-group-text"><span>电话号码</span></div>
+            </div>
+            <input id="phone" type="text" class="form-control" aria-label="phone" pattern="\d{11}" required>
+            <div class="invalid-feedback">请输入11位电话号码</div>
         </div>
-    </div>
-    <div class="alert alert-primary" role="alert" id="locator-addr" hidden></div>
-    <div class="input-group mb-3">
-        <div class="input-group-prepend">
-            <div class="input-group-text"><span>电话号码</span></div>
-        </div>
-        <input id="phone" type="text" class="form-control" aria-label="phone">
-    </div>
+    </form>
     <div class="alert alert-danger" role="alert" id="err-msg" hidden></div>
     <button type="button" class="btn btn-primary btn-lg" id="register">注册</button>
 </div>
