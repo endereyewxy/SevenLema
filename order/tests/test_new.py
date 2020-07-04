@@ -4,13 +4,25 @@ from cmdb.models.shop import Shop
 from cmdb.models.dish import Dish
 from cmdb.models.order import Order
 import json
+import time
 from datetime import datetime
-from order.views import OrderCommitView
 
 
 class OrderModelTests(TestCase):
+    # def _set_id_session(self, id="demo2"):
+    #     """
+    #     hack the session code to change it to the right one
+    #     """
+    #     from django.contrib.sessions.models import Session
+    #     from django.contrib.sessions.backends.db import SessionStore
+    #     session = Session.objects.get(pk=self.client.cookies['sessionid'].value)
+    #     newsession = {"id": id}
+    #     session.session_data = SessionStore().encode(newsession)
+    #     session.save()
+
     def setUp(self):
         self.factory = RequestFactory()
+        session = self.client.session
 
         user = User.objects.create(
             username='test-username',
@@ -22,6 +34,9 @@ class OrderModelTests(TestCase):
             phone='10394719283'
         )
         user.save()
+        self.user_id = str(user.id)
+        session['id'] = user.id
+        session.save()
 
         shop = Shop.objects.create(
             user_id=user,
@@ -72,6 +87,25 @@ class OrderModelTests(TestCase):
                 sales=i,
                 serving=i % 2 == 0
             ).save()
+
+    def test_no_login(self):
+        data = {
+            'shop_id': self.shop_id,
+            'dish_id': ['1'],
+            'amount': 'test-amount',
+            'addr': 'test-addr',
+            'loc_lng': 'test-loc_lng',
+            'loc_lat': 'test-loc_lat',
+            'remarks': 'test-remarks',
+        }
+
+        obj = json.dumps(data)
+        session = self.client.session
+        del session['id']
+        session.save()
+        resp = self.client.post('/order/new/', data=obj, content_type='application/json')
+        resjson = json.loads(resp.content)
+        self.assertJSONEqual(resp.content, {'code': 103, 'msg': 'no login in '})
 
     def test_parameter_lost(self):
         data = {
@@ -138,15 +172,15 @@ class OrderModelTests(TestCase):
     def test_commit_success(self):
         data = {
             'shop_id': self.shop_id,
-            'dish_id': ['2'],
-            'amount': 'test-amount',
+            'dish_id': ['0', '2'],
+            'amount': ['2', '3'],
             'addr': 'test-addr',
-            'loc_lng': 'test-loc_lng',
-            'loc_lat': 'test-loc_lat',
+            'loc_lng': 1,
+            'loc_lat': 1,
             'remarks': 'test-remarks',
         }
         obj = json.dumps(data)
         resp = self.client.post('/order/new/', data=obj, content_type='application/json')
         resjson = json.loads(resp.content)
-        order_id = datetime.now().strftime('%Y%m%d%H%M') + self.shop_id
-        self.assertJSONEqual(resp.content, {'code': 0, 'msg': 'creating order succeed', 'data': order_id})
+        order_id = int(time.time())
+        self.assertJSONEqual(resp.content, {'code': 0, 'msg': 'creating order succeed', 'data': 1})
