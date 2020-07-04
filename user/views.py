@@ -24,6 +24,8 @@ def signUpPage(request):
             'phone': phone
         }
 
+        # salted_password = User.set_password(password=password)
+
         database.create(
             username=username,
             # userId=int(database_maxId) + 1,
