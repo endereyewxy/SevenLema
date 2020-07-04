@@ -91,30 +91,40 @@ def login(request):
         login_usn = User.objects.filter(username=username)
         login_pho = User.objects.filter(phone=phone)
 
+        usn = login_usn.all()
+
         if login_usn.exists():
-            user = login_usn.first()
 
-            if user.password == password:
+            for us in usn:
 
-                return JsonResponse({
-                    'code':0,
-                    'msg':'登录成功'
-                })
+                if us.password == password:
+                    return JsonResponse({
+                        'code': 0,
+                        'msg': '登录成功'
+                    })
+
+            # user = login_usn.first()
+
+            # if user.password == password:
+            #
+            #     return JsonResponse({
+            #         'code':0,
+            #         'msg':'登录成功'
+            #     })
 
         elif login_pho.exists():
 
             pho = login_pho.first()
 
             if pho.password == password:
-
                 return JsonResponse({
-                    'code':0,
-                    'msg':'登录成功'
+                    'code': 0,
+                    'msg': '登录成功'
                 })
 
         else:
             return JsonResponse({
-                'code':102,
+                'code': 102,
                 'msg': '用户不存在'
             })
 
@@ -124,4 +134,3 @@ def login(request):
             'code': 101,
             'msg': '请求错误',
         })
-
