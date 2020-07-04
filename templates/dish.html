@@ -22,10 +22,16 @@
         <div class="input-group mb-3">
             <input type="text" class="form-control" id="total-price" value="总价：￥0" aria-label="TotalPrice" disabled>
             <div class="input-group-append">
-                <button class="btn btn-primary" type="button" {% if not shop_obj.serving %}disabled{% endif %}>下单
+                <button class="btn btn-primary" type="button" {% if not shop_obj.serving or not login %}disabled{% endif %}>下单
                 </button>   <!-- TODO-->
             </div>
+
         </div>
+        {% if not login %}
+            <div class="alert alert-danger" role="alert" id="alert" style="width: 530px">请登录后下单</div>
+        {% elif not shop_obj.serving %}
+            <div class="alert alert-danger" role="alert" id="alert" style="width: 530px">商家休息中</div>
+        {% endif %}
         <a href="#" class="close-btn text-decoration-none"
            onclick="document.getElementById('sidebar').style.width = '0'">×</a>
     </div>
