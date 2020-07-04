@@ -1,30 +1,34 @@
 let locator;
 
 function register() {
-    $('form').addClass('was-validated');
-    if ($('input:invalid').length) {
-        return;
-    }
-    const data = {
-        username: $('#username').val(),
-        password: $('#password').val(),
-        addr: $('#addr').val(),
-        loc_lng: locator.lng,
-        loc_lat: locator.lat,
-        phone: $('#phone').val()
-    };
-    $.ajax({
-        url: '/user/register',
-        data: data,
-        type: 'post',
-        success: function (data) {
-            if (data.msg === 0) {
-                window.location.href = "/index.html";
-            } else {
-                $('#alert').text(data.msg).removeAttr('hidden');
-            }
+    if($('#password').val() !== $('#password_2').val()){
+        window.alert("输入的两次密码不一致，请重新注册。");
+    }else {
+        $('form').addClass('was-validated');
+        if ($('input:invalid').length) {
+            return;
         }
-    });
+        const data = {
+            username: $('#username').val(),
+            password: $('#password').val(),
+            addr: $('#addr').val(),
+            loc_lng: locator.lng,
+            loc_lat: locator.lat,
+            phone: $('#phone').val()
+        };
+        $.ajax({
+            url: '/user/register',
+            data: data,
+            type: 'post',
+            success: function (data) {
+                if (data.msg === 0) {
+                    window.location.href = "/index.html";
+                } else {
+                    $('#alert').text(data.msg).removeAttr('hidden');
+                }
+            }
+        });
+    }
 }
 
 $(document).ready(function () {
