@@ -99,7 +99,7 @@ $(document).ready(function () {
         locator.create(106.30557, 29.59899, true);
     }
     $('#header-config-button').popover({
-        content: $('#serving-wrapper'),
+        content: () => $($('#serving-wrapper').html().replace('hidden', '').replace('-1', '')),
         placement: 'bottom',
         trigger: 'click',
         html: true

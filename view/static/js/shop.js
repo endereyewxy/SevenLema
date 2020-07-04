@@ -45,8 +45,17 @@ $(document).ready(function () {
     } else {
         locator.create(106.30557, 29.59899, true);
     }
+    const html =
+        '<div class="popover" role="tooltip">' +
+        '   <div class="arrow"></div>' +
+        '   <h3 class="popover-header"></h3>' +
+        '   <div>' +
+        '       <input type="checkbox" id="serving" onchange="serving = $(\'#serving:checked\').length === 1;load_shop();">' +
+        '       <label for="serving">只显示营业中的商家</label>' +
+        '   </div>' +
+        '</div>'
     $('#header-config-button').popover({
-        content: $('#serving-wrapper'),
+        content: () => $($('#serving-wrapper').html().replace('hidden', '').replace('-1', '')),
         placement: 'bottom',
         trigger: 'click',
         html: true

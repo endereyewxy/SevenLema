@@ -112,8 +112,9 @@
     shop_id = {{ shop_obj.id }};
 </script>
 </body>
-<div id="serving-wrapper">
-    <input type="checkbox" id="serving" onchange="serving = $('#serving:checked').length === 1;load_dish();">
+<div id="serving-wrapper" hidden>
+    <input type="checkbox" id="serving-1" onchange="serving = $('#serving:checked').length === 1;load_dish();">
     <label for="serving">只显示可购买的菜品</label>
 </div>
+{% csrf_token %}
 </html>

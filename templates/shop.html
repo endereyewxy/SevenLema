@@ -53,8 +53,8 @@
     </div>
 </script>
 </body>
-<div id="serving-wrapper">
-    <input type="checkbox" id="serving" onchange="serving = $('#serving:checked').length === 1;load_shop();">
+<div id="serving-wrapper" hidden>
+    <input type="checkbox" id="serving-1" onchange="serving = $('#serving:checked').length === 1;load_shop();">
     <label for="serving">只显示营业中的商家</label>
 </div>
 {% csrf_token %}
