@@ -68,7 +68,7 @@ class Paginator {
                 }
             } else if (tag === 'next') {
                 if (object._curr_page < object._max_pages) {
-                    object._max_pages++;
+                    object._curr_page++;
                     object.change();
                 }
             } else {

@@ -18,7 +18,7 @@ html, body {
     width: 100%;
 }
 
-div.input-group-text span, img {
+div.input-group-text span {
     display: block;
     margin: 0 auto;
 }
