@@ -20,24 +20,24 @@
     <img src="{% static 'images/logo.png' %}" alt="logo" class="mb-3">
     <div class="input-group mb-3">
         <div class="input-group-prepend">
-            <div class="input-group-text" id="label-username"><span>用户名</span></div>
+            <div class="input-group-text"><span>用户名</span></div>
         </div>
-        <input id="username" type="text" class="form-control" aria-label="username" aria-describedby="label-username">
+        <input id="username" type="text" class="form-control" aria-label="username" required>
     </div>
     <div class="input-group mb-3">
         <div class="input-group-prepend">
-            <div class="input-group-text" id="label-password"><span>密码</span></div>
+            <div class="input-group-text"><span>密码</span></div>
         </div>
-        <input id="password" type="password" class="form-control" aria-label="password"
-               aria-describedby="label-password">
+        <input id="password" type="password" class="form-control" aria-label="password">
     </div>
     <div class="input-group mb-3">
         <div class="input-group-prepend">
-            <div class="input-group-text" id="label-addr"><span>地址</span></div>
+            <div class="input-group-text"><span>地址</span></div>
         </div>
-        <input id="addr" type="text" class="form-control" aria-label="addr" aria-describedby="label-addr">
+        <input id="addr" type="text" class="form-control" aria-label="addr" placeholder="点击右侧按钮自动定位">
         <div class="input-group-append">
-            <button class="btn btn-outline-secondary" id="locator-show" type="button">
+            <button class="btn btn-outline-secondary" id="locator-show" type="button" data-toggle="tooltip"
+                    data-placement="bottom" title="点击自动定位">
                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-geo-alt" fill="currentColor"
                      xmlns="http://www.w3.org/2000/svg">
                     <path fill-rule="evenodd"
@@ -49,9 +49,9 @@
     <div class="alert alert-primary" role="alert" id="locator-addr" hidden></div>
     <div class="input-group mb-3">
         <div class="input-group-prepend">
-            <div class="input-group-text" id="label-phone"><span>电话号码</span></div>
+            <div class="input-group-text"><span>电话号码</span></div>
         </div>
-        <input id="phone" type="text" class="form-control" aria-label="phone" aria-describedby="label-phone">
+        <input id="phone" type="text" class="form-control" aria-label="phone">
     </div>
     <div class="alert alert-danger" role="alert" id="err-msg" hidden></div>
     <button type="button" class="btn btn-primary btn-lg" id="register">注册</button>

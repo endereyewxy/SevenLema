@@ -26,7 +26,7 @@ function register() {
 $(document).ready(function () {
     locator = new Locator();
     locator.change = function (lng, lat, addr) {
-        $('#locator-addr').text(addr).removeAttr('hidden');
+        $('#locator-addr').text('定位到：' + addr).removeAttr('hidden');
     };
     locator.create(106.30557, 29.59899, true);
     $('#register').click(register);
