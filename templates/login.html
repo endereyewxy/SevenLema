@@ -12,22 +12,26 @@
 </head>
 <body style="background-image: url('{% static 'images/background.png' %}'); background-size: 100% 100%">
 <div class="container">
-    <img src="{% static 'images/logo.svg' %}" alt="logo" class="mb-3" style="width: 100%; height: auto; background-size: 100% 100%">
-    <div class="input-group mb-3">
-        <div class="input-group-prepend">
-            <div class="input-group-text" id="label-username"><span>用户名</span></div>
+    <img src="{% static 'images/logo.svg' %}" alt="logo" class="mb-3"
+         style="width: 100%; height: auto; background-size: 100% 100%">
+    <form class="needs-validation" novalidate>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <div class="input-group-text"><span>用户名</span></div>
+            </div>
+            <input id="username" type="text" class="form-control" aria-label="username" required>
+            <div class="invalid-feedback">请输入用户名</div>
         </div>
-        <input id="username" type="text" class="form-control" aria-label="username" aria-describedby="label-username">
-    </div>
-    <div class="input-group mb-3">
-        <div class="input-group-prepend">
-            <div class="input-group-text" id="label-password"><span>密码</span></div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <div class="input-group-text"><span>密码</span></div>
+            </div>
+            <input id="password" type="password" class="form-control" aria-label="password" required>
+            <div class="invalid-feedback">请输入用户名（不超过20个字符）</div>
         </div>
-        <input id="password" type="password" class="form-control" aria-label="password"
-               aria-describedby="label-password">
-    </div>
-    <div class="alert alert-danger" role="alert" id="alert" hidden></div>
-    <button type="button" class="btn btn-primary btn-lg" id="login">登录</button>
+        <div class="alert alert-danger" role="alert" id="alert" hidden></div>
+        <button type="button" class="btn btn-primary btn-lg" id="login">登录</button>
+    </form>
 </div>
 </body>
 {% csrf_token %}
