@@ -1,4 +1,8 @@
 function login() {
+    $('form').addClass('was-validated');
+    if ($('input:invalid').length) {
+        return;
+    }
     const data = {
         csrfmiddlewaretoken: $('[name=csrfmiddlewaretoken]').val(),
         username: $('#username').val(),

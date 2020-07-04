@@ -2,7 +2,7 @@ let locator;
 
 function register() {
     $('form').addClass('was-validated');
-    if ($('input:invalid').length()) {
+    if ($('input:invalid').length) {
         return;
     }
     const data = {
