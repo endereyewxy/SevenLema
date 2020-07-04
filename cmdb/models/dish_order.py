@@ -5,8 +5,8 @@ from .order import Order
 
 
 class DishOrder(models.Model):
-    dish_id = models.ForeignKey(Dish, models.CASCADE)
-    order_id = models.ForeignKey(Order, models.CASCADE)
+    dish   = models.ForeignKey(Dish, models.CASCADE)
+    order  = models.ForeignKey(Order, models.CASCADE)
     amount = models.IntegerField()
 
     class Meta:
