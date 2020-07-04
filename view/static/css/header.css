@@ -18,3 +18,9 @@ html, body, .container {
 div::-webkit-scrollbar {
     width: 0;
 }
+
+.card img.middle {
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+}

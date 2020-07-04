@@ -1,9 +1,9 @@
 let locator;
 
 function register() {
-    if($('#password').val() !== $('#password_2').val()){
-        window.alert("输入的两次密码不一致，请重新注册。");
-    }else {
+    // if($('#password').val() !== $('#password-2').val()){
+    //     window.alert("输入的两次密码不一致，请重新注册。");
+    // }else {
         $('form').addClass('was-validated');
         if ($('input:invalid').length) {
             return;
@@ -28,7 +28,7 @@ function register() {
                 }
             }
         });
-    }
+    // }
 }
 
 $(document).ready(function () {

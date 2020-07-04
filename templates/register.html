@@ -17,8 +17,10 @@
 </head>
 <body style="background-image: url('{% static 'images/background.png' %}'); background-size: 100% 100%">
 <div class="container">
-    <img src="{% static 'images/logo.svg' %}" alt="logo" class="mb-3"
-         style="width: 100%; height: auto; background-size: 100% 100%">
+    <a href="/">
+        <img src="{% static 'images/logo.svg' %}" alt="logo" class="mb-3"
+             style="width: 100%; height: auto; background-size: 100% 100%">
+    </a>
     <form class="needs-validation" novalidate>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
@@ -31,15 +33,17 @@
             <div class="input-group-prepend">
                 <div class="input-group-text"><span>密码</span></div>
             </div>
-            <input id="password" type="password" class="form-control" aria-label="password" required>
+            <input id="password" type="password" class="form-control" aria-label="password"
+                   onchange="$('#password-2').attr('pattern', $('#password').val()$('#password-2').attr('pattern', password.replace(/([\*\.\?\+\$\^\[\]\(\)\{\}\|\/\\])/g, '\\$1')))"
+                   required>
             <div class="invalid-feedback">请输入密码</div>
         </div>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
                 <div class="input-group-text"><span>确认密码</span></div>
             </div>
-            <input id="password_2" type="password" class="form-control" aria-label="password" required>
-            <div class="invalid-feedback">请再次输入密码</div>
+            <input id="password-2" type="password" class="form-control" aria-label="password" required>
+            <div class="invalid-feedback">两次输入密码不一致</div>
         </div>
         <div class="input-group mb-3">
             <div class="input-group-prepend">
