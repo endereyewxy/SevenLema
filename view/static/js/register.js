@@ -1,6 +1,10 @@
 let locator;
 
 function register() {
+    $('form').addClass('was-validated');
+    if ($('input:invalid').length()) {
+        return;
+    }
     const data = {
         username: $('#username').val(),
         password: $('#password').val(),
