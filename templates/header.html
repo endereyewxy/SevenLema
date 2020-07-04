@@ -1,0 +1,72 @@
+{% load static %}
+<div class="row">
+    <a class="col-4"
+       style="background-image: url('{% static 'images/logo.png' %}'); background-size: 100% 100%"
+       href="/">
+    </a>
+    <div class="col-8">
+        <div class="row">
+            <div class="col-6">
+                <button type="button" class="btn btn-outline-dark" id="locator-addr" style="width: 100%">&nbsp;
+                </button>
+            </div>
+            <div class="col-6">
+                <div class="btn-group" role="group">
+                    {% if login %}
+                        <a type="button" class="btn btn-secondary" style="color: aliceblue"
+                           href="/mine">{{ username }}</a>
+                        <a type="button" class="btn btn-secondary" style="color: aliceblue" id="logout">登出</a>
+                        <script src="{% static 'js/logout.js' %}"></script>
+                        <script type="text/javascript">
+                            default_lng = {{ loc_lng }};
+                            default_lat = {{ loc_lat }};
+                        </script>
+                    {% else %}
+                        <a type="button" class="btn btn-secondary" style="color: aliceblue" href="/register">注册</a>
+                        <a type="button" class="btn btn-secondary" style="color: aliceblue" href="/login">登录</a>
+                        <script type="text/javascript">
+                            default_lng = undefined;
+                        </script>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <div class="input-group">
+                    <input id="addr" type="text" class="form-control" aria-label="addr"
+                           aria-describedby="label-addr" value="{{ addr }}">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" id="locator-show" type="button">
+                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-geo-alt"
+                                 fill="currentColor"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                      d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="header-search" placeholder="搜索商户"
+                           aria-label="search"
+                           aria-describedby="header-search">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" id="header-search-button" type="button">
+                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-search"
+                                 fill="currentColor"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd"
+                                      d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z"></path>
+                                <path fill-rule="evenodd"
+                                      d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

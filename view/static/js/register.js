@@ -1,19 +1,18 @@
 let locator;
 
-
 function register() {
     const data = {
-        "username": $('#username').val(),
-        "password": $('#password').val(),
-        "addr": $('#addr').val(),
-        "loc_lng": locator.lng,
-        "loc_lat": locator.lat,
-        "phone": $('#phone').val()
+        username: $('#username').val(),
+        password: $('#password').val(),
+        addr: $('#addr').val(),
+        loc_lng: locator.lng,
+        loc_lat: locator.lat,
+        phone: $('#phone').val()
     };
     $.ajax({
-        url: "/user/register",
+        url: '/user/register',
         data: data,
-        type: "post",
+        type: 'post',
         success: function (data) {
             if (data.msg === 0) {
                 window.location.href = "/index.html";

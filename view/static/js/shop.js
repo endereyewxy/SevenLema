@@ -39,7 +39,11 @@ $(document).ready(function () {
             load_shop();
         }
     };
-    locator.create(default_lng, default_lat);
+    if (default_lng !== undefined) {
+        locator.create(default_lng, default_lat);
+    } else {
+        locator.create(106.30557, 29.59899, true);
+    }
     $('#locator-show').click(function () {
         locator.show($('#addr').val());
     });

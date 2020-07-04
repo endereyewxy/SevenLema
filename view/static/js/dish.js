@@ -1,8 +1,8 @@
 let paginator, locator, card_list = [];
 
-
 function amount_change(dish_id) {
-    let changed_amount = Number($("#dish-" + dish_id).val());
+    const input = $("#dish-" + dish_id);
+    let changed_amount = Number(input.val());
     if (changed_amount <= 0) {
         for (let i = 0; i < card_list.length; i++) {
             if (dish_id === card_list[i].dish_id) {
@@ -23,7 +23,7 @@ function amount_change(dish_id) {
         }
     }
     calc_total_price();
-    $("#dish-" + dish_id).val(changed_amount);
+    input.val(changed_amount);
 
 }
 
@@ -65,16 +65,16 @@ function get_order() {
 
 function load_dish() {
     const data = {
-        "shop_id": shop_id,
-        "name": $('#header-search').val(),
-        "order": get_order(),
-        "page": paginator.currPage,
-        "limit": 5
+        shop_id: shop_id,
+        name: $('#header-search').val(),
+        order: get_order(),
+        page: paginator.currPage,
+        limit: 5
     };
     $.ajax({
-        url: "/search/dish",
+        url: '/search/dish',
         data: data,
-        type: "get",
+        type: 'get',
         success: function (resp) {
             paginator.maxPages = resp.page;
             $('#data-container').html($('#data-template').tmpl(resp.data));
@@ -92,7 +92,11 @@ $(document).ready(function () {
     locator.change = function (lng, lat, addr) {
         $('#locator-addr').text(addr);
     };
-    locator.create(default_lng, default_lat);
+    if (default_lng !== undefined) {
+        locator.create(default_lng, default_lat);
+    } else {
+        locator.create(106.30557, 29.59899, true);
+    }
     $('#locator-show').click(function () {
         locator.show($('#addr').val());
     });
