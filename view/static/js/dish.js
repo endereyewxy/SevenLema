@@ -1,4 +1,4 @@
-let paginator, locator, card_list = [], serving = false;
+let card_list = [], serving = false;
 
 function change_dish_info() {
     let data = new FormData(document.getElementById('dish-form'));
@@ -15,8 +15,8 @@ function change_dish_info() {
     $.ajax({
         url: "/dish/edit/",
         data: data,
-        processData:false,
-        contentType:false,
+        processData: false,
+        contentType: false,
         type: 'post',
         success: function (data) { // TODO
             if (data.code === 0) {
@@ -123,9 +123,8 @@ function calc_total_price() {
     $('#total-price').val("总价：￥" + sum.toFixed(2));
 }
 
-
 function get_order() {
-    return $('label.active input').attr('id');
+    return $('.btn-group input:checked').attr('id');
 }
 
 function load_dish() {
@@ -151,42 +150,14 @@ function load_dish() {
 $(document).ready(function () {
     $('input[name=image]').fileinput({
         showUpload: false,
-        allowedFileExtensions: ['jpg', 'png' ,'svg']
+        allowedFileExtensions: ['jpg', 'png', 'svg']
     });
     $('#commit').click(commit_an_order);
     $('#dish-edit').click(change_dish_info);
-    $('#dish-modal').on('show.bs.modal', function (evt) {
-        $('#dish-edit-id').val($(evt.relatedTarget).attr('id'));
-    });
-
-    // Create and configure paginator
-    paginator = new Paginator('.pagination');
+    $('#dish-modal').on('show.bs.modal', (evt) => $('#dish-edit-id').val($(evt.relatedTarget).attr('id')));
     paginator.change = load_dish;
-
-    // Create and configure locator
-    locator = new Locator();
-    locator.change = function (lng, lat, addr) {
-        $('#locator-addr').text(addr);
-    };
-    if (default_lng !== undefined) {
-        locator.create(default_lng, default_lat);
-    } else {
-        locator.create(106.30557, 29.59899, true);
-    }
-    $('#header-config-button').popover({
-        content: () => $($('#serving-wrapper').html().replace('hidden', '').replace('-1', '')),
-        placement: 'bottom',
-        trigger: 'click',
-        html: true
-    });
-    $('#locator-show').click(function () {
-        locator.show($('#addr').val());
-    });
-    $('#locator-addr').click(locator.show);
-
-    // Bind loading functions
+    locator.change = (lng, lat, addr) => $('#locator-addr').text(addr);
+    default_lng !== undefined ? locator.create(default_lng, default_lat) : locator.create(106.30557, 29.59899, true);
     $('#header-search-button,#price,#sales').click(load_dish);
-
-    // Initialize settings
     load_dish();
 });

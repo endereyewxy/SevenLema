@@ -61,10 +61,10 @@ class Paginator {
             "               <option " + (this.limit === 20 ? "selected=\"selected\"" : '') + "value=\"20\">20条/页</option>" +
             "               <option " + (this.limit === 30 ? "selected=\"selected\"" : '') + "value=\"30\">30条/页</option>" +
             "           </select>";
-        this.html += this.next + selector;
+        this.html += this.next + '&nbsp;' + selector;
         $(this.container).html(this.html);
         const object = this;
-        $('.page-link').click(() => {
+        $('.page-link').click(function () {
             let tag = $(this).attr('aria-label');
             if (tag === 'prev') {
                 if (object._curr_page > 1) {
@@ -81,7 +81,7 @@ class Paginator {
                 object.change();
             }
         });
-        $(this.container + ' select').change(() => {
+        $(this.container + ' select').change(function () {
             object.limit = Number($(this).val());
             object.change();
         });

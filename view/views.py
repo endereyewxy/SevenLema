@@ -45,7 +45,7 @@ def dish(request, shop_id):
     try:
         shop_ = Shop.objects.get(id=shop_id)
         ctx['shop_obj'] = model_to_dict(shop_)
-        ctx['is_admin'] = shop_.user_id == request.session['id']
+        ctx['is_admin'] = 'id' in request.session and shop_.user_id == request.session['id']
     except Shop.DoesNotExist:
         raise Http404('找不到商户')
     return render(request, 'dish.html', ctx)

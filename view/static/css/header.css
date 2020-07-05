@@ -2,25 +2,47 @@ html, body, .container {
     height: 100%;
 }
 
-.row {
-    margin: 10px;
+body {
+    background-size: 100% 1000%;
+    background-repeat: no-repeat;
 }
 
 .btn-group {
     width: 100%;
 }
 
-.flex-grow-1 {
-    overflow: scroll;
-    scrollbar-width: none;
+.btn-group .btn-outline-primary {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
-div::-webkit-scrollbar {
-    width: 0;
+.card a.row {
+    color: black;
 }
 
-.card img.middle {
-    position: absolute;
-    top: 50%;
-    transform: translate(0, -50%);
+.card .row div {
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: contain
+}
+
+#data-container {
+    border-color: rgb(0, 123, 255);
+    border-style: solid;
+    border-top-style: none;
+    border-width: 1px;
+}
+
+.header a {
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: auto 100%;
+}
+
+.header .row, .sidebar .row {
+    margin: 10px;
+}
+
+.header .btn-secondary {
+    color: white;
 }
