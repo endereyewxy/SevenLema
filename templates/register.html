@@ -34,7 +34,7 @@
                 <div class="input-group-text"><span>密码</span></div>
             </div>
             <input id="password" type="password" class="form-control" aria-label="password"
-                   onchange="$('#password-2').attr('pattern', $('#password').val()$('#password-2').attr('pattern', password.replace(/([\*\.\?\+\$\^\[\]\(\)\{\}\|\/\\])/g, '\\$1')))"
+                   onchange="$('#password-2').attr('pattern', $('#password').val().replace(/([\*\.\?\+\$\^\[\]\(\)\{\}\|\/\\])/g, '\\$1'))"
                    required>
             <div class="invalid-feedback">请输入密码</div>
         </div>
@@ -75,4 +75,5 @@
     <button type="button" class="btn btn-primary btn-lg" id="register">注册</button>
 </div>
 </body>
+{% csrf_token %}
 </html>
