@@ -47,7 +47,7 @@
 | name    | VARCHAR(50) | 名称       | 是       |                            |
 | image   | CHAR(16)    | 图片       | 是       |                            |
 | desc    | TEXT        | 描述       | 是       |                            |
-| price   | INTEGER     | 单价       | 是       | 单位为分（乘100为RMB价格） |
+| price   | INTEGER     | 单价       | 是       | 单位为分（除100为RMB价格） |
 | sales   | INTEGER     | 销量       | 是       |                            |
 | serving | BOOLEAN     | 是否有货   | 是       |                            |
 
