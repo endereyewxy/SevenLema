@@ -69,7 +69,6 @@
                 </div>
                 <div class="row">
                     <div class="col-6">
-
                     </div>
                     <div class="col-6">
                         <div class="input-group">
@@ -94,86 +93,168 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-5"
-                style="width: 100px; background-color: aquamarine; border-radius: 10px; margin: 0 45px 0 50px;">
-                <br>
-                <h5 class="div-title">个人信息</h5>
-                <br>
-                <div class="border1">
-                    <div class="card border-primary mb-3" style="border: 0px; margin-left:20px; margin-right:20px;">
-                        <div class="card-body text-primary">
-                            <p class="card-text">用户名：${username}</p>
+            <div class="col-6">
+                <div class="row" style="background-color: aquamarine; border-radius: 10px; margin: 0 45px 0 25px;">
+                    <div class="col-12">
+                        <br>
+                        <h5 class="div-title">个人信息</h5>
+                        <br>
+                        <div class="card border-primary mb-3" style="border: 0px; margin-left:20px; margin-right:20px;">
+                            <div class="card-body text-primary">
+                                <p class="card-text">用户名：${username}</p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="card border-primary mb-3" style="border: 0px; margin-left:20px; margin-right:20px;">
-                        <div class="card-body text-primary">
-                            <p class="card-text">电话号码：${phone}</p>
+                        <div class="card border-primary mb-3" style="border: 0px; margin-left:20px; margin-right:20px;">
+                            <div class="card-body text-primary">
+                                <p class="card-text">电话号码：${phone}</p>
+                            </div>
                         </div>
-                    </div>
-                    <div class="card border-primary mb-3" style="border: 0px; margin-left:20px; margin-right:20px;">
-                        <div class="card-body text-primary">
-                            <p class="card-text">地址：${addr}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-5" style=" background-color: blanchedalmond; border-radius: 10px; margin: 0 0 0 45px;">
-                <br>
-                <h5 class="div-title">订单详情</h5>
-                <br>
-                <div class="border2" id="border2">
-                    <div class="card border-primary mb-3" style="border: 0px; margin-left:20px; margin-right:20px;">
-                        <div class="card-body text-primary">
-                            <p class="card-text">用户名：{{username}}</p>
-                        </div>
-                    </div>
-                    <div class="card border-primary mb-3" style="border: 0px; margin-left:20px; margin-right:20px;">
-                        <div class="card-body text-primary">
-                            <p class="card-text">电话号码：{{phone}}</p>
-                        </div>
-                    </div>
-                    <div class="card border-primary mb-3" style="border: 0px; margin-left:20px; margin-right:20px;">
-                        <div class="card-body text-primary">
-                            <p class="card-text">地址：{{addr}}</p>
-                        </div>
-                    </div>
-                    <div class="card border-primary mb-3" style="border: 0px; margin-left:20px; margin-right:20px;">
-                        <div class="card-body text-primary">
-                            <p class="card-text">用户名：{{username}}</p>
-                        </div>
-                    </div>
-                    <div class="card border-primary mb-3" style="border: 0px; margin-left:20px; margin-right:20px;">
-                        <div class="card-body text-primary">
-                            <p class="card-text">电话号码：{{phone}}</p>
-                        </div>
-                    </div>
-                    <div class="card border-primary mb-3" style="border: 0px; margin-left:20px; margin-right:20px;">
-                        <div class="card-body text-primary">
-                            <p class="card-text">地址：{{addr}}</p>
-                        </div>
-                    </div>
-                    <div class="card border-primary mb-3" style="border: 0px; margin-left:20px; margin-right:20px;">
-                        <div class="card-body text-primary">
-                            <p class="card-text">用户名：{{username}}</p>
-                        </div>
-                    </div>
-                    <div class="card border-primary mb-3" style="border: 0px; margin-left:20px; margin-right:20px;">
-                        <div class="card-body text-primary">
-                            <p class="card-text">电话号码：{{phone}}</p>
-                        </div>
-                    </div>
-                    <div class="card border-primary mb-3" style="border: 0px; margin-left:20px; margin-right:20px;">
-                        <div class="card-body text-primary">
-                            <p class="card-text">地址：{{addr}}</p>
+                        <div class="card border-primary mb-3" style="border: 0px; margin-left:20px; margin-right:20px;">
+                            <div class="card-body text-primary">
+                                <p class="card-text">地址：${addr}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <br><br>
+                <div class="row" style="background-color:cornsilk; border-radius: 10px; margin: 0 45px 0 25px;">
+                    <div class="col-12">
+                        <br>
+                        <h5 class="div-title">我的店铺</h5>
+                        <br>
+                        <div style="text-align: center;">
+                            <a href="" class="btn btn-outline-info" style="float: center;" data-toggle="modal"
+                                data-target="#staticBackdrop">创建店铺</a>
+                        </div>
+                        <br>
+                        <div class="card border-primary mb-3"
+                            style="border: 0px; margin-top: 10px; margin-left:20px; margin-right:20px;">
+                            <div class="card-body">
+                                <h5 class="card-title">店铺名称</h5>
+                                <a href="" class="btn btn-outline-info" style="float: right;" data-toggle="modal"
+                                    data-target="#staticBackdrop">管理</a>
+                            </div>
+                        </div>
+                        <div class="card border-primary mb-3"
+                            style="border: 0px; margin-top: 10px; margin-left:20px; margin-right:20px;">
+                            <div class="card-body">
+                                <h5 class="card-title">店铺名称</h5>
+                                <a href="" class="btn btn-outline-info" style="float: right;" data-toggle="modal"
+                                    data-target="#staticBackdrop">管理</a>
+                            </div>
+                        </div>
+                        <div class="card border-primary mb-3"
+                            style="border: 0px; margin-top: 10px; margin-left:20px; margin-right:20px;">
+                            <div class="card-body">
+                                <h5 class="card-title">店铺名称</h5>
+                                <a href="" class="btn btn-outline-info" style="float: right;">管理</a>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
             </div>
+            <div class="col-6">
+                <div class="row" style="background-color:blanchedalmond; border-radius: 10px; margin: 0 45px 0 25px;">
+                    <div class="col-12">
+                        <br>
+                        <h5 class="div-title">我的订单</h5>
+                        <br>
+                        <div class="card border-primary mb-3"
+                            style="border: 0px; margin-top: 10px; margin-left:20px; margin-right:20px;">
+                            <div class="card-body">
+                                <h5 class="card-title">下单时间</h5>
+                                <a href="" class="btn btn-outline-info" style="float: right;">订单详情</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br><br>
+                <div class="row" style="background-color:cornsilk; border-radius: 10px; margin: 0 45px 0 25px;">
+
+                </div>
+            </div>
+
         </div>
         <span>&nbsp;</span>
         <div class="flex-grow-1" id="info-container"></div>
         <ul class="pagination justify-content-center"></ul>
     </div>
+
+    <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 style="color: darkslategray;font-size: 30px;font-weight: bolder;
+                                font-family: cursive;">商户信息修改</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-5">
+                            <div>
+                                <h6 style="color: dimgray;font-size: 20px;font-weight: bolder;
+                                font-family: cursive;">基本信息修改</h6>
+                                <div class="input-group mb-3" style="margin-top: 10px;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="inputGroup-sizing-default">商户id</span>
+                                    </div>
+                                    <input type="text" class="form-control" aria-label="Sizing example input"
+                                        aria-describedby="inputGroup-sizing-default">
+                                </div>
+                                <div class="input-group mb-3" style="margin-top: 10px;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="inputGroup-sizing-default">商户名称</span>
+                                    </div>
+                                    <input type="text" class="form-control" aria-label="Sizing example input"
+                                        aria-describedby="inputGroup-sizing-default">
+                                </div>
+
+                                <!-- {% comment %}上传图片{% endcomment %} -->
+                                <div class="input-group mb-3" style="margin-top: 10px;">
+                                    {% csrf_token %}
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="inputGroup-sizing-default">商户图片</span>
+                                    </div>
+                                    <input type="file" accept="jpg, png, svg" class="form-control" aria-label="Sizing example input"
+                                        aria-describedby="inputGroup-sizing-default">
+                                    <button type="submit">上传</button>
+                                </div>
+                                <div class="input-group mb-3" style="margin-top: 10px;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="inputGroup-sizing-default">商户说明</span>
+                                    </div>
+                                    <input type="text" class="form-control" aria-label="Sizing example input"
+                                        aria-describedby="inputGroup-sizing-default">
+                                </div>
+                                <div class="input-group mb-3" style="margin-top: 10px;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text" id="inputGroup-sizing-default">商户地址</span>
+                                    </div>
+                                    <input type="text" class="form-control" aria-label="Sizing example input"
+                                        aria-describedby="inputGroup-sizing-default">
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="col-7">
+                            <input type="text" class="form-control" id="header-search" placeholder="搜索商户"
+                                aria-label="search" aria-describedby="header-search">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary">修改</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </body>
 <script id="info-template" type="text/x-jquery-tmpl">
     <div class="card border-primary mb-3" style="border: 0px; margin-left:20px; margin-right:20px;">

@@ -1,7 +1,7 @@
 function load_orders() {
     const data = {
-        page: 1;
-        limit: 50;
+        "page": 1,
+        "limit": 50
     };
     $.ajax({
         url: "/order/info",
