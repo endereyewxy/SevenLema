@@ -9,7 +9,7 @@ function load_shop() {
         name: $('#header-search').val(),
         order: get_order(),
         page: paginator.currPage,
-        limit: 5,
+        limit: paginator.limit,
         serving: serving
     };
     if (get_order() === 'dist') {
