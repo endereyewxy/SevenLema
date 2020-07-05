@@ -46,3 +46,12 @@ body {
 .header .btn-secondary {
     color: white;
 }
+
+.flex-grow-1 {
+    overflow: scroll;
+    scrollbar-width: none;
+}
+
+div::-webkit-scrollbar {
+    width: 0;
+}
