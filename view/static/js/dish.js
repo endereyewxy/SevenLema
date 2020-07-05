@@ -118,10 +118,6 @@ function load_dish() {
 }
 
 $(document).ready(function () {
-    $('input[name=image]').fileinput({
-        showUpload: false,
-        allowedFileExtensions: ['jpg', 'png', 'svg']
-    });
     $('#commit').click(commit_an_order);
     $('#dish-edit').click(change_dish_info);
     $('#dish-modal').on('show.bs.modal', (evt) => $('#dish-edit-id').val($(evt.relatedTarget).attr('id')));
