@@ -10,4 +10,4 @@ class DishOrder(models.Model):
     amount = models.IntegerField()
 
     class Meta:
-        unique_together = ('dish_id', 'order_id')
+        unique_together = ('dish', 'order')
