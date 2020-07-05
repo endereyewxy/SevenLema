@@ -147,9 +147,10 @@ class OrderModelTests(TestCase):
         resp = self.client.post('/order/new/', data)
         self.assertEqual(json.loads(resp.content)['code'], 0)
         data2 = {
+            'order_id': json.loads(resp.content)['data']['order_id'],
             'page': 1,
             'limit': 5,
             'unfinished': False
         }
         resp2 = self.client.get('/order/info/', data2)
-        self.assertEqual(json.loads(resp2.content)['code'], 103)
+        self.assertEqual(json.loads(resp2.content)['code'], 0)

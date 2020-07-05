@@ -17,7 +17,7 @@ def check_login_status(request):
             return True, User.objects.get(id=request.session['id'])
         except User.DoesNotExist:
             pass
-    return False, JsonResponse({'code': 103, 'msg': 'no login in '})
+    return False, JsonResponse({'code': 103, 'msg': '用户尚未登录'})
 
 
 @require_POST
@@ -37,7 +37,7 @@ def new(request):
 
     # Necessarily parameter checks
     if not all([shop_id, dish_ids, amounts, addr, loc_lng, loc_lat, remarks]) or len(dish_ids) != len(amounts):
-        return JsonResponse({'code': 101, 'msg': 'parameters lost'})
+        return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
     try:
         shop_id = int(shop_id)
         dish_ids = [int(x) for x in dish_ids]
@@ -45,26 +45,26 @@ def new(request):
         loc_lng = float(loc_lng)
         loc_lat = float(loc_lat)
     except ValueError:
-        return JsonResponse({'code': 101, 'msg': 'parameters lost'})
+        return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
 
     # Existence of shop_id check and whether on serving time check
     try:
         shop = Shop.objects.get(id=shop_id)
         if not shop.serving:
-            return JsonResponse({'code': 106, 'msg': 'shop no serving time'})
+            return JsonResponse({'code': 106, 'msg': '商户未营业'})
     except Shop.DoesNotExist:
-        return JsonResponse({'code': 102, 'msg': 'shop no exist'})
+        return JsonResponse({'code': 102, 'msg': '商户不存在'})
 
     # Dish validness check
     for dish_id in dish_ids:
         try:
             dish = Dish.objects.get(id=dish_id)
             if not dish.serving:
-                return JsonResponse({'code': 106, 'msg': 'dish {0} not on sale'.format(dish_id)})
+                return JsonResponse({'code': 106, 'msg': '菜品 {0} 暂时缺货'.format(dish_id)})
             if dish.shop_id != shop_id:
-                return JsonResponse({'code': 105, 'msg': 'dish {0} not in the shop {1}'.format(dish.name, shop.name)})
+                return JsonResponse({'code': 105, 'msg': '菜品 {0} 不属于商户 {1}'.format(dish.name, shop.name)})
         except Dish.DoesNotExist:
-            return JsonResponse({'code': 102, 'msg': 'shop no exist'})
+            return JsonResponse({'code': 102, 'msg': '菜品不存在'})
 
     # Create order
     order = Order.objects.create(
@@ -88,7 +88,7 @@ def new(request):
     shop.sales += 1
     shop.save()
 
-    return JsonResponse({'code': 0, 'msg': "creating order succeed", 'data': order.id})
+    return JsonResponse({'code': 0, 'msg': '', 'data': {'order_id': order.id}})
 
 
 def order_info(order):
@@ -120,42 +120,42 @@ def info(request):
     unfinished = request.GET.get('unfinished')
 
     if not all([page, limit, unfinished]):
-        return JsonResponse({'code': 101, 'msg': 'parameters lost'})
+        return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
     try:
         page       = int(page)
         limit      = int(limit)
         unfinished = unfinished == 'true'
     except ValueError:
-        return JsonResponse({'code': 101, 'msg': 'parameters lost'})
+        return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
 
     # User get order info
     if order_id is not None:
         try:
             order_id = int(order_id)
         except ValueError:
-            return JsonResponse({'code': 101, 'msg': 'parameters lost'})
+            return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
         order = Order.objects.get(id=order_id)
         if user.id != order.user_id:
-            return JsonResponse({'code': 103, 'msg': "no right to see the user order "})
-        return JsonResponse({'code': 0, 'msg': "get order info succeed", 'data': [order_info(order)]})
+            return JsonResponse({'code': 103, 'msg': '权限不足'})
+        return JsonResponse({'code': 0, 'msg': '', 'data': [order_info(order)]})
 
     # Shop get order info
     elif shop_id is not None:
         try:
             shop_id = int(shop_id)
         except ValueError:
-            return JsonResponse({'code': 101, 'msg': 'parameters lost'})
+            return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
         shop = Shop.objects.get(id=shop_id)
         if shop.user_id != user.id:
-            return JsonResponse({'code': 103, 'msg': "no right to see the shop order "})
+            return JsonResponse({'code': 103, 'msg': '权限不足'})
         json = []
         for order in Order.objects.filter(shop_id=shop_id):
             json.append(order_info(order))
-        return JsonResponse({'code': 0, 'msg': "get order info succeed", 'data': json})
+        return JsonResponse({'code': 0, 'msg': '', 'data': json})
 
     # No useful input
     else:
-        return JsonResponse({'code': 103, 'msg': "no order_id and shop_id input "})
+        return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
 
 
 @require_POST
@@ -167,25 +167,25 @@ def finish(request):
     # Get post parameters
     order_id = request.POST.get('order_id')
     if order_id is None:
-        return JsonResponse({'code': 101, 'msg': 'parameters lost'})
+        return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
     try:
         order_id = int(order_id)
     except ValueError:
-        return JsonResponse({'code': 101, 'msg': 'parameters lost'})
+        return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
 
     # User connection check
     try:
         order = Order.objects.get(id=order_id)
         if order.shop.user.id != user.id:
-            return JsonResponse({'code': 103, 'msg': 'order not belong to this user '})
+            return JsonResponse({'code': 103, 'msg': '权限不足'})
     except Order.DoesNotExist:
-        return JsonResponse({'code': 101, 'msg': 'parameters lost'})
+        return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
 
     # Order state check
     if order.tm_finished is not None:
-        return JsonResponse({'code': 105, 'msg': 'order not finish now'})
+        return JsonResponse({'code': 105, 'msg': '订单已经送达'})
 
     order.tm_finished = int(time.time())
     order.save()
 
-    return JsonResponse({'code': 0, 'msg': 'order finish'})
+    return JsonResponse({'code': 0, 'msg': ''})
