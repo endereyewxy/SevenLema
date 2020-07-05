@@ -54,6 +54,7 @@
         {% if not shop_obj.serving %}
             <p class="card-text text-right" style="font-weight: bold; color: red">商家休息中</p>
         {% endif %}
+        {% if not is_admin %}
         <button class="btn btn-danger"
                 onclick="document.getElementById('sidebar').style.width = '550px'">
             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-cart4" fill="currentColor"
@@ -63,6 +64,10 @@
             </svg>
             购物车
         </button>
+        {% else %}
+         <button class="btn btn-danger"
+                onclick="document.getElementById('sidebar').style.width = '550px'" disabled>欢迎来到你的店面</button>
+        {% endif %}
     </div>
 </div>
 <div class="container d-flex flex-column justify-content-between">
@@ -205,5 +210,21 @@
 <div id="serving-wrapper" hidden>
     <input type="checkbox" id="serving-1" onchange="serving = $('#serving:checked').length === 1;load_dish();">
     <label for="serving">只显示有货的菜品</label>
+</div>
+<div id="user-wrapper" hidden>
+    <div class="card" style="width: 250px;">
+      <div class="card-body">
+        <h5 class="card-title">{{ username }}</h5>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">电话：{{ phone }}</li>
+        <li class="list-group-item">地址：{{ addr }}</li>
+      </ul>
+      <div class="card-body">
+{#TODO#}
+        <a href="#" class="card-link">Card link</a>
+        <a href="#" class="card-link">Another link</a>
+      </div>
+    </div>
 </div>
 </html>

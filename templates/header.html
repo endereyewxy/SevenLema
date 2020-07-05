@@ -1,4 +1,5 @@
 {% load static %}
+<script src="{% static 'js/header.js' %}"></script>
 <div class="row">
     <a class="col-4"
        style="background-image: url('{% static 'images/logo.svg' %}'); background-position: center center; background-repeat: no-repeat; background-size: auto 100%"
@@ -14,8 +15,7 @@
             <div class="col-6">
                 <div class="btn-group" role="group">
                     {% if login %}
-                        <a type="button" class="btn btn-secondary" style="color: aliceblue"
-                           href="/mine">{{ username }}</a>
+                        <button class="btn btn-secondary" style="color: aliceblue"  id="user-info">{{ username }}</button>
                         <a type="button" class="btn btn-secondary" style="color: aliceblue" id="logout">登出</a>
                         <script src="{% static 'js/logout.js' %}"></script>
                         <script type="text/javascript">
@@ -73,5 +73,22 @@
                 </div>
             </div>
         </div>
+    </div>
+</div>
+
+<div id="user-wrapper" hidden>
+    <div class="card" style="width: 250px;">
+      <div class="card-body">
+        <h5 class="card-title">{{ username }}</h5>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">电话：{{ phone }}</li>
+        <li class="list-group-item">地址：{{ addr }}</li>
+      </ul>
+      <div class="card-body">
+{#TODO#}
+        <a href="#" class="card-link">Card link</a>
+        <a href="#" class="card-link">Another link</a>
+      </div>
     </div>
 </div>

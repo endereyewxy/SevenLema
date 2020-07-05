@@ -20,7 +20,8 @@ function change_dish_info() {
         type: 'post',
         success: function (data) { // TODO
             if (data.code === 0) {
-                window.location.href = '/';
+                $('#dish-modal').modal('hide');
+                load_dish();
             } else {
                 alert(data.msg);
             }
