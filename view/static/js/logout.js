@@ -1,9 +1,10 @@
 function logout() {
     $.ajax({
-        url: "/user/logout",
-        type: "post",
+        url: '/user/logout/',
+        data: {csrfmiddlewaretoken: $('[name=csrfmiddlewaretoken]').val()},
+        type: 'post',
         success: function (data) {
-            window.location.href = "/index.html";
+            window.location.href = "/"; // TODO
         }
     });
 }

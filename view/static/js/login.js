@@ -1,15 +1,20 @@
 function login() {
+    $('form').addClass('was-validated');
+    if ($('input:invalid').length) {
+        return;
+    }
     const data = {
-        "username": $('#username').val(),
-        "password": $('#password').val()
+        csrfmiddlewaretoken: $('[name=csrfmiddlewaretoken]').val(),
+        username: $('#username').val(),
+        password: $('#password').val()
     };
     $.ajax({
-        url: "/user/login",
+        url: "/user/login/",
         data: data,
-        type: "post",
+        type: 'post',
         success: function (data) {
             if (data.code === 0) {
-                window.location.href = "/index.html";
+                window.location.href = '/';
             } else {
                 $('#alert').text(data.msg).removeAttr('hidden');
             }

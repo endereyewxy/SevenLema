@@ -9,10 +9,13 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
-
 import os
+from math import acos, sin, cos, radians
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from django.db.backends.signals import connection_created
+from django.dispatch import receiver
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Quick-start development settings - unsuitable for production
@@ -36,8 +39,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'cmdb',
+    'dish',
+    'order',
     'search',
-    'view'
+    'shop',
+    'user',
+    'view',
 ]
 
 MIDDLEWARE = [
@@ -111,3 +118,17 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'view/static')
+
+
+def distance(lng_0, lat_0, lng_1, lat_1):
+    lng_0 = radians(lng_0)
+    lat_0 = radians(lat_0)
+    rad = sin(lat_0) * sin(lat_1) + cos(lat_0) * cos(lat_1) * cos(lng_0 - lng_1)
+    return 0 if rad >= 1 else 6371 * acos(rad)
+
+
+@receiver(connection_created)
+def extend_sqlite(connection=None, **kwargs):
+    if connection.vendor == "sqlite":
+        cf = connection.connection.create_function
+        cf('distance', 4, distance)

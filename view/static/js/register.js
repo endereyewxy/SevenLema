@@ -1,19 +1,22 @@
 let locator;
 
-
 function register() {
+    $('form').addClass('was-validated');
+    if ($('input:invalid').length) {
+        return;
+    }
     const data = {
-        "username": $('#username').val(),
-        "password": $('#password').val(),
-        "addr": $('#addr').val(),
-        "loc_lng": locator.lng,
-        "loc_lat": locator.lat,
-        "phone": $('#phone').val()
+        username: $('#username').val(),
+        password: $('#password').val(),
+        addr: $('#addr').val(),
+        loc_lng: locator.lng,
+        loc_lat: locator.lat,
+        phone: $('#phone').val()
     };
     $.ajax({
-        url: "/user/register",
+        url: '/user/register',
         data: data,
-        type: "post",
+        type: 'post',
         success: function (data) {
             if (data.msg === 0) {
                 window.location.href = "/index.html";
@@ -27,7 +30,7 @@ function register() {
 $(document).ready(function () {
     locator = new Locator();
     locator.change = function (lng, lat, addr) {
-        $('#locator-addr').text(addr).removeAttr('hidden');
+        $('#locator-addr').text('定位到：' + addr).removeAttr('hidden');
     };
     locator.create(106.30557, 29.59899, true);
     $('#register').click(register);

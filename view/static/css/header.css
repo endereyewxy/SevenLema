@@ -1,0 +1,26 @@
+html, body, .container {
+    height: 100%;
+}
+
+.row {
+    margin: 10px;
+}
+
+.btn-group {
+    width: 100%;
+}
+
+.flex-grow-1 {
+    overflow: scroll;
+    scrollbar-width: none;
+}
+
+div::-webkit-scrollbar {
+    width: 0;
+}
+
+.card img.middle {
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+}
