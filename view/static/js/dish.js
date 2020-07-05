@@ -2,23 +2,17 @@ let card_list = [], serving = false;
 
 function change_dish_info() {
     let data = new FormData(document.getElementById('dish-form'));
-    if (data.get('name').length === 0) {
-        data.delete('name');
-    }
-    if (data.get('price').length === 0) {
-        data.delete('price');
-    }
-    if (data.get('desc').length === 0) {
-        data.delete('desc');
+    for (let key in ['name', 'price', 'desc']) {
+        !data.get(key).length && data.delete(key);
     }
     data.append('serving', $('#dish-serving:checked').length !== 0 ? 'true' : 'false');
     $.ajax({
-        url: "/dish/edit/",
+        url: '/dish/edit/',
         data: data,
         processData: false,
         contentType: false,
         type: 'post',
-        success: function (data) { // TODO
+        success: (resp) => {
             if (data.code === 0) {
                 $('#dish-modal').modal('hide');
                 load_dish();
@@ -44,23 +38,12 @@ function commit_an_order() {
         loc_lng: locator.lng,
         loc_lat: locator.lat,
         remarks: $('#remarks').val()
-    }
-    $.ajax({
-        url: "/order/new/",
-        data: data,
-        type: 'post',
-        success: function (data) { // TODO
-            if (data.code === 0) {
-                window.location.href = '/';
-            } else {
-                alert(data.msg);
-            }
-        }
-    });
+    };
+    $.post('/order/new/', data, (resp) => resp.code ? alert(resp.msg) : window.location.href = '/');
 }
 
 function amount_change(dish_id) {
-    const input = $("#dish-" + dish_id);
+    const input = $('#dish-' + dish_id);
     let changed_amount = Number(input.val());
     if (changed_amount <= 0) {
         for (let i = 0; i < card_list.length; i++) {
@@ -71,9 +54,7 @@ function amount_change(dish_id) {
             }
         }
     } else {
-        if ((changed_amount % 1) !== 0) {
-            changed_amount = changed_amount.toFixed(0);
-        }
+        !(changed_amount % 1) && (changed_amount = Number(changed_amount.toFixed(0)));
         for (let i = 0; i < card_list.length; i++) {
             if (dish_id === card_list[i].dish_id) {
                 card_list[i].amount = changed_amount;
@@ -81,12 +62,9 @@ function amount_change(dish_id) {
             }
         }
     }
-    if (card_list.length === 0) {
-        $('#submit-order').attr('disabled', 'disabled');
-    }
+    !card_list.length && $('#submit-order').attr('disabled', 'disabled');
     calc_total_price();
     input.val(changed_amount);
-
 }
 
 function add_dish_to_card(name, dish_id, image, price) {
@@ -101,31 +79,28 @@ function add_dish_to_card(name, dish_id, image, price) {
             break;
         }
     }
-    if (!flag) {
-        card_list = card_list.concat([{
-            name: name,
-            dish_id: dish_id,
-            image: image,
-            price: price,
-            amount: 1
-        }]);
-    }
+    !flag && (card_list = card_list.concat([{
+        name: name,
+        dish_id: dish_id,
+        image: image,
+        price: price,
+        amount: 1
+    }]));
     calc_total_price();
     $('#card-list-container').html($('#card-list-template').tmpl(card_list));
-
 }
 
 function calc_total_price() {
-    let sum = 0;
+    let sum = 0, amount = 0;
     for (let i = 0; i < card_list.length; i++) {
         sum += card_list[i].price * card_list[i].amount;
+        amount += card_list[i].amount;
     }
-    $('#total-price').val("总价：￥" + sum.toFixed(2));
+    $('.badge').text(amount ? amount : '');
+    $('#total-price').val('总价：￥' + sum.toFixed(2));
 }
 
-function get_order() {
-    return $('.btn-group input:checked').attr('id');
-}
+const get_order = () => $('.btn-group input:checked').attr('id');
 
 function load_dish() {
     const data = {
@@ -136,14 +111,9 @@ function load_dish() {
         limit: paginator.limit,
         serving: serving
     };
-    $.ajax({
-        url: '/search/dish',
-        data: data,
-        type: 'get',
-        success: function (resp) {
-            paginator.maxPages = resp.page;
-            $('#data-container').html($('#data-template').tmpl(resp.data));
-        }
+    $.get('/search/dish', data, (resp) => {
+        paginator.maxPages = resp.page;
+        $('#data-container').html($('#data-template').tmpl(resp.data));
     });
 }
 
