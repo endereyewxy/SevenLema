@@ -7,6 +7,7 @@
     <link href="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="{% static 'css/header.css' %}" rel="stylesheet">
     <link href="{% static 'css/dish.css' %}" rel="stylesheet">
+    <link href="{% static 'css/fileinput.css' %}" rel="stylesheet">
     <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
     <script src="{% static 'js/popper.min.js' %}"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
@@ -16,28 +17,33 @@
     <script src="{% static 'js/paginator.js' %}"></script>
     <script src="{% static 'js/locator.js' %}"></script>
     <script src="{% static 'js/dish.js' %}"></script>
+    <script src="{% static 'js/fileinput.js' %}"></script>
 </head>
 <body style="background-image: url('{% static 'images/background.png' %}'); background-size: 100% 100%">
-<div id="sidebar" class="sidebar d-flex flex-column">
-    <div class="row" style="width: 530px;">
-        <div class="input-group mb-3">
-            <input type="text" class="form-control" id="total-price" value="总价：￥0" aria-label="TotalPrice" disabled>
-            <div class="input-group-append">
-                <button class="btn btn-primary" type="button" id="commit"
-                        {% if not shop_obj.serving or not login %}disabled{% endif %}>下单
-                </button>   <!-- TODO-->
+{% if not is_admin %}
+    <div id="sidebar" class="sidebar d-flex flex-column">
+        <div class="row" style="width: 530px;">
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" id="total-price" value="总价：￥0" aria-label="TotalPrice" disabled>
+                <div class="input-group-append">
+                    <button id="submit-order" type="button" class="btn btn-primary" data-toggle="modal"
+                            data-target="#confirm"
+                            disabled>
+                        下单
+                    </button>
+                </div>
             </div>
+            {% if not login %}
+                <div class="alert alert-danger" role="alert" style="width: 530px">请登录后下单</div>
+            {% elif not shop_obj.serving %}
+                <div class="alert alert-danger" role="alert" style="width: 530px">商家休息中</div>
+            {% endif %}
+            <a href="#" class="close-btn text-decoration-none"
+               onclick="document.getElementById('sidebar').style.width = '0'">×</a>
         </div>
-        {% if not login %}
-            <div class="alert alert-danger" role="alert" id="alert" style="width: 530px">请登录后下单</div>
-        {% elif not shop_obj.serving %}
-            <div class="alert alert-danger" role="alert" id="alert" style="width: 530px">商家休息中</div>
-        {% endif %}
-        <a href="#" class="close-btn text-decoration-none"
-           onclick="document.getElementById('sidebar').style.width = '0'">×</a>
+        <div class="flex-grow-1" style="width: 550px" id="card-list-container"></div>
     </div>
-    <div class="flex-grow-1" style="width: 550px" id="card-list-container"></div>
-</div>
+{% endif %}
 <div class="card" id="shop-card">
     <img class="card-img-top" src="{% static 'images' %}/{{ shop_obj.image }}" alt="{{ shop_obj.name }}">
     <div class="card-body">
@@ -85,14 +91,23 @@
                     <h5 class="card-title">${name}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">价格￥${price} 销量 ${sales}</h6>
                     <p class="card-text">${desc}</p>
+                    {% if not is_admin %}
                     <button ${serving ? '' : 'disabled'} class="btn btn-primary" onclick="add_dish_to_card('${name}', ${dish_id}, '${image}', ${price})">
                         ${serving ? '加入购物车' : '暂时无货'}
                     </button>
+                    {% else %}
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#dish-modal" id="${dish_id}">修改</button>
+                    {% endif %}
                 </div>
             </div>+
         </div>
     </div>
 </script>
+<script type="text/javascript">
+    shop_id = {{ shop_obj.id }};
+</script>
+</body>
+{% if not is_admin %}
 <script id="card-list-template" type="text/x-jquery-tmpl">
     <div class="card mb-3" style="width: 500px; margin: 0 auto">
         <img src="{% static 'images' %}/${image}" class="card-img" alt="${name}">
@@ -108,13 +123,87 @@
         </div>
     </div>
 </script>
-<script type="text/javascript">
-    shop_id = {{ shop_obj.id }};
-</script>
-</body>
-<div id="serving-wrapper" hidden>
-    <input type="checkbox" id="serving-1" onchange="serving = $('#serving:checked').length === 1;load_dish();">
-    <label for="serving">只显示可购买的菜品</label>
+<div class="modal fade" id="confirm" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">确认订单</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <textarea id="remarks" class="form-control" placeholder="订单备注" aria-label="Remarks"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="commit">确认</button>
+            </div>
+        </div>
+    </div>
 </div>
 {% csrf_token %}
+{% else %}
+<div class="modal fade" id="dish-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">菜品信息</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="dish-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="dish_id" id="dish-edit-id">
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><span>菜名</span></div>
+                            </div>
+                            <input name="name" type="text" class="form-control" aria-label="Name">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><span>价格</span></div>
+                            </div>
+                            <input name="price" type="number" class="form-control" aria-label="Price">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><span>描述</span></div>
+                            </div>
+                            <textarea name="desc" class="form-control" aria-label="Description"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <form enctype="multipart/form-data">
+                            <input name="image" class="file" type="file">
+                        </form>
+                    </div>
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="dish-serving" checked="checked" aria-label="Serving">
+                            <label class="custom-control-label" for="dish-serving">是否有货</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="dish-edit">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+<div id="serving-wrapper" hidden>
+    <input type="checkbox" id="serving-1" onchange="serving = $('#serving:checked').length === 1;load_dish();">
+    <label for="serving">只显示有货的菜品</label>
+</div>
 </html>

@@ -6,6 +6,7 @@ function register() {
         return;
     }
     const data = {
+        csrfmiddlewaretoken: $('[name=csrfmiddlewaretoken]').val(),
         username: $('#username').val(),
         password: $('#password').val(),
         addr: $('#addr').val(),
@@ -14,14 +15,14 @@ function register() {
         phone: $('#phone').val()
     };
     $.ajax({
-        url: '/user/register',
+        url: '/user/register/',
         data: data,
         type: 'post',
         success: function (data) {
             if (data.msg === 0) {
-                window.location.href = "/index.html";
+                window.location.href = "/";
             } else {
-                $('#alert').text(data.msg).removeAttr('hidden');
+                $('#err-msg').text(data.msg).removeAttr('hidden');
             }
         }
     });
