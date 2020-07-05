@@ -29,15 +29,15 @@ def new(request):
 
     # Get post parameters
     shop_id  = request.POST.get('shop_id')
-    dish_ids = request.POST.getlist('dish_id')
-    amounts  = request.POST.getlist('amount')
+    dish_ids = request.POST.getlist('dish_id[]')
+    amounts  = request.POST.getlist('amount[]')
     addr     = request.POST.get('addr')
     loc_lng  = request.POST.get('loc_lng')
     loc_lat  = request.POST.get('loc_lat')
     remarks  = request.POST.get('remarks')
 
     # Necessarily parameter checks
-    if not all([shop_id, dish_ids, amounts, addr, loc_lng, loc_lat, remarks]) or len(dish_ids) != len(amounts):
+    if None in [shop_id, dish_ids, amounts, addr, loc_lng, loc_lat, remarks] or len(dish_ids) != len(amounts):
         return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
     try:
         shop_id = int(shop_id)
@@ -53,6 +53,8 @@ def new(request):
         shop = Shop.objects.get(id=shop_id)
         if not shop.serving:
             return JsonResponse({'code': 106, 'msg': '商户未营业'})
+        if shop.user_id == user.id:
+            return JsonResponse({'code': 105, 'msg': '无法在此店下单'})
     except Shop.DoesNotExist:
         return JsonResponse({'code': 102, 'msg': '商户不存在'})
 

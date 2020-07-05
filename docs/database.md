@@ -31,7 +31,7 @@
 | addr      | VARCHAR(50)  | 地址       | 是       |                            |
 | loc_lng   | DECIMAL(9,5) | 位置经度   | 是       |                            |
 | loc_lat   | DECIMAL(9,5) | 位置纬度   | 是       |                            |
-| avg_price | INTEGER      | 人均消费   | 是       | 单位为分（乘100为RMB价格） |
+| avg_price | INTEGER      | 人均消费   | 是       | 单位为分（除100为RMB价格） |
 | sales     | INTEGER      | 销量       | 是       | 订单总数量                 |
 | phone     | CHAR(11)     | 电话号码   | 否       |                            |
 | serving   | BOOLEAN      | 是否营业   | 是       |                            |
@@ -47,7 +47,7 @@
 | name    | VARCHAR(50) | 名称       | 是       |                            |
 | image   | CHAR(16)    | 图片       | 是       |                            |
 | desc    | TEXT        | 描述       | 是       |                            |
-| price   | INTEGER     | 单价       | 是       | 单位为分（乘100为RMB价格） |
+| price   | INTEGER     | 单价       | 是       | 单位为分（除100为RMB价格） |
 | sales   | INTEGER     | 销量       | 是       |                            |
 | serving | BOOLEAN     | 是否有货   | 是       |                            |
 

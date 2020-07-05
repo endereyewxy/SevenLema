@@ -1,98 +1,24 @@
 <!DOCTYPE html>
-<html lang="en">
+{% load static %}
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title>吃了么</title>
+    <title></title>
     <link href="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'css/header.css' %}" rel="stylesheet">
     <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script type="text/javascript"
             src="http://api.map.baidu.com/getscript?v=3.0&ak=tdfjfQq8B4ETmpg93UMWGWrL8yprpI5Q"></script>
-    <script src="/static/js/jquery.tmpl.js"></script>
-    <script src="/static/js/paginator.js"></script>
-    <script src="/static/js/locator.js"></script>
-    <script src="/static/js/shop.js"></script>
-    <style>
-        html, body, .container {
-            height: 100%;
-        }
-
-        .row {
-            margin: 10px;
-        }
-
-        .btn-group {
-            width: 100%;
-        }
-
-        .flex-grow-1 {
-            overflow: scroll;
-            scrollbar-width: none;
-        }
-
-        div::-webkit-scrollbar {
-            width: 0;
-        }
-    </style>
+    <script src="{% static 'js/jquery.tmpl.js' %}"></script>
+    <script src="{% static 'js/paginator.js' %}"></script>
+    <script src="{% static 'js/locator.js' %}"></script>
+    <script src="{% static 'js/shop.js' %}"></script>
 </head>
-<body>
+<body style="background-image: url('{% static 'images/background.png' %}'); background-size: 100% 100%">
 <div class="container d-flex flex-column justify-content-between">
-    <div class="row">
-        <a class="col-4"
-           style="background-image: url('/static/images/0123456789abc.png'); background-size: 100% 100%" href="/index">
-        </a>
-        <div class="col-8">
-            <div class="row">
-                <div class="col-6">
-                    <button type="button" class="btn btn-outline-dark" id="locator-addr" style="width: 100%">&nbsp;
-                    </button>
-                </div>
-                <div class="col-6">
-                    <div class="btn-group" role="group">
-                        <a type="button" class="btn btn-secondary" style="color: aliceblue" href="/register">注册</a>
-                        <a type="button" class="btn btn-secondary" style="color: aliceblue" href="/login">登录</a>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-6">
-                    <div class="input-group">
-                        <input id="addr" type="text" class="form-control" aria-label="addr"
-                               aria-describedby="label-addr" value="{{ addr }}">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" id="locator-show" type="button">
-                                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-geo-alt"
-                                     fill="currentColor"
-                                     xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd"
-                                          d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="header-search" placeholder="搜索商户"
-                               aria-label="search"
-                               aria-describedby="header-search">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" id="header-search-button" type="button">
-                                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-search"
-                                     fill="currentColor"
-                                     xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd"
-                                          d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z"></path>
-                                    <path fill-rule="evenodd"
-                                          d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"></path>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% include 'header.html' %}
     <div class="btn-group btn-group-toggle" data-toggle="buttons">
         <label class="btn btn-outline-primary">
             <input type="radio" name="order" id="dist"> 距离最近
@@ -105,31 +31,31 @@
         </label>
     </div>
     <span>&nbsp;</span>
-    <div class="flex-grow-1" id="data-container"></div>
+    <div id="data-container"></div>
     <ul class="pagination justify-content-center"></ul>
 </div>
 <script id="data-template" type="text/x-jquery-tmpl">
     <div class="card mb-3">
-        <a class="row no-gutters stretched-link text-decoration-none" href="/shop/${shop_id}">
-            <div class="col-md-4">
-                <img src="/static/images/${image}" class="card-img" alt="${name}">
+        <a class="row no-gutters stretched-link text-decoration-none" href="/shop/${shop_id}" style="color: black">
+            <div class="col-md-4"
+                style="background-image: url('{% static 'images' %}/${image}'); background-position: center center; background-repeat: no-repeat; background-size: contain">
             </div>
             <div class="col-md-8">
                 <div class="card-body">
                     <h5 class="card-title">${name}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">人均消费￥${avg_price} 销量 ${sales}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">人均消费￥${avg_price} 销量 ${sales} ${typeof dist !== 'number' ? '' : dist.toFixed(0) <= 10 ? '在您附近' : dist.toFixed(0) >= 1000 ? '据您约' + (dist / 1000).toFixed(0) + '公里' : '据您约' + dist.toFixed(0) + '米'}</h6>
                     <p class="card-text">${desc}</p>
-                    <p class="card-text">地址：${addr}</p>
-                    <p class="card-text">电话号码：${phone}</p>
-                    <p class="card-text">${serving ? '营业中' : '休息中'}</p>
+                    <p class="card-text text-muted text-right">地址：${addr} &nbsp; 电话号码：${phone}</p>
+                    <p class="card-text text-right" style="font-weight: bold; color: red">${serving ? '' : '商家休息中'}</p>
                 </div>
             </div>
         </a>
     </div>
 </script>
-<script type="text/javascript">
-    default_lng = {{ loc_lng }};
-    default_lat = {{ loc_lat }};
-</script>
 </body>
+<div id="serving-wrapper" hidden>
+    <input type="checkbox" id="serving-1" onchange="serving = $('#serving:checked').length === 1;load_shop();">
+    <label for="serving">只显示营业中的商家</label>
+</div>
+{% csrf_token %}
 </html>

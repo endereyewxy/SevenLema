@@ -1,5 +1,4 @@
 # Developer: endereye <endereyewxy@gmail.com>
-
 from math import radians
 
 from django.core.paginator import Paginator, EmptyPage
@@ -45,10 +44,10 @@ def add_page_info(qs, page, limit):
     max_page = 0
     try:
         paginator = Paginator(qs, limit)
-        max_page = paginator.num_pages
-        qs       = paginator.page(page)
+        max_page  = paginator.num_pages
+        qs        = paginator.page(page)
     except EmptyPage:
-        qs       = []
+        qs        = []
     return qs, max_page
 
 
@@ -93,17 +92,17 @@ def shop(request):
             return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
 
         # Perform raw SQL query
-        sql = """
-        SELECT  *, (
-            6378.137 * acos(
-                cos({1})
-                * cos(radians(loc_lat))
-                * cos(radians(loc_lng) - {0})
-                + sin({1})
-                * sin(radians(loc_lat))
-            )
-        ) AS dist FROM cmdb_shop ORDER BY dist""".replace('{0}', str(loc_lng)).replace('{1}', str(loc_lat))
-        qs = qs.raw(sql)
+        sql = \
+            "SELECT  *, distance(loc_lng, loc_lat, " + \
+            str(loc_lng) + \
+            ", " + \
+            str(loc_lat) + \
+            ") AS dist FROM cmdb_shop WHERE name LIKE '%" + \
+            name[1:].replace("'", '') + \
+            "%'" + \
+            (' AND serving = true' if serving else '') + \
+            " ORDER BY dist"
+        qs = Shop.objects.raw(sql)
 
     elif order == 'avg_price':
         qs = qs.order_by('avg_price')
