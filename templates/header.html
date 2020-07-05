@@ -1,33 +1,36 @@
 {% load static %}
-<div class="row">
-    <a class="col-4"
-       style="background-image: url('{% static 'images/logo.svg' %}'); background-position: center center; background-repeat: no-repeat; background-size: auto 100%"
-       href="/">
-    </a>
+<link href="{% static 'css/header.css' %}" rel="stylesheet">
+<script src="{% static 'js/jquery.tmpl.js' %}"></script>
+<script src="{% static 'js/paginator.js' %}"></script>
+<script src="{% static 'js/locator.js' %}"></script>
+<script src="{% static 'js/header.js' %}"></script>
+<span>&nbsp;</span>
+<button class="btn btn-danger" onclick="moveToTop()" id="btn-top">返回顶部</button>
+<div class="row header mb-2">
+    <a class="col-4" style="background-image: url('{% static 'images/logo.svg' %}')" href="/"></a>
     <div class="col-8">
         <div class="row">
             <div class="col-6">
                 <button type="button" class="btn btn-outline-dark" id="locator-addr" data-toggle="tooltip"
-                        data-placement="bottom" title="点击在地图中查看" style="width: 100%">&nbsp;
+                        data-placement="bottom" title="点击在地图中查看" style="width: 100%">
+                    &nbsp;
                 </button>
             </div>
             <div class="col-6">
                 <div class="btn-group" role="group">
                     {% if login %}
-                        <a type="button" class="btn btn-secondary" style="color: aliceblue"
-                           href="/mine">{{ username }}</a>
-                        <a type="button" class="btn btn-secondary" style="color: aliceblue" id="logout">登出</a>
-                        <script src="{% static 'js/logout.js' %}"></script>
+                        <a class="btn btn-secondary" id="user-info">{{ username }}</a>
                         <script type="text/javascript">
                             default_lng = {{ loc_lng }};
                             default_lat = {{ loc_lat }};
                         </script>
+                        <a type="button" class="btn btn-secondary" id="logout">登出</a>
                     {% else %}
-                        <a type="button" class="btn btn-secondary" style="color: aliceblue" href="/register">注册</a>
-                        <a type="button" class="btn btn-secondary" style="color: aliceblue" href="/login">登录</a>
+                        <a type="button" class="btn btn-secondary" href="/register">注册</a>
                         <script type="text/javascript">
                             default_lng = undefined;
                         </script>
+                        <a type="button" class="btn btn-secondary" href="/login">登录</a>
                     {% endif %}
                 </div>
             </div>
@@ -35,16 +38,17 @@
         <div class="row">
             <div class="col-6">
                 <div class="input-group">
-                    <input id="addr" type="text" class="form-control" aria-label="Address" placeholder="点击右侧按钮自动定位"
-                           value="{{ addr }}">
+                    <input id="addr" type="text" class="form-control" aria-label="Address"
+                           placeholder="点击右侧按钮根据地址定位" value="{{ addr }}">
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary" id="locator-show" type="button" data-toggle="tooltip"
-                                data-placement="bottom" title="点击自动定位">
+                                data-placement="bottom" title="点击根据地址定位">
                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-geo-alt"
                                  fill="currentColor"
                                  xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd"
-                                      d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path>
+                                      d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 0 0-6 3 3 0 0 0 0 6z">
+                                </path>
                             </svg>
                         </button>
                     </div>
@@ -52,9 +56,7 @@
             </div>
             <div class="col-6">
                 <div class="input-group">
-                    <input type="text" class="form-control" id="header-search" placeholder="搜索"
-                           aria-label="search"
-                           aria-describedby="header-search">
+                    <input type="text" class="form-control" id="header-search" placeholder="搜索" aria-label="Search">
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary" id="header-config-button" type="button">
                             ...
@@ -64,14 +66,31 @@
                                  fill="currentColor"
                                  xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd"
-                                      d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z"></path>
+                                      d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z">
+                                </path>
                                 <path fill-rule="evenodd"
-                                      d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"></path>
+                                      d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z">
+                                </path>
                             </svg>
                         </button>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+<div id="user-wrapper" hidden>
+    <div class="card" style="width: 250px;">
+        <div class="card-body">
+            <h5 class="card-title">{{ username }}</h5>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">电话：{{ phone }}</li>
+            <li class="list-group-item">地址：{{ addr }}</li>
+        </ul>
+        <div class="card-body">
+            <a href="#" class="card-link">查看订单</a>
+            <a href="#" class="card-link">我的店铺</a>
         </div>
     </div>
 </div>

@@ -3,9 +3,8 @@
 <html lang="zh">
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>恰了吗</title>
     <link href="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{% static 'css/header.css' %}" rel="stylesheet">
     <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
     <script src="{% static 'js/popper.min.js' %}"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
@@ -14,48 +13,54 @@
     <script src="{% static 'js/jquery.tmpl.js' %}"></script>
     <script src="{% static 'js/paginator.js' %}"></script>
     <script src="{% static 'js/locator.js' %}"></script>
-    <script src="{% static 'js/shop.js' %}"></script>
 </head>
-<body style="background-image: url('{% static 'images/background.png' %}'); background-size: 100% 100%">
-<div class="container d-flex flex-column justify-content-between">
+<body style="background-image: url('{% static 'images/background.jpg' %}');">
+<div class="container d-flex flex-column">
     {% include 'header.html' %}
     <div class="btn-group btn-group-toggle" data-toggle="buttons">
         <label class="btn btn-outline-primary">
             <input type="radio" name="order" id="dist"> 距离最近
         </label>
-        <label class="btn btn-outline-primary active">
+        <label class="btn btn-outline-primary">
             <input type="radio" name="order" id="avg_price" checked> 消费最低
         </label>
         <label class="btn btn-outline-primary">
             <input type="radio" name="order" id="sales"> 销量最高
         </label>
     </div>
-    <span>&nbsp;</span>
-    <div id="data-container"></div>
+    <div id="data-container" class="list-group list-group-flush mb-3"></div>
     <ul class="pagination justify-content-center"></ul>
+    <span>&nbsp;</span>
 </div>
 <script id="data-template" type="text/x-jquery-tmpl">
-    <div class="card mb-3">
-        <a class="row no-gutters stretched-link text-decoration-none" href="/shop/${shop_id}" style="color: black">
-            <div class="col-md-4"
-                style="background-image: url('{% static 'images' %}/${image}'); background-position: center center; background-repeat: no-repeat; background-size: contain">
+    <div class="card list-group-item list-group-item-action">
+        <a class="row no-gutters stretched-link text-decoration-none" href="/shop/${shop_id}">
+            <div class="col-md-4" style="background-image: url('{% static 'images' %}/${image}')">
             </div>
             <div class="col-md-8">
                 <div class="card-body">
                     <h5 class="card-title">${name}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">人均消费￥${avg_price} 销量 ${sales} ${typeof dist !== 'number' ? '' : dist.toFixed(0) <= 10 ? '在您附近' : dist.toFixed(0) >= 1000 ? '据您约' + (dist / 1000).toFixed(0) + '公里' : '据您约' + dist.toFixed(0) + '米'}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">
+                        人均消费￥${avg_price}&nbsp;
+                        销量&nbsp;${sales}&nbsp;
+                        ${typeof dist !== 'number' ? '' : dist.toFixed(0) <= 10 ? '在您附近' : dist.toFixed(0) >= 1000 ? '据您约' + (dist / 1000).toFixed(0) + '公里' : '据您约' + dist.toFixed(0) + '米'}
+                    </h6>
                     <p class="card-text">${desc}</p>
                     <p class="card-text text-muted text-right">地址：${addr} &nbsp; 电话号码：${phone}</p>
-                    <p class="card-text text-right" style="font-weight: bold; color: red">${serving ? '' : '商家休息中'}</p>
+                    <p class="card-text text-right" style="font-weight: bold; color: red">
+                        ${serving ? '' : '商家休息中'}
+                    </p>
                 </div>
             </div>
         </a>
     </div>
 </script>
+<script src="{% static 'js/shop.js' %}"></script>
 </body>
 <div id="serving-wrapper" hidden>
-    <input type="checkbox" id="serving-1" onchange="serving = $('#serving:checked').length === 1;load_shop();">
-    <label for="serving">只显示营业中的商家</label>
+    <label>
+        <input type="checkbox" id="serving-1" onchange="serving = !serving;load_shop()" formtarget="">只显示营业中的商家
+    </label>
 </div>
 {% csrf_token %}
 </html>

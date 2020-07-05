@@ -8,7 +8,7 @@
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.9);
 }
 
 .sidebar .close-btn {
@@ -17,10 +17,11 @@
     right: 25px;
     font-size: 36px;
     margin-left: 50px;
+    color: white;
 }
 
 .sidebar .row {
-    color: aliceblue;
+    color: white;
 }
 
 #shop-card {
@@ -28,4 +29,12 @@
     left: 20px;
     width: 15%;
     top: 30%;
+}
+
+.modal {
+    overflow-y: auto;
+}
+
+.modal-open {
+    overflow: auto;
 }
