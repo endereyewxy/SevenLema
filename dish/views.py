@@ -56,9 +56,10 @@ def edit(request):
         # Generate unique name
         ext = image.name.split('.')[-1]
         tok = md5(str(uuid4()).encode('utf-8')).hexdigest()[8:-12]
-        with open(os.path.join(settings.STATIC_ROOT, tok + '.' + ext), 'wb') as f:
+        with open(os.path.join(settings.STATIC_ROOT, 'images', tok + '.' + ext), 'wb') as f:
             for chunk in image.chunks():
                 f.write(chunk)
+        dish.image = tok + '.' + ext
 
     desc = request.POST.get('desc')
     if desc is not None:
