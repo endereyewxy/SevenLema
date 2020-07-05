@@ -53,6 +53,8 @@ def new(request):
         shop = Shop.objects.get(id=shop_id)
         if not shop.serving:
             return JsonResponse({'code': 106, 'msg': '商户未营业'})
+        if shop.user_id == user.id:
+            return JsonResponse({'code': 105, 'msg': '无法在此店下单'})
     except Shop.DoesNotExist:
         return JsonResponse({'code': 102, 'msg': '商户不存在'})
 
