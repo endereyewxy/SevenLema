@@ -37,13 +37,13 @@
 <script id="data-template" type="text/x-jquery-tmpl">
     <div class="card mb-3">
         <a class="row no-gutters stretched-link text-decoration-none" href="/shop/${shop_id}" style="color: black">
-            <div class="col-md-4">
-                <img src="{% static 'images' %}/${image}" class="card-img middle" alt="${name}">
+            <div class="col-md-4"
+                style="background-image: url('{% static 'images' %}/${image}'); background-position: center center; background-repeat: no-repeat; background-size: contain">
             </div>
             <div class="col-md-8">
                 <div class="card-body">
                     <h5 class="card-title">${name}</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">人均消费￥${avg_price} 销量 ${sales} ${typeof dist === 'number' ? '据您约' + dist.toFixed(0) + '米' : ''}</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">人均消费￥${avg_price} 销量 ${sales} ${typeof dist !== 'number' ? '' : dist.toFixed(0) <= 10 ? '在您附近' : dist.toFixed(0) >= 1000 ? '据您约' + (dist / 1000).toFixed(0) + '公里' : '据您约' + dist.toFixed(0) + '米'}</h6>
                     <p class="card-text">${desc}</p>
                     <p class="card-text text-muted text-right">地址：${addr} &nbsp; 电话号码：${phone}</p>
                     <p class="card-text text-right" style="font-weight: bold; color: red">${serving ? '' : '商家休息中'}</p>
@@ -59,3 +59,5 @@
 </div>
 {% csrf_token %}
 </html>
+                    <h6 class="card-subtitle mb-2 text-muted">人均消费￥${avg_price} 销量 ${sales}
+                        ${typeof dist !== 'number' ? '' : dist.toFixed(0) === 0 ? '在您附近' : dist.toFixed(0) >== 1000 ? '据您约' + dist.toFixed(0)/1000 + '公里' : '据您约' + dist.toFixed(0) + '米' }</h6>

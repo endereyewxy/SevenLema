@@ -23,7 +23,7 @@
         <div class="input-group mb-3">
             <input type="text" class="form-control" id="total-price" value="总价：￥0" aria-label="TotalPrice" disabled>
             <div class="input-group-append">
-                <button class="btn btn-primary" type="button"
+                <button class="btn btn-primary" type="button" id="commit"
                         {% if not shop_obj.serving or not login %}disabled{% endif %}>下单
                 </button>   <!-- TODO-->
             </div>
@@ -77,8 +77,8 @@
 <script id="data-template" type="text/x-jquery-tmpl">
     <div class="card mb-3">
         <div class="row no-gutters" >
-            <div class="col-md-4">
-                <img src="{% static 'images' %}/${image}" class="card-img middle" alt="${name}">
+            <div class="col-md-4"
+               style="background-image: url('{% static 'images' %}/${image}'); background-position: center center; background-repeat: no-repeat; background-size: contain">
             </div>
             <div class="col-md-8">
                 <div class="card-body">

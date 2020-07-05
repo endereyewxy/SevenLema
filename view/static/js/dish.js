@@ -1,4 +1,43 @@
 let paginator, locator, card_list = [], serving = false;
+let dish_id_list = [], dish_amount = [];
+
+function commit_an_order() {
+    if(card_list.length === 0) {
+        alert("订单不能为空！");
+        return;
+    }else{
+        for(let i=0;i<card_list.length;i++){
+            dish_id_list[i] = card_list[i].dish_id;
+            dish_amount[i] = card_list[i].amount;
+        }
+        const data = {
+                csrfmiddlewaretoken: $('[name=csrfmiddlewaretoken]').val(),
+                shop_id: shop_id,
+                dish_id: dish_id_list,
+                amount: dish_amount,
+                addr: $('#addr').val(),
+                loc_lng:locator.lng,
+                loc_lat:locator.lat,
+                remarks: ''
+        }
+        $.ajax({
+        url: "/order/new/",
+        data: data,
+        type: 'post',
+        success: function (data) {
+            if (data.code === 0) {
+                window.location.href = '/';
+            } else {
+                alert("等待信息补充");
+            }
+        }
+    });
+    }
+}
+
+
+
+
 
 function amount_change(dish_id) {
     const input = $("#dish-" + dish_id);
@@ -84,6 +123,8 @@ function load_dish() {
 }
 
 $(document).ready(function () {
+    $('#commit').click(commit_an_order);
+
     // Create and configure paginator
     paginator = new Paginator('.pagination');
     paginator.change = load_dish;
