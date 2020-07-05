@@ -1,11 +1,10 @@
-from django.test import TestCase, RequestFactory, Client
-from cmdb.models.user import User
-from cmdb.models.shop import Shop
-from cmdb.models.dish import Dish
-from cmdb.models.order import Order
 import json
-import time
-from datetime import datetime
+
+from django.test import TestCase, RequestFactory
+
+from cmdb.models.dish import Dish
+from cmdb.models.shop import Shop
+from cmdb.models.user import User
 
 
 class OrderModelTests(TestCase):
@@ -39,7 +38,7 @@ class OrderModelTests(TestCase):
         session.save()
 
         shop = Shop.objects.create(
-            user_id=user,
+            user=user,
             name='test-name',
             image='9441c87f9df8954b',
             desc='A Simple Description',
@@ -53,7 +52,7 @@ class OrderModelTests(TestCase):
         self.shop_id = str(shop.id)
 
         no_serving_shop = Shop.objects.create(
-            user_id=user,
+            user=user,
             name='test-name',
             image='9441c87f9df8954b',
             desc='A Simple Description',
@@ -70,7 +69,7 @@ class OrderModelTests(TestCase):
         # no-serving shop has 1 2 3 4  dishes
         for i in range(4):
             Dish.objects.create(
-                shop_id=shop,
+                shop=shop,
                 name=str(i),
                 image='0123456789abcdef',
                 desc='',
@@ -79,7 +78,7 @@ class OrderModelTests(TestCase):
                 serving=i % 2 == 0
             ).save()
             Dish.objects.create(
-                shop_id=no_serving_shop,
+                shop=no_serving_shop,
                 name=str(i + 1),
                 image='0123456789abcdef',
                 desc='',
@@ -98,14 +97,11 @@ class OrderModelTests(TestCase):
             'loc_lat': 'test-loc_lat',
             'remarks': 'test-remarks',
         }
-
-        obj = json.dumps(data)
         session = self.client.session
         del session['id']
         session.save()
-        resp = self.client.post('/order/new/', data=obj, content_type='application/json')
-        resjson = json.loads(resp.content)
-        self.assertJSONEqual(resp.content, {'code': 103, 'msg': 'no login in '})
+        resp = self.client.post('/order/new/', data)
+        self.assertEqual(json.loads(resp.content)['code'], 103)
 
     def test_parameter_lost(self):
         data = {
@@ -117,70 +113,58 @@ class OrderModelTests(TestCase):
             'loc_lat': 'test-loc_lat',
             'remarks': 'test-remarks',
         }
-        obj = json.dumps(data)
-        resp = self.client.post('/order/new/', data=obj, content_type='application/json')
-        resjson = json.loads(resp.content)
-        self.assertJSONEqual(resp.content, {'code': 101, 'msg': 'parameters lost'})
+        resp = self.client.post('/order/new/', data)
+        self.assertEqual(json.loads(resp.content)['code'], 101)
 
     def test_shop_no_exist(self):
         data = {
             'shop_id': '3',  # shop no exist
             'dish_id': ['1'],
-            'amount': 'test-amount',
+            'amount': ['0'],
             'addr': 'test-addr',
-            'loc_lng': 'test-loc_lng',
-            'loc_lat': 'test-loc_lat',
+            'loc_lng': '13',
+            'loc_lat': '13',
             'remarks': 'test-remarks',
         }
-        obj = json.dumps(data)
-        resp = self.client.post('/order/new/', data=obj, content_type='application/json')
-        resjson = json.loads(resp.content)
-        self.assertJSONEqual(resp.content, {'code': 106, 'msg': 'shop no exist'})
+        resp = self.client.post('/order/new/', data)
+        self.assertEqual(json.loads(resp.content)['code'], 102)
 
     def test_shop_no_serving(self):
         data = {
             'shop_id': self.no_serving_shop_id,  # shop no serving
-            'dish_id': ['1'],
-            'amount': 'test-amount',
+            'dish_id': ['2'],
+            'amount': ['0'],
             'addr': 'test-addr',
-            'loc_lng': 'test-loc_lng',
-            'loc_lat': 'test-loc_lat',
+            'loc_lng': '12',
+            'loc_lat': '12',
             'remarks': 'test-remarks',
         }
-        obj = json.dumps(data)
-        resp = self.client.post('/order/new/', data=obj, content_type='application/json')
-        resjson = json.loads(resp.content)
-        self.assertJSONEqual(resp.content, {'code': 106, 'msg': 'shop no serving time'})
+        resp = self.client.post('/order/new/', data)
+        self.assertEqual(json.loads(resp.content)['code'], 106)
 
     # getting dish 5 from shop
     def test_dish_no_exist(self):
         data = {
             'shop_id': self.shop_id,
             'dish_id': ['1', '3', '7', '9'],
-            'amount': 'test-amount',
+            'amount': ['2', '3', '4', '5'],
             'addr': 'test-addr',
-            'loc_lng': 'test-loc_lng',
-            'loc_lat': 'test-loc_lat',
+            'loc_lng': '12',
+            'loc_lat': '12',
             'remarks': 'test-remarks',
         }
-        obj = json.dumps(data)
-        resp = self.client.post('/order/new/', data=obj, content_type='application/json')
-        resjson = json.loads(resp.content)
-        self.assertJSONEqual(resjson,
-                             '{"106": ["dish 1 not on sale", "dish 3 not on sale"], "105": ["dish 7 not in the shop 1", "dish 9 not in the shop 1"]}')
+        resp = self.client.post('/order/new/', data)
+        self.assertEqual(json.loads(resp.content)['code'], 106)
 
     def test_commit_success(self):
         data = {
             'shop_id': self.shop_id,
-            'dish_id': ['0', '2'],
+            'dish_id': ['1', '5'],
             'amount': ['2', '3'],
             'addr': 'test-addr',
             'loc_lng': 1,
             'loc_lat': 1,
             'remarks': 'test-remarks',
         }
-        obj = json.dumps(data)
-        resp = self.client.post('/order/new/', data=obj, content_type='application/json')
-        resjson = json.loads(resp.content)
-        order_id = int(time.time())
-        self.assertJSONEqual(resp.content, {'code': 0, 'msg': 'creating order succeed', 'data': 1})
+        resp = self.client.post('/order/new/', data)
+        self.assertEqual(json.loads(resp.content)['code'], 0)
