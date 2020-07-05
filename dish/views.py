@@ -59,6 +59,7 @@ def edit(request):
         with open(os.path.join(settings.STATIC_ROOT, tok + '.' + ext), 'wb') as f:
             for chunk in image.chunks():
                 f.write(chunk)
+        dish.image = tok + '.' + ext
 
     desc = request.POST.get('desc')
     if desc is not None:
