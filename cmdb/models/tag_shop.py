@@ -9,4 +9,4 @@ class TagShop(models.Model):
     tag  = models.ForeignKey(Tag, models.CASCADE)
 
     class Meta:
-        unique_together = ('shop_id', 'tag_id')
+        unique_together = ('shop', 'tag')
