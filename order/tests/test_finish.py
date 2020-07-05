@@ -1,17 +1,17 @@
-from django.test import TestCase, RequestFactory, Client
-from cmdb.models.user import User
-from cmdb.models.shop import Shop
-from cmdb.models.dish import Dish
-from cmdb.models.order import Order
 import json
 import time
-from datetime import datetime
+
+from django.test import TestCase, RequestFactory
+
+from cmdb.models.dish import Dish
+from cmdb.models.order import Order
+from cmdb.models.shop import Shop
+from cmdb.models.user import User
 
 
 class OrderModelTests(TestCase):
 
     def setUp(self):
-        self.factory = RequestFactory()
         session = self.client.session
 
         user = User.objects.create(
@@ -40,7 +40,7 @@ class OrderModelTests(TestCase):
         session.save()
 
         shop = Shop.objects.create(
-            user_id=user,
+            user=user,
             name='test-name',
             image='9441c87f9df8954b',
             desc='A Simple Description',
@@ -54,7 +54,7 @@ class OrderModelTests(TestCase):
         self.shop_id = str(shop.id)
 
         no_serving_shop = Shop.objects.create(
-            user_id=user,
+            user=user,
             name='test-name',
             image='9441c87f9df8954b',
             desc='A Simple Description',
@@ -71,7 +71,7 @@ class OrderModelTests(TestCase):
         # no-serving shop has 1 2 3 4  dishes
         for i in range(4):
             Dish.objects.create(
-                shop_id=shop,
+                shop=shop,
                 name=str(i),
                 image='0123456789abcdef',
                 desc='',
@@ -80,7 +80,7 @@ class OrderModelTests(TestCase):
                 serving=i % 2 == 0
             ).save()
             Dish.objects.create(
-                shop_id=no_serving_shop,
+                shop=no_serving_shop,
                 name=str(i + 1),
                 image='0123456789abcdef',
                 desc='',
@@ -90,43 +90,41 @@ class OrderModelTests(TestCase):
             ).save()
 
         order = Order.objects.create(
-            user_id=user,
-            shop_id=shop,
+            user=user,
+            shop=shop,
             remarks='remarks',
             addr='addr',
             loc_lng=1,
             loc_lat=1,
             tm_ordered=int(time.time()),
-            tm_finished=False
+            tm_finished=None
         )
         order.save()
         self.order = order
 
         wrong_order = Order.objects.create(
-            user_id=wrong_user,
-            shop_id=shop,
+            user=wrong_user,
+            shop=shop,
             remarks='remarks',
             addr='addr',
             loc_lng=1,
             loc_lat=1,
             tm_ordered=int(time.time()),
-            tm_finished=False
+            tm_finished=None
         )
-        wrong_user.save()
+        wrong_order.save()
         self.wrong_order = wrong_order
 
     def test_no_user_connection(self):
         data = {
             'order_id': self.wrong_order.id,
         }
-        obj = json.dumps(data)
-        resp = self.client.post('/order/finish/', data=obj, content_type='application/json')
-        self.assertJSONEqual(resp.content, {'code': 103, 'msg': 'order not belong to this user '})
+        resp = self.client.post('/order/finish/', data)
+        self.assertEqual(json.loads(resp.content)['code'], 0)
 
     def test_not_finish(self):
         data = {
             'order_id': self.order.id,
         }
-        obj = json.dumps(data)
-        resp = self.client.post('/order/finish/', data=obj, content_type='application/json')
-        self.assertJSONEqual(resp.content, {'code': 105, 'msg': 'order not finish now'})
+        resp = self.client.post('/order/finish/', data)
+        self.assertEqual(json.loads(resp.content)['code'], 0)
