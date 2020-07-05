@@ -1,17 +1,15 @@
-from django.shortcuts import render
-from django.views import View
-from django.http import JsonResponse
-from cmdb.models.user import User
-from cmdb.models.shop import Shop
-from cmdb.models.dish import Dish
-from cmdb.models.order import Order
-from cmdb.models.dish_order import DishOrder
-from datetime import datetime
-import time
 import json
+import time
 
+from django.http import JsonResponse
+from django.views import View
 
-# from django.contrib.auth.mixins import LoginRequiredMixin
+from cmdb.models.dish import Dish
+from cmdb.models.dish_order import DishOrder
+from cmdb.models.order import Order
+from cmdb.models.shop import Shop
+from cmdb.models.user import User
+
 
 # Order Commit View Part
 class OrderCommitView(View):
@@ -49,17 +47,17 @@ class OrderCommitView(View):
             return JsonResponse({'code': 106, 'msg': 'shop no exist'})
 
         # dish connection and exist checks
-        dishError = {}
+        dish_error = {}
         for dish in dish_id:
             if not Dish.objects.filter(shop_id=shop_id, name=dish).exists():
                 # 'dish {0} is not in the shop{1}'.format(dish, shop_id)
-                dishError.setdefault(105, []).append('dish {0} not in the shop {1}'.format(dish, shop_id))
+                dish_error.setdefault(105, []).append('dish {0} not in the shop {1}'.format(dish, shop_id))
                 continue
             dish_obj = Dish.objects.get(shop_id=shop_id, name=dish)
             if not dish_obj.serving:
-                dishError.setdefault(106, []).append('dish {0} not on sale'.format(dish))
-        if dishError:
-            data = json.dumps(dishError)
+                dish_error.setdefault(106, []).append('dish {0} not on sale'.format(dish))
+        if dish_error:
+            data = json.dumps(dish_error)
             return JsonResponse(data, safe=False)
 
         # creating order_id by time and user info
@@ -97,17 +95,13 @@ def order_info(order_id, context):
     context.append({'user_id': user.phone})
     context.append({'shop_id': shop.id})
     context.append({'shop_name': shop.name})
-    dishes = []
-    dishOrders = DishOrder.objects.filter(order_id=order_id).all()
-    for dishorder in dishOrders:
-        dish = dishorder.dish_id
+    dish_orders = DishOrder.objects.filter(order_id=order_id).all()
+    for dish_order in dish_orders:
+        dish = dish_order.dish_id
         dish_id = dish.id
         name = dish.name
-        amount = dishorder.amount
-        data = {}
-        data['dish_id'] = dish_id
-        data['name'] = name
-        data['amount'] = amount
+        amount = dish_order.amount
+        data = {'dish_id': dish_id, 'name': name, 'amount': amount}
         context.append(data)
     context.append({'loc_lng': user.loc_lng})
     context.append({'loc_lat': user.loc_lat})
@@ -143,14 +137,14 @@ class OrderInfoView(View):
             order = Order.objects.get(id=order_id)
             user = order.user_id
             # user check
-            if (user.id != user_id):
+            if user.id != user_id:
                 return JsonResponse({'code': 103, 'msg': "no right to see the user order "})
             order_info(order_id, context)
             return JsonResponse({'code': 0, 'msg': "get order info succeed", 'data': context})
         # shop get order info
         elif 'shop_id' in res:
             shop_id = res['shop_id']
-            if (shop_id != user_id):
+            if shop_id != user_id:
                 return JsonResponse({'code': 103, 'msg': "no right to see the shop order "})
             shop = Order.objects.get(id=shop_id)
             orders = Order.objects.filter(shop_id=shop_id)
@@ -178,12 +172,12 @@ class OrderFinishView(View):
         data = request.body
         res = json.loads(data)
         order_id = res['order_id']
-        if not (order_id):
+        if not order_id:
             return JsonResponse({'code': 101, 'msg': 'parameters lost'})
 
         # user connection check
         order = Order.objects.get(id=order_id)
-        if (order_id != user_id):
+        if order_id != user_id:
             return JsonResponse({'code': 103, 'msg': 'order not belong to this user '})
         # order state check
         if not order.tm_finished:

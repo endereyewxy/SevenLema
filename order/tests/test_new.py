@@ -1,11 +1,10 @@
-from django.test import TestCase, RequestFactory, Client
-from cmdb.models.user import User
-from cmdb.models.shop import Shop
-from cmdb.models.dish import Dish
-from cmdb.models.order import Order
 import json
-import time
-from datetime import datetime
+
+from django.test import TestCase, RequestFactory
+
+from cmdb.models.dish import Dish
+from cmdb.models.shop import Shop
+from cmdb.models.user import User
 
 
 class OrderModelTests(TestCase):
@@ -104,7 +103,6 @@ class OrderModelTests(TestCase):
         del session['id']
         session.save()
         resp = self.client.post('/order/new/', data=obj, content_type='application/json')
-        resjson = json.loads(resp.content)
         self.assertJSONEqual(resp.content, {'code': 103, 'msg': 'no login in '})
 
     def test_parameter_lost(self):
@@ -119,7 +117,6 @@ class OrderModelTests(TestCase):
         }
         obj = json.dumps(data)
         resp = self.client.post('/order/new/', data=obj, content_type='application/json')
-        resjson = json.loads(resp.content)
         self.assertJSONEqual(resp.content, {'code': 101, 'msg': 'parameters lost'})
 
     def test_shop_no_exist(self):
@@ -134,7 +131,6 @@ class OrderModelTests(TestCase):
         }
         obj = json.dumps(data)
         resp = self.client.post('/order/new/', data=obj, content_type='application/json')
-        resjson = json.loads(resp.content)
         self.assertJSONEqual(resp.content, {'code': 106, 'msg': 'shop no exist'})
 
     def test_shop_no_serving(self):
@@ -149,7 +145,6 @@ class OrderModelTests(TestCase):
         }
         obj = json.dumps(data)
         resp = self.client.post('/order/new/', data=obj, content_type='application/json')
-        resjson = json.loads(resp.content)
         self.assertJSONEqual(resp.content, {'code': 106, 'msg': 'shop no serving time'})
 
     # getting dish 5 from shop
@@ -165,9 +160,10 @@ class OrderModelTests(TestCase):
         }
         obj = json.dumps(data)
         resp = self.client.post('/order/new/', data=obj, content_type='application/json')
-        resjson = json.loads(resp.content)
-        self.assertJSONEqual(resjson,
-                             '{"106": ["dish 1 not on sale", "dish 3 not on sale"], "105": ["dish 7 not in the shop 1", "dish 9 not in the shop 1"]}')
+        res_json = json.loads(resp.content)
+        self.assertJSONEqual(res_json,
+                             '{"106": ["dish 1 not on sale", "dish 3 not on sale"], "105": ["dish 7 not in the shop '
+                             '1", "dish 9 not in the shop 1"]}')
 
     def test_commit_success(self):
         data = {
@@ -181,6 +177,4 @@ class OrderModelTests(TestCase):
         }
         obj = json.dumps(data)
         resp = self.client.post('/order/new/', data=obj, content_type='application/json')
-        resjson = json.loads(resp.content)
-        order_id = int(time.time())
         self.assertJSONEqual(resp.content, {'code': 0, 'msg': 'creating order succeed', 'data': 1})
