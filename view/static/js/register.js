@@ -1,41 +1,16 @@
-let locator;
-
-function register() {
-    $('form').addClass('was-validated');
-    if ($('input:invalid').length) {
-        return;
-    }
-    const data = {
-        csrfmiddlewaretoken: $('[name=csrfmiddlewaretoken]').val(),
-        username: $('#username').val(),
-        password: $('#password').val(),
-        addr: $('#addr').val(),
-        loc_lng: locator.lng,
-        loc_lat: locator.lat,
-        phone: $('#phone').val()
-    };
-    $.ajax({
-        url: '/user/register/',
-        data: data,
-        type: 'post',
-        success: function (data) {
-            if (data.msg === 0) {
-                window.location.href = "/";
-            } else {
-                $('#err-msg').text(data.msg).removeAttr('hidden');
-            }
-        }
-    });
-}
-
 $(document).ready(function () {
-    locator = new Locator();
-    locator.change = function (lng, lat, addr) {
+    const loc_lng = $('input[name=loc_lng]'), loc_lat = $('input[name=loc_lat]');
+    const locator = new Locator();
+    locator.change = (lng, lat, addr) => {
+        loc_lng.val(lng);
+        loc_lat.val(lat);
         $('#locator-addr').text('定位到：' + addr).removeAttr('hidden');
     };
     locator.create(106.30557, 29.59899, true);
-    $('#register').click(register);
-    $('#locator-show').click(function () {
-        locator.show($('#addr').val());
+    $('#locator-show').click(() => locator.show($('input[name=addr]').val()));
+    $('input[name=password]').change(function () {
+        let pattern = $(this).val().replace(/([*.?+$^\[\](){}|\/\\])/g, '\\$1');
+        $('#password-confirm').attr('pattern', pattern);
     });
+    setLoginRegister('register');
 });
