@@ -30,3 +30,11 @@
     width: 15%;
     top: 30%;
 }
+
+.modal {
+    overflow-y: auto;
+}
+
+.modal-open {
+    overflow: auto;
+}
