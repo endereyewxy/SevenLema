@@ -1,5 +1,6 @@
 import time
 
+from django.core.paginator import Paginator, EmptyPage
 from django.forms import model_to_dict
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_GET
@@ -106,6 +107,17 @@ def order_info(order):
     return json
 
 
+def add_page_info(qs, page, limit):
+    max_page = 0
+    try:
+        paginator = Paginator(qs, limit)
+        max_page  = paginator.num_pages
+        qs        = paginator.page(page)
+    except EmptyPage:
+        qs        = []
+    return qs, max_page
+
+
 @require_GET
 def info(request):
     login, user = check_login_status(request)
@@ -137,7 +149,10 @@ def info(request):
         order = Order.objects.get(id=order_id)
         if user.id != order.user_id:
             return JsonResponse({'code': 103, 'msg': '权限不足'})
-        return JsonResponse({'code': 0, 'msg': '', 'data': [order_info(order)]})
+        if page == 1 and (not unfinished or order.tm_finished is None):
+            return JsonResponse({'code': 0, 'msg': '', 'page': 1, 'data': [order_info(order)]})
+        else:
+            return JsonResponse({'code': 0, 'msg': '', 'page': 1, 'data': []})
 
     # Shop get order info
     elif shop_id is not None:
@@ -148,10 +163,14 @@ def info(request):
         shop = Shop.objects.get(id=shop_id)
         if shop.user_id != user.id:
             return JsonResponse({'code': 103, 'msg': '权限不足'})
-        json = []
-        for order in Order.objects.filter(shop_id=shop_id):
-            json.append(order_info(order))
-        return JsonResponse({'code': 0, 'msg': '', 'data': json})
+        qs = Order.objects.filter(shop_id=shop_id)
+        if unfinished:
+            qs = qs.filter(tm_finished=None)
+        qs, max_page = add_page_info(qs, page, limit)
+        data = []
+        for order in qs:
+            data.append(order_info(order))
+        return JsonResponse({'code': 0, 'msg': '', 'page': max_page, 'data': data})
 
     # No useful input
     else:
