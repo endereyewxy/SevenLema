@@ -30,15 +30,14 @@ window.onscroll = function () {
 };
 
 function scrollFunction() {
-    console.log(121);
     if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-        document.getElementById("myBtn").style.display = "block";
+        document.getElementById("btn-top").style.display = "block";
     } else {
-        document.getElementById("myBtn").style.display = "none";
+        document.getElementById("btn-top").style.display = "none";
     }
 }
 
-function topFunction() {
+function moveToTop() {
     document.body.scrollTop = 0;
     document.documentElement.scrollTop = 0;
 }
