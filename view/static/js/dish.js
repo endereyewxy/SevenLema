@@ -2,41 +2,37 @@ let paginator, locator, card_list = [], serving = false;
 let dish_id_list = [], dish_amount = [];
 
 function commit_an_order() {
-    if(card_list.length === 0) {
+    if (card_list.length === 0) {
         alert("订单不能为空！");
-        return;
-    }else{
-        for(let i=0;i<card_list.length;i++){
+    } else {
+        for (let i = 0; i < card_list.length; i++) {
             dish_id_list[i] = card_list[i].dish_id;
-            dish_amount[i] = card_list[i].amount;
+            dish_amount [i] = card_list[i].amount;
         }
         const data = {
-                csrfmiddlewaretoken: $('[name=csrfmiddlewaretoken]').val(),
-                shop_id: shop_id,
-                dish_id: dish_id_list,
-                amount: dish_amount,
-                addr: $('#addr').val(),
-                loc_lng:locator.lng,
-                loc_lat:locator.lat,
-                remarks: ''
+            csrfmiddlewaretoken: $('[name=csrfmiddlewaretoken]').val(),
+            shop_id: shop_id,
+            dish_id: dish_id_list,
+            amount: dish_amount,
+            addr: $('#addr').val(),
+            loc_lng: locator.lng,
+            loc_lat: locator.lat,
+            remarks: '' // TODO
         }
         $.ajax({
-        url: "/order/new/",
-        data: data,
-        type: 'post',
-        success: function (data) {
-            if (data.code === 0) {
-                window.location.href = '/';
-            } else {
-                alert("等待信息补充");
+            url: "/order/new/",
+            data: data,
+            type: 'post',
+            success: function (data) { // TODO
+                if (data.code === 0) {
+                    window.location.href = '/';
+                } else {
+                    alert(data.msg);
+                }
             }
-        }
-    });
+        });
     }
 }
-
-
-
 
 
 function amount_change(dish_id) {

@@ -29,15 +29,15 @@ def new(request):
 
     # Get post parameters
     shop_id  = request.POST.get('shop_id')
-    dish_ids = request.POST.getlist('dish_id')
-    amounts  = request.POST.getlist('amount')
+    dish_ids = request.POST.getlist('dish_id[]')
+    amounts  = request.POST.getlist('amount[]')
     addr     = request.POST.get('addr')
     loc_lng  = request.POST.get('loc_lng')
     loc_lat  = request.POST.get('loc_lat')
     remarks  = request.POST.get('remarks')
 
     # Necessarily parameter checks
-    if not all([shop_id, dish_ids, amounts, addr, loc_lng, loc_lat, remarks]) or len(dish_ids) != len(amounts):
+    if None in [shop_id, dish_ids, amounts, addr, loc_lng, loc_lat, remarks] or len(dish_ids) != len(amounts):
         return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
     try:
         shop_id = int(shop_id)
