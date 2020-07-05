@@ -156,4 +156,4 @@ def dish(request):
 
     # Change query into dictionaries
     qs, max_page = add_page_info(qs, page, limit)
-    return JsonResponse({'code': 0, 'msg': '', 'data': [dish_to_json(obj) for obj in qs]})
+    return JsonResponse({'code': 0, 'msg': '', 'page': max_page, 'data': [dish_to_json(obj) for obj in qs]})
