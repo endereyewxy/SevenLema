@@ -1,39 +1,62 @@
 let paginator, locator, card_list = [], serving = false;
-let dish_id_list = [], dish_amount = [];
 
-function commit_an_order() {
-    if (card_list.length === 0) {
-        alert("订单不能为空！");
-    } else {
-        for (let i = 0; i < card_list.length; i++) {
-            dish_id_list[i] = card_list[i].dish_id;
-            dish_amount [i] = card_list[i].amount;
-        }
-        const data = {
-            csrfmiddlewaretoken: $('[name=csrfmiddlewaretoken]').val(),
-            shop_id: shop_id,
-            dish_id: dish_id_list,
-            amount: dish_amount,
-            addr: $('#addr').val(),
-            loc_lng: locator.lng,
-            loc_lat: locator.lat,
-            remarks: '' // TODO
-        }
-        $.ajax({
-            url: "/order/new/",
-            data: data,
-            type: 'post',
-            success: function (data) { // TODO
-                if (data.code === 0) {
-                    window.location.href = '/';
-                } else {
-                    alert(data.msg);
-                }
-            }
-        });
+function change_dish_info() {
+    let data = new FormData(document.getElementById('dish-form'));
+    if (data.get('name').length === 0) {
+        data.delete('name');
     }
+    if (data.get('price').length === 0) {
+        data.delete('price');
+    }
+    if (data.get('desc').length === 0) {
+        data.delete('desc');
+    }
+    data.append('serving', $('#dish-serving:checked').length !== 0 ? 'true' : 'false');
+    $.ajax({
+        url: "/dish/edit/",
+        data: data,
+        processData:false,
+        contentType:false,
+        type: 'post',
+        success: function (data) { // TODO
+            if (data.code === 0) {
+                window.location.href = '/';
+            } else {
+                alert(data.msg);
+            }
+        }
+    });
 }
 
+function commit_an_order() {
+    let dish_id_list = [], dish_amount = [];
+    for (let i = 0; i < card_list.length; i++) {
+        dish_id_list[i] = card_list[i].dish_id;
+        dish_amount [i] = card_list[i].amount;
+    }
+    const data = {
+        csrfmiddlewaretoken: $('[name=csrfmiddlewaretoken]').val(),
+        shop_id: shop_id,
+        dish_id: dish_id_list,
+        amount: dish_amount,
+        addr: $('#addr').val(),
+        loc_lng: locator.lng,
+        loc_lat: locator.lat,
+        remarks: $('#remarks').val()
+    }
+    $.ajax({
+        url: "/order/new/",
+        data: data,
+        type: 'post',
+        success: function (data) { // TODO
+            if (data.code === 0) {
+                window.location.href = '/';
+            } else {
+                alert(data.msg);
+            }
+        }
+    });
+}
 
 function amount_change(dish_id) {
     const input = $("#dish-" + dish_id);
@@ -57,6 +80,9 @@ function amount_change(dish_id) {
             }
         }
     }
+    if (card_list.length === 0) {
+        $('#submit-order').attr('disabled', 'disabled');
+    }
     calc_total_price();
     input.val(changed_amount);
 
@@ -64,6 +90,9 @@ function amount_change(dish_id) {
 
 function add_dish_to_card(name, dish_id, image, price) {
     let flag = false;
+    if (card_list.length === 0 && $('.alert').length === 0) {
+        $('#submit-order').removeAttr('disabled');
+    }
     for (let i = 0; i < card_list.length; i++) {
         if (card_list[i].dish_id === dish_id) {
             card_list[i].amount++;
@@ -119,7 +148,15 @@ function load_dish() {
 }
 
 $(document).ready(function () {
+    $('input[name=image]').fileinput({
+        showUpload: false,
+        allowedFileExtensions: ['jpg', 'png' ,'svg']
+    });
     $('#commit').click(commit_an_order);
+    $('#dish-edit').click(change_dish_info);
+    $('#dish-modal').on('show.bs.modal', function (evt) {
+        $('#dish-edit-id').val($(evt.relatedTarget).attr('id'));
+    });
 
     // Create and configure paginator
     paginator = new Paginator('.pagination');
