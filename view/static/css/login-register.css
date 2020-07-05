@@ -1,0 +1,28 @@
+html, body {
+    height: 100%;
+}
+
+.container {
+    width: 30%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.input-group-prepend {
+    width: 15%;
+}
+
+.input-group-text, button {
+    width: 100%;
+}
+
+div.input-group-text span {
+    display: block;
+    margin: 0 auto;
+}
+
+p {
+    text-align: center;
+}

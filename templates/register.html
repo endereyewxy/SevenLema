@@ -1,81 +1,81 @@
 <!DOCTYPE html>
-<html lang="en">
+{% load static %}
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <title>吃了么 - 注册</title>
     <link href="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'css/login-register.css' %}" rel="stylesheet">
     <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script type="text/javascript"
             src="http://api.map.baidu.com/getscript?v=3.0&ak=tdfjfQq8B4ETmpg93UMWGWrL8yprpI5Q"></script>
-    <script src="/static/js/locator.js"></script>
-    <script src="/static/js/register.js"></script>
+    <script src="{% static 'js/locator.js' %}"></script>
+    <script src="{% static 'js/login-register.js' %}"></script>
+    <script src="{% static 'js/register.js' %}"></script>
     <style>
-        html, body {
-            height: 100%;
-        }
-
-        .container {
-            width: 30%;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .input-group-prepend {
-            width: 15%;
-        }
-
-        .input-group-text, button {
-            width: 100%;
-        }
-
-        div.input-group-text span {
-            display: block;
-            margin: 0 auto;
-        }
     </style>
 </head>
-<body>
+<body style="background-image: url('{% static 'images/background.jpg' %}'); background-size: 100% 100%">
 <div class="container">
-    <div class="input-group mb-3">
-        <div class="input-group-prepend">
-            <div class="input-group-text" id="label-username"><span>用户名</span></div>
+    <a href="/">
+        <img src="{% static 'images/logo.svg' %}" alt="logo" class="mb-3"
+             style="width: 100%; height: auto; background-size: 100% 100%">
+    </a>
+    <form class="needs-validation" novalidate>
+        {% csrf_token %}
+        <input type="hidden" name="loc_lng">
+        <input type="hidden" name="loc_lat">
+        <div class="input-group mb-2">
+            <div class="input-group-prepend">
+                <div class="input-group-text"><span>用户名</span></div>
+            </div>
+            <input name="username" type="text" class="form-control" aria-label="Username" pattern="\w{0,20}" required>
+            <div class="invalid-feedback">请输入用户名（不超过20个字符）</div>
         </div>
-        <input id="username" type="text" class="form-control" aria-label="username" aria-describedby="label-username">
-    </div>
-    <div class="input-group mb-3">
-        <div class="input-group-prepend">
-            <div class="input-group-text" id="label-password"><span>密码</span></div>
+        <div class="input-group mb-2">
+            <div class="input-group-prepend">
+                <div class="input-group-text"><span>密码</span></div>
+            </div>
+            <input name="password" type="password" class="form-control" aria-label="Password" required>
+            <div class="invalid-feedback">请输入密码</div>
         </div>
-        <input id="password" type="password" class="form-control" aria-label="password"
-               aria-describedby="label-password">
-    </div>
-    <div class="input-group mb-3">
-        <div class="input-group-prepend">
-            <div class="input-group-text" id="label-addr"><span>地址</span></div>
+        <div class="input-group mb-2">
+            <div class="input-group-prepend">
+                <div class="input-group-text"><span>确认密码</span></div>
+            </div>
+            <input id="password-confirm" type="password" class="form-control" aria-label="Password Confirm" required>
+            <div class="invalid-feedback">两次输入密码不一致</div>
         </div>
-        <input id="addr" type="text" class="form-control" aria-label="addr" aria-describedby="label-addr">
-        <div class="input-group-append">
-            <button class="btn btn-outline-secondary" id="locator-show" type="button">
-                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-geo-alt" fill="currentColor"
-                     xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd"
-                          d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path>
-                </svg>
-            </button>
+        <div class="input-group mb-2">
+            <div class="input-group-prepend">
+                <div class="input-group-text"><span>地址</span></div>
+            </div>
+            <input name="addr" type="text" class="form-control" aria-label="addr" placeholder="点击右侧按钮根据地址定位" required>
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" id="locator-show" type="button" data-toggle="tooltip"
+                        data-placement="bottom" title="根据地址定位">
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-geo-alt" fill="currentColor"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                              d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path>
+                    </svg>
+                </button>
+            </div>
+            <div class="invalid-feedback">请输入地址</div>
         </div>
-    </div>
-    <div class="alert alert-primary" role="alert" id="locator-addr" hidden></div>
-    <div class="input-group mb-3">
-        <div class="input-group-prepend">
-            <div class="input-group-text" id="label-phone"><span>电话号码</span></div>
+        <div class="alert alert-primary mb-2" role="alert" id="locator-addr" hidden></div>
+        <div class="input-group mb-2">
+            <div class="input-group-prepend">
+                <div class="input-group-text"><span>电话号码</span></div>
+            </div>
+            <input name="phone" type="text" class="form-control" aria-label="phone" pattern="\d{11}" required>
+            <div class="invalid-feedback">请输入11位电话号码</div>
         </div>
-        <input id="phone" type="text" class="form-control" aria-label="phone" aria-describedby="label-phone">
-    </div>
-    <div class="alert alert-danger" role="alert" id="err-msg" hidden></div>
-    <button type="button" class="btn btn-primary btn-lg" id="register">注册</button>
+    </form>
+    <div class="alert alert-danger mb-2" role="alert" id="err-msg" hidden></div>
+    <button type="button" class="btn btn-primary btn-lg mb-2" id="register">注册</button>
+    <p>已有帐号？<a href="/login">立即登录</a></p>
 </div>
 </body>
 </html>

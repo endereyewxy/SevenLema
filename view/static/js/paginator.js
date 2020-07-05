@@ -12,9 +12,9 @@ class Paginator {
             "        </li>";
         this._curr_page = 1;
         this._max_pages = 1;
+        this.limit = 5;
         this.container = container;
         this._create_html();
-
         this._create_html = this._create_html.bind(this);
         this._add_page = this._add_page.bind(this);
         this._add_dots = this._add_dots.bind(this);
@@ -55,9 +55,14 @@ class Paginator {
                 this._add_dots();
             }
         }
-        this.html += this.next;
+        let selector = "<select class=\"custom-select\" style=\"width: 7rem\">" +
+            "               <option " + (this.limit === 5 ? "selected=\"selected\"" : '') + "value=\"5\">5条/页</option>" +
+            "               <option " + (this.limit === 10 ? "selected=\"selected\"" : '') + "value=\"10\">10条/页</option>" +
+            "               <option " + (this.limit === 20 ? "selected=\"selected\"" : '') + "value=\"20\">20条/页</option>" +
+            "               <option " + (this.limit === 30 ? "selected=\"selected\"" : '') + "value=\"30\">30条/页</option>" +
+            "           </select>";
+        this.html += this.next + '&nbsp;' + selector;
         $(this.container).html(this.html);
-
         const object = this;
         $('.page-link').click(function () {
             let tag = $(this).attr('aria-label');
@@ -68,13 +73,17 @@ class Paginator {
                 }
             } else if (tag === 'next') {
                 if (object._curr_page < object._max_pages) {
-                    object._max_pages++;
+                    object._curr_page++;
                     object.change();
                 }
             } else {
                 object._curr_page = Number(tag);
                 object.change();
             }
+        });
+        $(this.container + ' select').change(function () {
+            object.limit = Number($(this).val());
+            object.change();
         });
     }
 

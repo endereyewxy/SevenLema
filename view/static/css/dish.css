@@ -1,0 +1,40 @@
+.sidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 100;
+    top: 0;
+    left: 0;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+.sidebar .close-btn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+    color: white;
+}
+
+.sidebar .row {
+    color: white;
+}
+
+#shop-card {
+    position: fixed;
+    left: 20px;
+    width: 15%;
+    top: 30%;
+}
+
+.modal {
+    overflow-y: auto;
+}
+
+.modal-open {
+    overflow: auto;
+}
