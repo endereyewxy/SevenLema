@@ -2,6 +2,8 @@ from hashlib import md5
 
 from django.db import models
 
+import random
+import string
 
 class User(models.Model):
     username = models.CharField(max_length=20)
@@ -19,3 +21,8 @@ class User(models.Model):
     def set_password(self, password):
         """Set the current password to the given one"""
         self.password = md5((password + ':' + self.salt).encode('utf-8')).hexdigest()[8:-8]
+
+    def set_salt(self): # Temporary method
+        """Get a random salt made of lower letters and digits, then set the current salt to this one"""
+        self.salt = ''.join(random.sample(string.ascii_lowercase + string.digits, 16))
+
