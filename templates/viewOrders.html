@@ -6,16 +6,8 @@
     <meta charset="UTF-8">
     <title>吃了么-我的订单</title>
     {% include 'includes.html' %}
-    <link href="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
-    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <script type="text/javascript"
             src="http://api.map.baidu.com/getscript?v=3.0&ak=tdfjfQq8B4ETmpg93UMWGWrL8yprpI5Q"></script>
-    <script src="/static/js/jquery.tmpl.js"></script>
-    <script src="/static/js/miscellaneous.js"></script>
-
-    <script src="{% static 'js/miscellaneous.js' %}"></script>
-    <script src="/static/js/paginator.js"></script>
     <script src="/static/js/viewOrders.js"></script>
 
     <style>
@@ -58,7 +50,7 @@
 
     <div class="row">
         <div class="col-12">
-                <!-- 模板填充区域 -->
+            <!-- 模板填充区域 -->
             <div id="orders-container" class="list-group list-group-flush mb-3"></div>
         </div>
     </div>
@@ -102,6 +94,7 @@
             </div>
         </div>
     </div>
+
 </script>
 
 </html>
