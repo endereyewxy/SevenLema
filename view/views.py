@@ -49,3 +49,12 @@ def dish(request, shop_id):
     except Shop.DoesNotExist:
         raise Http404('找不到商户')
     return render(request, 'dish.html', ctx)
+
+
+@require_GET
+def orders(request):
+    ctx = get_login_context(request)
+    if ctx['login']:
+        return render(request, 'viewOrders.html', ctx)
+    else:
+        raise Http404('找不到商户')
