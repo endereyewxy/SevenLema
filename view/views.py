@@ -59,3 +59,13 @@ def orders(request):
         return render(request, 'viewOrders.html', ctx)
     else:
         raise Http404('找不到商户')
+
+
+@require_GET
+def shop_info(request):
+    ctx = get_login_context(request)
+    if ctx['login']:
+        return render(request, 'shopInfo.html', ctx)
+    else:
+        raise Http404('找不到商户')
+

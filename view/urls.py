@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import shop, register, dish, login, root
+from .views import shop, register, dish, login, root, orders,shop_info
 
 urlpatterns = [
     path('', root),
@@ -9,4 +9,5 @@ urlpatterns = [
     path('index/',              shop),
     path('shop/<int:shop_id>/', dish),
     path('viewOrders/', orders),
+    path('shopInfo/', shop_info),
 ]
