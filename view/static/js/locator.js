@@ -101,7 +101,7 @@
         '       </div>' +
         '   </div>' +
         '</div>';
-    $('body').append(html_modal);
+    $('html').append(html_modal);
     $('#locator-modal').on('shown.bs.modal', async () => {
         await new Promise(r => setTimeout(r, 150));
         map.panTo(marker.getPosition());
