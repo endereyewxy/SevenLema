@@ -1,7 +1,7 @@
 function load_orders() {
     const data = {
-        page: 1,
-        limit: 100
+        "page": paginator.currPage,
+        "limit": paginator.limit
     };
     $.get('/order/info', data, (resp) => {
         paginator.maxPages = resp.page;
@@ -10,5 +10,7 @@ function load_orders() {
 }
 
 $(document).ready(function () {
+    paginator = new Paginator('.pagination');
+    paginator.change = load_orders();
     load_orders();
 });
