@@ -9,7 +9,7 @@
 }(this, function () {
     const popover = (container, content) => $(container).popover({
         html: true,
-        content: () => $($(content).html().replaceAll('-1', '')),
+        content: () => $($(content).html().replace(/-1/g, '')),
         placement: 'bottom',
         trigger: 'click',
     });
