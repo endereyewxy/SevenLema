@@ -133,7 +133,7 @@ def info(request):
     limit      = request.GET.get('limit')
     unfinished = request.GET.get('unfinished')
 
-    if not all([page, limit, unfinished]):
+    if None in [page, limit]:
         return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
     try:
         page       = int(page)
@@ -166,17 +166,16 @@ def info(request):
         if shop.user_id != user.id:
             return JsonResponse({'code': 103, 'msg': '权限不足'})
         qs = Order.objects.filter(shop_id=shop_id)
-        if unfinished:
-            qs = qs.filter(tm_finished=None)
-        qs, max_page = add_page_info(qs, page, limit)
-        data = []
-        for order in qs:
-            data.append(order_info(order))
-        return JsonResponse({'code': 0, 'msg': '', 'page': max_page, 'data': data})
-
-    # No useful input
     else:
-        return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
+        qs = Order.objects.filter(user=user)
+
+    if unfinished:
+        qs = qs.filter(tm_finished=None)
+    qs, max_page = add_page_info(qs, page, limit)
+    data = []
+    for order in qs:
+        data.append(order_info(order))
+    return JsonResponse({'code': 0, 'msg': '', 'page': max_page, 'data': data})
 
 
 @require_POST

@@ -111,8 +111,8 @@ $(document).ready(function () {
     $('#commit').click(commit_an_order);
     $('#dish-edit').click(change_dish_info);
     $('#dish-modal').on('show.bs.modal', (evt) => $('#dish-edit-id').val($(evt.relatedTarget).attr('id')));
-    paginator.change = load_dish;
-    locator.change = (lng, lat, addr) => $('#locator-addr').text(addr);
+    paginator.change(load_dish);
+    locator.change(() => $('#locator-addr').text(locator.address()));
     default_lng !== undefined ? locator.create(default_lng, default_lat) : locator.create();
     $('#header-search-button,#price,#sales').click(load_dish);
     load_dish();

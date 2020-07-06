@@ -5,6 +5,7 @@ from django.views.decorators.http import require_GET
 
 from cmdb.models.shop import Shop
 from cmdb.models.user import User
+from cmdb.models.order import Order
 
 
 @require_GET
@@ -49,3 +50,8 @@ def dish(request, shop_id):
     except Shop.DoesNotExist:
         raise Http404('找不到商户')
     return render(request, 'dish.html', ctx)
+
+
+@require_GET
+def viewOrders(request):
+    return render(request,'viewOrders.html',get_login_context(request))

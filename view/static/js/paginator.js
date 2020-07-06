@@ -24,7 +24,7 @@
     const add_page = (html, l, r) => {
         for (let i = l; i <= r; i++) {
             html +=
-                '<li class="page-item"' + (i === cur_page ? ' active' : '') + '>' +
+                '<li class="page-item' + (i === cur_page ? ' active' : '') + '">' +
                 '   <a class="page-link" href="#" aria-label="' + i + '">' + i + '</a>' +
                 '</li>';
         }
@@ -51,12 +51,25 @@
         $('.page-link').click(function () {
             const tag = $(this).attr('aria-label');
             if (tag === 'prev') {
-                cur_page !== 1 && on_change(--cur_page);
+                if (cur_page === 1) {
+                    return;
+                }
+                cur_page--;
             } else if (tag === 'next') {
-                cur_page !== max_page && on_change(++cur_page);
+                if (cur_page === max_page) {
+                    return;
+                }
+                cur_page++;
             } else {
                 cur_page = Number(tag);
             }
+            on_change();
+            update_html();
+        });
+        $('.pagination select').change(function () {
+            limit_ = Number($(this).val());
+            on_change();
+            update_html();
         });
     };
 
