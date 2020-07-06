@@ -13,6 +13,8 @@ function load_orders() {
 $(document).ready(function () {
     paginator.change(load_orders);
     load_orders();
+    $('#logout').click(
+        () => miscellaneous.web.post('/user/logout/', {}, () => window.location.href = '/'));
 });
 
 // $(document).ready(() => {

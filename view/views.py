@@ -58,7 +58,7 @@ def orders(request):
     if ctx['login']:
         return render(request, 'viewOrders.html', ctx)
     else:
-        raise Http404('找不到商户')
+        raise Http404('尚未登录')
 
 
 @require_GET

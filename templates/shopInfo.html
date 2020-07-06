@@ -5,22 +5,20 @@
 <head>
     <meta charset="UTF-8">
     <title>吃了么-店铺管理</title>
-    <link href="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+    {% include 'includes.html' %}
     <link href="{% static 'css/header.css' %}" rel="stylesheet">
-    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
-    <script src="{% static 'js/popper.min.js' %}"></script>
-    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
-    <script type="text/javascript"
-            src="http://api.map.baidu.com/getscript?v=3.0&ak=tdfjfQq8B4ETmpg93UMWGWrL8yprpI5Q"></script>
-    <script src="{% static 'js/jquery.tmpl.js' %}"></script>
-    <script src="{% static 'js/paginator.js' %}"></script>
-    <script src="{% static 'js/locator.js' %}"></script>
-    <script src="{% static 'js/shop.js' %}"></script>
+    <script src="{% static 'js/miscellaneous.js' %}"></script>
+    <script src="{% static 'js/shopInfo.js' %}"></script>
     <style>
         html,
         body,
         .container {
             height: 100%;
+        }
+
+        body {
+            background-size: 100% 1000%;
+            background-repeat: no-repeat;
         }
 
         .row {
@@ -43,37 +41,25 @@
 </head>
 
 <body>
-<div class="container d-flex flex-column justify-content-between">
-    <div class="row">
+<div class="container d-flex flex-column">
+    <div class="row header mb-2">
         <a class="col-4" style="background-image: url('{% static 'images/logo.svg' %}')" href="/"></a>
         <div class="col-8">
             <div class="row">
                 <div class="col-6">
                 </div>
                 <div class="col-6">
-                    {% if login %}
-                        <a class="btn btn-secondary" id="user-info">{{ username }}</a>
-                        <script type="text/javascript">
-                            default_lng = {{ loc_lng }};
-                            default_lat = {{ loc_lat }};
-                        </script>
+                    <div class="btn-group" role="group">
                         <a type="button" class="btn btn-secondary" id="logout">登出</a>
-                    {% else %}
-                        <a type="button" class="btn btn-secondary" href="/register">注册</a>
-                        <script type="text/javascript">
-                            default_lng = undefined;
-                        </script>
-                        <a type="button" class="btn btn-secondary" href="/login">登录</a>
-                    {% endif %}
+                    </div>
                 </div>
             </div>
-            <div class="row" style="margin-bottom: 3px">
+            <div class="row">
                 <div class="col-6">
                 </div>
                 <div class="col-6">
-                    <button type="button" class="btn btn-outline-info" style="float: right;" data-toggle="modal"
-                            data-target="#createShopModal">创建商铺
-                    </button>
+                    <a type="button" class="btn btn-secondary" id="create-shop" style="width: 100%"
+                       data-toggle="modal" data-target="#createShopModal">创建商铺</a>
                 </div>
             </div>
         </div>
@@ -81,17 +67,18 @@
 
 
     <div class="row" style="margin-top: 10px">
-        <div class="col-12" id="shopInfo-container">
+        <div class="col-12" id="shop-info-container">
         </div>
     </div>
 
     <div class="flex-grow-1" id="info-container"></div>
     <ul class="pagination justify-content-center"></ul>
+
 </div>
 
 
 <!-- 模板容器位置 -->
-<script id="shopInfo-template" type="text/x-jquery-tmpl">
+<script id="shop-info-template" type="text/x-jquery-tmpl">
     <div class="accordion" id="accordionExample" style="margin-top: 10px">
         <div class="card">
             <div class="card-header" id="headingOne">
@@ -141,14 +128,12 @@
                                     </div>
                                 </div>
 
-                                <div class="tab-pane fade" id="list-profile" role="tabpanel"
-                                     aria-labelledby="list-profile-list">
-                                    <div class="card" id="viewDishes-container">
-                                    </div>
+                                <div class="tab-pane fade" role="tabpanel"
+                                     aria-labelledby="list-profile-list" id="dishes-container">
                                 </div>
 
                                 <div class="tab-pane fade" id="list-messages" role="tabpanel"
-                                     aria-labelledby="list-messages-list" id="viewOrders-container">
+                                     aria-labelledby="list-messages-list" id="orders-container">
                                 </div>
                             </div>
                         </div>
@@ -157,6 +142,14 @@
             </div>
         </div>
     </div>
+
+
+
+
+
+
+
+
 
 
 </script>
@@ -192,13 +185,15 @@
                         <input type="text" class="form-control" id="recipient-name" name="phone">
                     </div>
                     <div class="form-group">
-                        <input type="checkbox" class="custom-control-input" id="create-shop-serving" aria-label="Serving">
+                        <input type="checkbox" class="custom-control-input" id="create-shop-serving"
+                               aria-label="Serving">
                         <label for="create-shop-serving" class="custom-control-label">是否营业:</label>
                     </div>
                     <div class="form-group">
                         <label for="recipient-name" class="col-form-label">商户图片:</label>
-                        <input type="file" class="form-control" id="recipient-name" name="image" data-show-upload="false"
-                        data-show-preview="false" data-allowed-file-extensions='["jpg", "png", "svg"]'>
+                        <input type="file" class="form-control" id="recipient-name" name="image"
+                               data-show-upload="false"
+                               data-show-preview="false" data-allowed-file-extensions='["jpg", "png", "svg"]'>
                     </div>
                 </form>
             </div>
@@ -246,8 +241,9 @@
                     </div>
                     <div class="form-group">
                         <label for="recipient-name" class="col-form-label">商户图片:</label>
-                        <input type="file" class="form-control" id="recipient-name" name="image" data-show-upload="false"
-                        data-show-preview="false" data-allowed-file-extensions='["jpg", "png", "svg"]'>
+                        <input type="file" class="form-control" id="recipient-name" name="image"
+                               data-show-upload="false"
+                               data-show-preview="false" data-allowed-file-extensions='["jpg", "png", "svg"]'>
                     </div>
                 </form>
             </div>
@@ -343,7 +339,7 @@
 </div>
 
 
-<script id="viewDishes-template" type="text/x-jquery-tmpl">
+<script id="dishes-template" type="text/x-jquery-tmpl">
     <div class="card" style="margin-bottom: 10px; margin-top: 10px;">
         <div class="card-body" id="shopCardId">
             <p class="card-text"><b>菜品名称:</b> ${ usename }.</p>
@@ -361,7 +357,7 @@
 
 </script>
 
-<script id="viewOrders-template" type="text/x-jquery-tmpl">
+<script id="orders-template" type="text/x-jquery-tmpl">
     <div class="card" style="margin-bottom: 10px; margin-top: 10px;">
         <div class="card-header">
             <h5>有待处理订单</h5>
@@ -380,6 +376,8 @@
             </button>
         </div>
     </div>
+
+
 
 
 
