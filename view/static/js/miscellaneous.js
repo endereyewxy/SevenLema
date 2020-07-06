@@ -24,7 +24,7 @@
         sr.length ? target.removeAttr('disabled') : target.attr('disabled', 'disabled');
     };
 
-    const load_template = (container, template, data) => {
+    const load_template = (container, template, data, keep = false) => {
         if (!data.length) {
             return;
         }
@@ -32,7 +32,7 @@
             template.tmpl(data[i]).addClass('animate__animated animate__fadeInUp').appendTo(container);
             i < data.length - 1 && new Promise((r) => setTimeout(r, 100)).then(() => rec(i + 1));
         };
-        container.html('');
+        !keep && container.html('');
         rec(0);
     };
 
