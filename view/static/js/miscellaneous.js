@@ -7,13 +7,22 @@
         root.miscellaneous = factory();
     }
 }(this, function () {
+    const popover = (container, content) => $(container).popover({
+        html: true,
+        content: () => $($(content).html().replaceAll('-1', '')),
+        placement: 'bottom',
+        trigger: 'click',
+    });
+
     const web_get = (url, data, callback) => $.get(url, data, (resp) => resp.code ? alert(resp.msg) : callback(resp));
+
     const web_post = (url, data, callback) => {
         data['csrfmiddlewaretoken'] = $('[name=csrfmiddlewaretoken]').val();
         $.post(url, data, (resp) => resp.code ? alert(resp.msg) : callback(resp));
     };
 
     return {
+        popover: popover,
         web: {
             get: web_get,
             post: web_post

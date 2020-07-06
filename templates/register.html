@@ -2,21 +2,16 @@
 {% load static %}
 <html lang="zh">
 <head>
-    <meta charset="UTF-8">
     <title>吃了么 - 注册</title>
-    <link href="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{% static 'css/login-register.css' %}" rel="stylesheet">
-    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
-    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
+    {% include 'includes.html' %}
+    <link href="{% static 'css/login.register.css' %}" rel="stylesheet">
     <script type="text/javascript"
             src="http://api.map.baidu.com/getscript?v=3.0&ak=tdfjfQq8B4ETmpg93UMWGWrL8yprpI5Q"></script>
     <script src="{% static 'js/locator.js' %}"></script>
-    <script src="{% static 'js/login-register.js' %}"></script>
+    <script src="{% static 'js/login.register.js' %}"></script>
     <script src="{% static 'js/register.js' %}"></script>
-    <style>
-    </style>
 </head>
-<body style="background-image: url('{% static 'images/background.jpg' %}'); background-size: 100% 100%">
+<body>
 <div class="container">
     <a href="/">
         <img src="{% static 'images/logo.svg' %}" alt="logo" class="mb-3"
