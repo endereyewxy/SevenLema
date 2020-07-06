@@ -15,7 +15,7 @@ $(document).ready(() => {
     paginator = new Paginator('.pagination');
     locator = new Locator();
     $('#header-config-button').popover({
-        content: () => $($('#serving-wrapper').html().replace('hidden', '').replace('-1', '')),
+        content: () => $($('#serving-wrapper').html().replaceAll('-1', '')),
         placement: 'bottom',
         trigger: 'click',
         html: true

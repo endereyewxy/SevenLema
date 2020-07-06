@@ -2,8 +2,8 @@ let card_list = [], serving = false;
 
 function change_dish_info() {
     let data = new FormData(document.getElementById('dish-form'));
-    for (let key in ['name', 'price', 'desc']) {
-        !data.get(key).length && data.delete(key);
+    for (let i = 0; i < 3; i++) {
+        !data.get(['name', 'price', 'desc'][i]).length && data.delete(['name', 'price', 'desc'][i]);
     }
     data.append('serving', $('#dish-serving:checked').length !== 0 ? 'true' : 'false');
     $.ajax({
@@ -12,14 +12,7 @@ function change_dish_info() {
         processData: false,
         contentType: false,
         type: 'post',
-        success: (resp) => {
-            if (data.code === 0) {
-                $('#dish-modal').modal('hide');
-                load_dish();
-            } else {
-                alert(data.msg);
-            }
-        }
+        success: (resp) => resp.code ? alert(resp.msg) : ($('#dish-modal').modal('hide') & load_dish())
     });
 }
 

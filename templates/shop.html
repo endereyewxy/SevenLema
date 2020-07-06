@@ -58,9 +58,10 @@
 <script src="{% static 'js/shop.js' %}"></script>
 </body>
 <div id="serving-wrapper" hidden>
-    <label>
-        <input type="checkbox" id="serving-1" onchange="serving = !serving;load_shop()" formtarget="">只显示营业中的商家
-    </label>
+    <div class="custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input" id="serving-1" onchange="serving = !serving;load_shop()">
+        <label class="custom-control-label" for="serving-1">只显示营业中的商家</label>
+    </div>
 </div>
 {% csrf_token %}
 </html>
