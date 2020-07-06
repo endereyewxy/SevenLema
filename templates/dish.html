@@ -2,24 +2,16 @@
 {% load static %}
 <html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <title>吃了么 - {{ shop_obj.name }}</title>
-    <link href="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
-    <link href="{% static 'css/header.css' %}" rel="stylesheet">
+    <title>恰了吗 - {{ shop_obj.name }}</title>
+    {% include 'includes.html' %}
     <link href="{% static 'css/dish.css' %}" rel="stylesheet">
-    <link href="{% static 'css/fileinput.css' %}" rel="stylesheet">
-    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
-    <script src="{% static 'js/popper.min.js' %}"></script>
-    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
-    <script type="text/javascript"
-            src="http://api.map.baidu.com/getscript?v=3.0&ak=tdfjfQq8B4ETmpg93UMWGWrL8yprpI5Q"></script>
-    <script src="{% static 'js/fileinput.js' %}"></script>
+    <script src="{% static 'js/dish.js' %}"></script>
 </head>
 <body style="background-image: url('{% static 'images/background.jpg' %}');">
 {% if not is_admin %}
     <div id="sidebar" class="sidebar d-flex flex-column">
-        <div class="row" style="width: 530px;">
-            <div class="input-group mb-3">
+        <div class="row">
+            <div class="input-group mb-1">
                 <input type="text" class="form-control" id="total-price" value="总价：￥0" aria-label="TotalPrice" disabled>
                 <div class="input-group-append">
                     <button id="submit-order" type="button" class="btn btn-primary" data-toggle="modal"
@@ -29,14 +21,14 @@
                 </div>
             </div>
             {% if not login %}
-                <div class="alert alert-danger" role="alert" style="width: 530px">请登录后下单</div>
+                <div class="alert alert-danger" role="alert">请登录后下单</div>
             {% elif not shop_obj.serving %}
-                <div class="alert alert-danger" role="alert" style="width: 530px">商家休息中</div>
+                <div class="alert alert-danger" role="alert">商家休息中</div>
             {% endif %}
             <a href="#" class="close-btn text-decoration-none"
                onclick="document.getElementById('sidebar').style.width = '0'">×</a>
         </div>
-        <div class="flex-grow-1" style="width: 550px" id="card-list-container"></div>
+        <div class="flex-grow-1" id="card-list-container"></div>
     </div>
 {% endif %}
 <div class="card" id="shop-card">
@@ -49,22 +41,22 @@
         {% if not shop_obj.serving %}
             <p class="card-text text-right" style="font-weight: bold; color: red">商家休息中</p>
         {% endif %}
-        {% if not is_admin %}
-            <button class="btn btn-danger"
-                    onclick="document.getElementById('sidebar').style.width = '550px'">
-                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-cart4" fill="currentColor"
-                     xmlns="http://www.w3.org/2000/svg">
-                    <path fill-rule="evenodd"
-                          d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l.5 2H5V5H3.14zM6 5v2h2V5H6zm3 0v2h2V5H9zm3 0v2h1.36l.5-2H12zm1.11 3H12v2h.61l.5-2zM11 8H9v2h2V8zM8 8H6v2h2V8zM5 8H3.89l.5 2H5V8zm0 5a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"></path>
-                </svg>
-                购物车
-                <span class="badge badge-pill badge-warning"></span>
-            </button>
-        {% else %}
-            <button class="btn btn-danger"
-                    onclick="document.getElementById('sidebar').style.width = '550px'" disabled>欢迎来到你的店面
-            </button>
-        {% endif %}
+        <div style="text-align: right">
+            {% if not is_admin %}
+                <button class="btn btn-danger"
+                        onclick="document.getElementById('sidebar').style.width = '550px'">
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-cart4" fill="currentColor"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                              d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5zM3.14 5l.5 2H5V5H3.14zM6 5v2h2V5H6zm3 0v2h2V5H9zm3 0v2h1.36l.5-2H12zm1.11 3H12v2h.61l.5-2zM11 8H9v2h2V8zM8 8H6v2h2V8zM5 8H3.89l.5 2H5V8zm0 5a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0zm9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0z"></path>
+                    </svg>
+                    购物车
+                    <span class="badge badge-pill badge-warning"></span>
+                </button>
+            {% else %}
+                <button class="btn btn-danger" disabled>欢迎来到你的店面</button>
+            {% endif %}
+        </div>
     </div>
 </div>
 <div class="container d-flex flex-column">
@@ -103,11 +95,12 @@
             </div>
         </div>
     </div>
+
+
 </script>
 <script type="text/javascript">
     shop_id = {{ shop_obj.id }};
 </script>
-<script src="{% static 'js/dish.js' %}"></script>
 </body>
 {% if not is_admin %}
     <script id="card-list-template" type="text/x-jquery-tmpl">
@@ -124,6 +117,8 @@
             </div>
         </div>
     </div>
+
+
     </script>
     <div class="modal fade" id="confirm" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
@@ -156,7 +151,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="dish-form">
+                    <form id="dish-form" enctype="multipart/form-data">
                         {% csrf_token %}
                         <input type="hidden" name="dish_id" id="dish-edit-id">
                         <div class="form-group">
@@ -164,7 +159,8 @@
                                 <div class="input-group-prepend">
                                     <div class="input-group-text"><span>菜名</span></div>
                                 </div>
-                                <input name="name" type="text" class="form-control" aria-label="Name">
+                                <input name="name" type="text" class="form-control" placeholder="留空表示不修改"
+                                       autocomplete="off" aria-label="Name">
                             </div>
                         </div>
                         <div class="form-group">
@@ -172,7 +168,8 @@
                                 <div class="input-group-prepend">
                                     <div class="input-group-text"><span>价格</span></div>
                                 </div>
-                                <input name="price" type="number" class="form-control" aria-label="Price">
+                                <input name="price" type="number" class="form-control" placeholder="留空表示不修改"
+                                       autocomplete="off" aria-label="Price">
                             </div>
                         </div>
                         <div class="form-group">
@@ -180,14 +177,13 @@
                                 <div class="input-group-prepend">
                                     <div class="input-group-text"><span>描述</span></div>
                                 </div>
-                                <textarea name="desc" class="form-control" aria-label="Description"></textarea>
+                                <textarea name="desc" class="form-control" placeholder="留空表示不修改" autocomplete="off"
+                                          aria-label="Description"></textarea>
                             </div>
                         </div>
                         <div class="form-group">
-                            <form enctype="multipart/form-data">
-                                <input name="image" class="file" type="file" data-show-upload="false"
-                                       data-show-preview="false" data-allowed-file-extensions='["jpg", "png", "svg"]'>
-                            </form>
+                            <input name="image" class="file" type="file" data-show-upload="false"
+                                   data-show-preview="false" data-allowed-file-extensions='["jpg", "png", "svg"]'>
                         </div>
                         <div class="form-group">
                             <div class="custom-control custom-checkbox">
@@ -207,8 +203,10 @@
     </div>
 {% endif %}
 <div id="serving-wrapper" hidden>
-    <input type="checkbox" id="serving-1" onchange="serving = $('#serving:checked').length === 1;load_dish();">
-    <label for="serving">只显示有货的菜品</label>
+    <div class="custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input" id="serving-1" onchange="serving = !serving;load_dish()">
+        <label class="custom-control-label" for="serving-1">只显示有货的菜品</label>
+    </div>
 </div>
 <div id="user-wrapper" hidden>
     <div class="card" style="width: 250px;">

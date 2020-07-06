@@ -1,20 +1,28 @@
 {% load static %}
 <link href="{% static 'css/header.css' %}" rel="stylesheet">
-<script src="{% static 'js/jquery.tmpl.js' %}"></script>
-<script src="{% static 'js/paginator.js' %}"></script>
+<script type="text/javascript"
+        src="http://api.map.baidu.com/getscript?v=3.0&ak=tdfjfQq8B4ETmpg93UMWGWrL8yprpI5Q"></script>
 <script src="{% static 'js/locator.js' %}"></script>
+<script src="{% static 'js/miscellaneous.js' %}"></script>
+<script src="{% static 'js/paginator.js' %}"></script>
 <script src="{% static 'js/header.js' %}"></script>
 <span>&nbsp;</span>
-<button class="btn btn-danger" onclick="moveToTop()" id="btn-top">返回顶部</button>
+<button class="btn btn-lg btn-dark" onclick="document.body.scrollTop = 0;document.documentElement.scrollTop = 0"
+        id="btn-top" data-toggle="tooltip" title="返回顶部">
+    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-up" fill="currentColor"
+         xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5z"></path>
+        <path fill-rule="evenodd"
+              d="M7.646 2.646a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8 3.707 5.354 6.354a.5.5 0 1 1-.708-.708l3-3z"></path>
+    </svg>
+</button>
 <div class="row header mb-2">
     <a class="col-4" style="background-image: url('{% static 'images/logo.svg' %}')" href="/"></a>
     <div class="col-8">
         <div class="row">
             <div class="col-6">
                 <button type="button" class="btn btn-outline-dark" id="locator-addr" data-toggle="tooltip"
-                        data-placement="bottom" title="点击在地图中查看" style="width: 100%">
-                    &nbsp;
-                </button>
+                        data-placement="bottom" title="在地图中查看" style="width: 100%">&nbsp;</button>
             </div>
             <div class="col-6">
                 <div class="btn-group" role="group">
@@ -42,7 +50,7 @@
                            placeholder="点击右侧按钮根据地址定位" value="{{ addr }}">
                     <div class="input-group-append">
                         <button class="btn btn-outline-secondary" id="locator-show" type="button" data-toggle="tooltip"
-                                data-placement="bottom" title="点击根据地址定位">
+                                data-placement="bottom" title="根据地址定位">
                             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-geo-alt"
                                  fill="currentColor"
                                  xmlns="http://www.w3.org/2000/svg">
@@ -89,7 +97,7 @@
             <li class="list-group-item">地址：{{ addr }}</li>
         </ul>
         <div class="card-body">
-            <a href="#" class="card-link">查看订单</a>
+            <a href="/viewOrders" class="card-link">查看订单</a>
             <a href="#" class="card-link">我的店铺</a>
         </div>
     </div>

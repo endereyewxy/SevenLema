@@ -2,30 +2,22 @@
 {% load static %}
 <html lang="zh">
 <head>
-    <meta charset="UTF-8">
     <title>恰了吗</title>
-    <link href="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
-    <script src="{% static 'js/popper.min.js' %}"></script>
-    <script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.min.js"></script>
-    <script type="text/javascript"
-            src="http://api.map.baidu.com/getscript?v=3.0&ak=tdfjfQq8B4ETmpg93UMWGWrL8yprpI5Q"></script>
-    <script src="{% static 'js/jquery.tmpl.js' %}"></script>
-    <script src="{% static 'js/paginator.js' %}"></script>
-    <script src="{% static 'js/locator.js' %}"></script>
+    {% include 'includes.html' %}
+    <script src="{% static 'js/shop.js' %}"></script>
 </head>
-<body style="background-image: url('{% static 'images/background.jpg' %}');">
+<body>
 <div class="container d-flex flex-column">
     {% include 'header.html' %}
     <div class="btn-group btn-group-toggle" data-toggle="buttons">
         <label class="btn btn-outline-primary">
-            <input type="radio" name="order" id="dist"> 距离最近
+            <input autocomplete="off" type="radio" name="order" id="dist"> 距离最近
+        </label>
+        <label class="btn btn-outline-primary active">
+            <input autocomplete="off" type="radio" name="order" id="avg_price" checked> 消费最低
         </label>
         <label class="btn btn-outline-primary">
-            <input type="radio" name="order" id="avg_price" checked> 消费最低
-        </label>
-        <label class="btn btn-outline-primary">
-            <input type="radio" name="order" id="sales"> 销量最高
+            <input autocomplete="off" type="radio" name="order" id="sales"> 销量最高
         </label>
     </div>
     <div id="data-container" class="list-group list-group-flush mb-3"></div>
@@ -55,12 +47,12 @@
         </a>
     </div>
 </script>
-<script src="{% static 'js/shop.js' %}"></script>
 </body>
 <div id="serving-wrapper" hidden>
-    <label>
-        <input type="checkbox" id="serving-1" onchange="serving = !serving;load_shop()" formtarget="">只显示营业中的商家
-    </label>
+    <div class="custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input" id="serving-1" onchange="serving = !serving;load_shop()">
+        <label class="custom-control-label" for="serving-1">只显示营业中的商家</label>
+    </div>
 </div>
 {% csrf_token %}
 </html>

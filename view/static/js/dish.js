@@ -2,8 +2,8 @@ let card_list = [], serving = false;
 
 function change_dish_info() {
     let data = new FormData(document.getElementById('dish-form'));
-    for (let key in ['name', 'price', 'desc']) {
-        !data.get(key).length && data.delete(key);
+    for (let i = 0; i < 3; i++) {
+        !data.get(['name', 'price', 'desc'][i]).length && data.delete(['name', 'price', 'desc'][i]);
     }
     data.append('serving', $('#dish-serving:checked').length !== 0 ? 'true' : 'false');
     $.ajax({
@@ -12,14 +12,7 @@ function change_dish_info() {
         processData: false,
         contentType: false,
         type: 'post',
-        success: (resp) => {
-            if (data.code === 0) {
-                $('#dish-modal').modal('hide');
-                load_dish();
-            } else {
-                alert(data.msg);
-            }
-        }
+        success: (resp) => resp.code ? alert(resp.msg) : ($('#dish-modal').modal('hide') & load_dish())
     });
 }
 
@@ -30,16 +23,15 @@ function commit_an_order() {
         dish_amount [i] = card_list[i].amount;
     }
     const data = {
-        csrfmiddlewaretoken: $('[name=csrfmiddlewaretoken]').val(),
         shop_id: shop_id,
         dish_id: dish_id_list,
         amount: dish_amount,
         addr: $('#addr').val(),
-        loc_lng: locator.lng,
-        loc_lat: locator.lat,
+        loc_lng: locator.lng(),
+        loc_lat: locator.lat(),
         remarks: $('#remarks').val()
     };
-    $.post('/order/new/', data, (resp) => resp.code ? alert(resp.msg) : window.location.href = '/');
+    miscellaneous.web.post('/order/new/', data, (resp) => window.location.href = '/');
 }
 
 function amount_change(dish_id) {
@@ -100,19 +92,17 @@ function calc_total_price() {
     $('#total-price').val('总价：￥' + sum.toFixed(2));
 }
 
-const get_order = () => $('.btn-group input:checked').attr('id');
-
 function load_dish() {
     const data = {
         shop_id: shop_id,
         name: $('#header-search').val(),
         order: get_order(),
-        page: paginator.currPage,
-        limit: paginator.limit,
+        page: paginator.currentPage(),
+        limit: paginator.limit(),
         serving: serving
     };
-    $.get('/search/dish', data, (resp) => {
-        paginator.maxPages = resp.page;
+    miscellaneous.web.get('/search/dish/', data, (resp) => {
+        paginator.maximumPage(resp.page);
         $('#data-container').html($('#data-template').tmpl(resp.data));
     });
 }
@@ -121,9 +111,9 @@ $(document).ready(function () {
     $('#commit').click(commit_an_order);
     $('#dish-edit').click(change_dish_info);
     $('#dish-modal').on('show.bs.modal', (evt) => $('#dish-edit-id').val($(evt.relatedTarget).attr('id')));
-    paginator.change = load_dish;
-    locator.change = (lng, lat, addr) => $('#locator-addr').text(addr);
-    default_lng !== undefined ? locator.create(default_lng, default_lat) : locator.create(106.30557, 29.59899, true);
+    paginator.change(load_dish);
+    locator.change(() => $('#locator-addr').text(locator.address()));
+    default_lng !== undefined ? locator.create(default_lng, default_lat) : locator.create();
     $('#header-search-button,#price,#sales').click(load_dish);
     load_dish();
 });
