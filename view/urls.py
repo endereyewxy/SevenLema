@@ -8,4 +8,5 @@ urlpatterns = [
     path('login/',              login),
     path('index/',              shop),
     path('shop/<int:shop_id>/', dish),
+    path('viewOrders/', orders),
 ]
