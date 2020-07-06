@@ -14,15 +14,35 @@
         trigger: 'click',
     });
 
-    const web_get = (url, data, callback) => $.get(url, data, (resp) => resp.code ? alert(resp.msg) : callback(resp));
+    const html_loading = '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>';
 
-    const web_post = (url, data, callback) => {
+    const loading_button = (selector) => {
+        let target = $(selector), sr = target.children('.sr-only');
+        target.html(sr.length
+            ? sr.html()
+            : html_loading + '<span class="sr-only">' + target.html() + '</span>');
+        sr.length ? target.removeAttr('disabled') : target.attr('disabled', 'disabled');
+    };
+
+    const web_callback = (done, failed) => (resp) => {
+        if (resp.code) {
+            alert(resp.msg);
+            failed && failed();
+        } else {
+            done && done();
+        }
+    };
+
+    const web_get = (url, data, done, failed) => $.get(url, data, web_callback(done, failed));
+
+    const web_post = (url, data, done, failed) => {
         data['csrfmiddlewaretoken'] = $('[name=csrfmiddlewaretoken]').val();
-        $.post(url, data, (resp) => resp.code ? alert(resp.msg) : callback(resp));
+        $.post(url, data, web_callback(done, failed));
     };
 
     return {
         popover: popover,
+        loadingButton: loading_button,
         web: {
             get: web_get,
             post: web_post
