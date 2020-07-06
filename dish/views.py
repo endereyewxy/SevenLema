@@ -55,6 +55,8 @@ def edit(request):
             return JsonResponse({'code': 105, 'msg': '图片体积过大'})
         # Generate unique name
         ext = image.name.split('.')[-1]
+        if ext not in ['png', 'jpg', 'svg']:
+            return JsonResponse({'code': 105, 'msg': '图片类型不支持'})
         tok = md5(str(uuid4()).encode('utf-8')).hexdigest()[8:-12]
         with open(os.path.join(settings.STATIC_ROOT, tok + '.' + ext), 'wb') as f:
             for chunk in image.chunks():
