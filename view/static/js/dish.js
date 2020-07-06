@@ -23,16 +23,15 @@ function commit_an_order() {
         dish_amount [i] = card_list[i].amount;
     }
     const data = {
-        csrfmiddlewaretoken: $('[name=csrfmiddlewaretoken]').val(),
         shop_id: shop_id,
         dish_id: dish_id_list,
         amount: dish_amount,
         addr: $('#addr').val(),
-        loc_lng: locator.lng,
-        loc_lat: locator.lat,
+        loc_lng: locator.lng(),
+        loc_lat: locator.lat(),
         remarks: $('#remarks').val()
     };
-    $.post('/order/new/', data, (resp) => resp.code ? alert(resp.msg) : window.location.href = '/');
+    miscellaneous.web.post('/order/new/', data, (resp) => window.location.href = '/');
 }
 
 function amount_change(dish_id) {
@@ -93,19 +92,17 @@ function calc_total_price() {
     $('#total-price').val('总价：￥' + sum.toFixed(2));
 }
 
-const get_order = () => $('.btn-group input:checked').attr('id');
-
 function load_dish() {
     const data = {
         shop_id: shop_id,
         name: $('#header-search').val(),
         order: get_order(),
-        page: paginator.currPage,
-        limit: paginator.limit,
+        page: paginator.currentPage(),
+        limit: paginator.limit(),
         serving: serving
     };
-    $.get('/search/dish', data, (resp) => {
-        paginator.maxPages = resp.page;
+    miscellaneous.web.get('/search/dish/', data, (resp) => {
+        paginator.maximumPage(resp.page);
         $('#data-container').html($('#data-template').tmpl(resp.data));
     });
 }
@@ -116,7 +113,7 @@ $(document).ready(function () {
     $('#dish-modal').on('show.bs.modal', (evt) => $('#dish-edit-id').val($(evt.relatedTarget).attr('id')));
     paginator.change = load_dish;
     locator.change = (lng, lat, addr) => $('#locator-addr').text(addr);
-    default_lng !== undefined ? locator.create(default_lng, default_lat) : locator.create(106.30557, 29.59899, true);
+    default_lng !== undefined ? locator.create(default_lng, default_lat) : locator.create();
     $('#header-search-button,#price,#sales').click(load_dish);
     load_dish();
 });

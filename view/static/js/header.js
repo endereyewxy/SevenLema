@@ -1,4 +1,4 @@
-let paginator, locator;
+const get_order = () => $('.btn-group input:checked').attr('id');
 
 $(document).ready(() => {
     $('#user-info').popover({
@@ -7,37 +7,18 @@ $(document).ready(() => {
         trigger: 'click',
         html: true
     });
-    $('#logout').click(() =>
-        $.post('/user/logout/', {csrfmiddlewaretoken: $('[name=csrfmiddlewaretoken]').val()},
-            (resp) => resp.code ? alert(resp.msg) : window.location.href = '/'));
-    $('.btn-group input').parent().removeClass('active');
-    $('.btn-group input:checked').parent().addClass('active');
-    paginator = new Paginator('.pagination');
-    locator = new Locator();
     $('#header-config-button').popover({
         content: () => $($('#serving-wrapper').html().replaceAll('-1', '')),
         placement: 'bottom',
         trigger: 'click',
         html: true
     });
-    $('#locator-show').click(() => locator.show($('#addr').val()));
-    $('#locator-addr').click(locator.show);
+    $('#logout').click(
+        () => miscellaneous.web.post('/user/logout/', {}, () => window.location.href = '/'));
+    $('#locator-show').click(() => locator.render($('#addr').val()));
+    $('#locator-addr').click(locator.render);
 });
 
 
-window.onscroll = function () {
-    scrollFunction()
-};
-
-function scrollFunction() {
-    if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
-        document.getElementById("btn-top").style.display = "block";
-    } else {
-        document.getElementById("btn-top").style.display = "none";
-    }
-}
-
-function moveToTop() {
-    document.body.scrollTop = 0;
-    document.documentElement.scrollTop = 0;
-}
+window.onscroll = () => document.getElementById("btn-top").style.display =
+    (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) ? 'block' : 'none';
