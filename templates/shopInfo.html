@@ -1,5 +1,7 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>吃了么-店铺管理</title>
@@ -39,11 +41,12 @@
         }
     </style>
 </head>
+
 <body>
 <div class="container d-flex flex-column justify-content-between">
     <div class="row">
         <a class="col-4"
-           style="background-image: url('/static/images/0123456789abc.png'); background-size: 100% 100%"
+           style="background-image: url('../view/static/images/logo.png'); background-size: 100% 100%"
            href="/index">
         </a>
         <div class="col-8">
@@ -62,23 +65,7 @@
                 <div class="col-6">
                 </div>
                 <div class="col-6">
-                    <div class="input-group">
-                        <input type="text" class="form-control" id="header-search" placeholder="搜索商户"
-                               aria-label="search" aria-describedby="header-search">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" id="header-search-button" type="button">
-                                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-search"
-                                     fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd"
-                                          d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z">
-                                    </path>
-                                    <path fill-rule="evenodd"
-                                          d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z">
-                                    </path>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
+                    <button type="button" class="btn btn-secondary" style="width: 100%">创建商铺</button>
                 </div>
             </div>
         </div>
@@ -86,8 +73,9 @@
 
     <div class="row" style="margin-top: 10px">
         <div class="col-12">
+            <div class="accordion" id="shopInfo-container" style="margin-top: 10px">
+                <!-- 填充 -->
 
-            <div class="accordion" id="accordionExample" style="margin-top: 10px">
                 <div class="card">
                     <div class="card-header" id="headingOne">
                         <h2 class="mb-0">
@@ -104,7 +92,7 @@
 
                             <div class="row">
                                 <div class="col-4">
-                                    <div class="list-group" id="list-tab" role="tablist" style="margin-left: 0px">
+                                    <div class="list-group" id="list-tab" role="tablist" style="margin-left: 0">
                                         <a class="list-group-item list-group-item-action active" id="list-home-list"
                                            data-toggle="list" href="#list-home" role="tab" aria-controls="home">商铺信息</a>
                                         <a class="list-group-item list-group-item-action" id="list-profile-list"
@@ -139,7 +127,7 @@
                                         <div class="tab-pane fade" id="list-profile" role="tabpanel"
                                              aria-labelledby="list-profile-list">
                                             <div class="card">
-                                                <div class="card-body" id="shopCardId">
+                                                <div class="card-body" id="dishCardId">
                                                     <p class="card-text"><b>菜品名称:</b> {{ usename }}.</p>
                                                     <p class="card-text"><b>菜品说明:</b> {{ desc }}.</p>
                                                     <p class="card-text"><b>菜品单价:</b> {{ price }}.</p>
@@ -280,8 +268,8 @@
                         </div>
                         <div class="form-group">
                             <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="dish-serving" checked="checked"
-                                       aria-label="Serving">
+                                <input type="checkbox" class="custom-control-input" id="dish-serving"
+                                       checked="checked" aria-label="Serving">
                                 <label class="custom-control-label" for="dish-serving">是否有货</label>
                             </div>
                         </div>
@@ -317,5 +305,10 @@
         </div>
     </div>
 </div>
+
+<script id="shopInfo-template" type="text/x-jquery-tmpl">
+
+</script>
 </body>
+
 </html>
