@@ -1,8 +1,12 @@
 function setLoginRegister(method) {
-    const form = $('form');
-    $('#' + method).click(() => {
+    const form = $('form'), button = $('#' + method);
+    button.click(() => {
         form.addClass('was-validated');
-        !$('input:invalid').length && $.post('/user/' + method + '/', form.serializeArray(),
-            resp => resp.msg ? $('#err-msg').text(resp.msg).removeAttr('hidden') : window.location.href = "/");
-    })
+        if (!$('input:invalid').length) {
+            miscellaneous.loadingButton(button);
+            miscellaneous.web.post('/user/' + method + '/', form.serializeArray(),
+                () => window.location.href = "/",
+                () => miscellaneous.loadingButton(button));
+        }
+    });
 }
