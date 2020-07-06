@@ -1,5 +1,6 @@
 html, body, .container {
     height: 100%;
+    padding-right: 0 !important;
 }
 
 body {
@@ -62,4 +63,12 @@ div::-webkit-scrollbar {
     bottom: 20px;
     right: 30px;
     z-index: 99;
+}
+
+.modal {
+    overflow-y: auto;
+}
+
+.modal-open {
+    overflow-y: scroll;
 }
