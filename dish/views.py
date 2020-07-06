@@ -40,7 +40,8 @@ def create(request):
         name   =name,
         image  =image,
         desc   =desc,
-        price  =price
+        price  =price,
+        sales  =0
     )
 
     dish.save()
