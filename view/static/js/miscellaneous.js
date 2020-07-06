@@ -25,6 +25,9 @@
     };
 
     const load_template = (container, template, data) => {
+        if (!data.length) {
+            return;
+        }
         const rec = (i) => {
             template.tmpl(data[i]).addClass('animate__animated animate__fadeInUp').appendTo(container);
             i < data.length - 1 && new Promise((r) => setTimeout(r, 100)).then(() => rec(i + 1));
