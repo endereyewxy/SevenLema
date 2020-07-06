@@ -21,7 +21,31 @@ def check_login_status(request):
 
 @require_POST
 def create(request):
-    pass
+    login, user = check_login_status(request)
+
+    if not login:
+        return user
+
+    shop_id = request.POST.get('shop_id')
+    name    = request.POST.get('name')
+    image   = request.POST.get('image')
+    desc    = request.POST.get('desc')
+    price   = request.POST.get('price')
+
+    if not all([shop_id, name, image, desc, price]):
+        return JsonResponse({'code':101, 'msg':'参数类型不正确'})
+
+    dish = Dish.objects.create(
+        shop_id=shop_id,
+        name   =name,
+        image  =image,
+        desc   =desc,
+        price  =price
+    )
+
+    dish.save()
+
+    return JsonResponse({'code':0, 'msg':'', 'data':{'dish_id':dish.id}})
 
 
 @require_POST
