@@ -20,8 +20,12 @@
     color: white;
 }
 
-.sidebar .row {
-    color: white;
+.sidebar .row, .sidebar .alert {
+    width: 530px;
+}
+
+.sidebar .flex-grow-1 {
+    width: 550px;
 }
 
 #shop-card {
@@ -29,12 +33,4 @@
     left: 20px;
     width: 15%;
     top: 30%;
-}
-
-.modal {
-    overflow-y: auto;
-}
-
-.modal-open {
-    overflow: auto;
 }

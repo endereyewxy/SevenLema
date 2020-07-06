@@ -5,6 +5,7 @@ from django.views.decorators.http import require_GET
 
 from cmdb.models.shop import Shop
 from cmdb.models.user import User
+from cmdb.models.order import Order
 
 
 @require_GET
