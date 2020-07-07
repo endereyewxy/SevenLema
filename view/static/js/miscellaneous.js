@@ -7,6 +7,25 @@
         root.miscellaneous = factory();
     }
 }(this, function () {
+    const alert = (msg) => {
+        let container = $('#alert-container');
+        if (!container.length) {
+            container = $('<div id="alert-container" style="position: fixed;top: 10px;right: 10px"></div>')
+                .appendTo($('body'));
+        }
+        const target = $(
+            `<div class="alert alert-danger alert-dismissible" role="alert">
+                <strong>${msg}</strong>
+                <a type="button" class="close" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </a>
+            </div>`
+        );
+        target.children('a').click(() => animate(target, 'fadeOutLeft', () => target.remove()));
+        animate(target, 'fadeInUp');
+        target.appendTo(container);
+    };
+
     const popover = (container, content) => container.popover({
         html: true,
         content: () => $(content.html().replace(/-1/g, '')),
@@ -58,6 +77,7 @@
     };
 
     return {
+        alert: alert,
         popover: popover,
         animate: animate,
         loadingButton: loading_button,
