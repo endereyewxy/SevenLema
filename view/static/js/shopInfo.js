@@ -7,11 +7,14 @@ function load_shop_info() {
     });
 }
 
-function load_order_info() {
-    const data = {};
+function load_order_info(shop_id) {
+    const data = {
+        shop_id: shop_id,
+        page: paginator.currentPage(),
+        limit: paginator.limit()
+    };
     miscellaneous.web.get('/order/info', data, (resp) => {
         paginator.maximumPage(resp.page);
-        $('#list-messages').html($('#viewOrders-template').tmpl(resp.data));
         miscellaneous.loadTemplate($('#orders-container'), $('#orders-template'), resp.data);
     });
 }
@@ -112,30 +115,14 @@ function check_order_finish() {
     });
 }
 
-function change_dish_info() {
-    let data = new FormData(document.getElementById('dish-form'));
-    for (let i = 0; i < 3; i++) {
-        !data.get(['name', 'price', 'desc'][i]).length && data.delete(['name', 'price', 'desc'][i]);
-    }
-    data.append('serving', $('#dish-serving:checked').length !== 0 ? 'true' : 'false');
-    $.ajax({
-        url: '/dish/edit/',
-        data: data,
-        processData: false,
-        contentType: false,
-        type: 'post',
-        success: (resp) => resp.code ? alert(resp.msg) : ($('#dish-modal').modal('hide') & load_dish())
-    });
-}
-
-function load_dish() {
+function load_dish_info(shop_id) {
     const data = {
         shop_id: shop_id,
-        name: "",  //
-        order: 'price',
+        name: "",
+        order: "sales",
         page: paginator.currentPage(),
         limit: paginator.limit(),
-        serving: serving
+        serving: true
     };
     miscellaneous.web.get('/search/dish/', data, (resp) => {
         paginator.maximumPage(resp.page);
@@ -143,16 +130,11 @@ function load_dish() {
     });
 }
 
-$(document).ready(() => {
-    $('#logout').click(
-        () => miscellaneous.web.post('/user/logout/', {}, () => window.location.href = '/'));
-});
-
 $(document).ready(function () {
     paginator.change(load_shop_info);
     load_shop_info();
+
     $('#create-shop').click(create_shop);
-    $('#list-messages-list').click(load_order_info);
     $('#logout').click(
         () => miscellaneous.web.post('/user/logout/', {}, () => window.location.href = '/'));
 });
