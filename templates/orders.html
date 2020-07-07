@@ -8,7 +8,7 @@
     {% include 'includes.html' %}
     <script type="text/javascript"
             src="http://api.map.baidu.com/getscript?v=3.0&ak=tdfjfQq8B4ETmpg93UMWGWrL8yprpI5Q"></script>
-    <script src="/static/js/viewOrders.js"></script>
+    <script src="/static/js/orders.js"></script>
 
     <style>
         html,
@@ -46,7 +46,7 @@
 
 <body>
 <div class="container d-flex flex-column">
-    {% include 'viewOrdersHeader.html' %}
+    {% include 'ordersHeader.html' %}
 
     <div class="row">
         <div class="col-12">
@@ -54,15 +54,13 @@
             <div id="orders-container" class="list-group list-group-flush mb-3"></div>
         </div>
     </div>
-    <span>&nbsp;</span>
     <div class="flex-grow-1" id="info-container"></div>
     <ul class="pagination justify-content-center"></ul>
 
 </div>
 
-
 </body>
-<script id="viewOrders-template" type="text/x-jquery-tmpl">
+<script id="orders-template" type="text/x-jquery-tmpl">
     <div class="accordion" id="accordionExample">
         <div class="card">
             <div class="card-header" id="headingOne">
@@ -96,5 +94,5 @@
     </div>
 
 </script>
-
+{% csrf_token %}
 </html>

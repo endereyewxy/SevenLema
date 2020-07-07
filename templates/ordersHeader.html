@@ -47,7 +47,7 @@
             <div class="col-6">
                 <div class="btn-group" role="group">
                     <a type="button" href="/" class="btn btn-secondary" id="logout">回到主页</a>
-                    <a type="button" href="/shopInfo" class="btn btn-secondary">我的店铺</a>
+                    <a type="button" href="/mine/shop" class="btn btn-secondary">我的店铺</a>
                 </div>
             </div>
         </div>
@@ -56,15 +56,15 @@
 <div id="user-wrapper" hidden>
     <div class="card" style="width: 250px;">
         <div class="card-body">
-            <h5 class="card-title">{{ ussername }}</h5>
+            <h5 class="card-title">{{ username }}</h5>
         </div>
         <ul class="list-group list-group-flush">
             <li class="list-group-item">电话：{{ phone }}</li>
             <li class="list-group-item">地址：{{ addr }}</li>
         </ul>
         <div class="card-body">
-            <a href="/viewOrders" class="card-link">查看订单</a>
-            <a href="/shopInfo" class="card-link">我的店铺</a>
+            <a href="/orders" class="card-link">查看订单</a>
+            <a href="/mine/shop" class="card-link">我的店铺</a>
         </div>
     </div>
 </div>

@@ -3,9 +3,9 @@ from django.http import Http404
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_GET
 
+from cmdb.models.order import Order
 from cmdb.models.shop import Shop
 from cmdb.models.user import User
-from cmdb.models.order import Order
 
 
 @require_GET
@@ -56,7 +56,7 @@ def dish(request, shop_id):
 def orders(request):
     ctx = get_login_context(request)
     if ctx['login']:
-        return render(request, 'viewOrders.html', ctx)
+        return render(request, 'orders.html', ctx)
     else:
         raise Http404('尚未登录')
 
@@ -68,4 +68,22 @@ def shop_info(request):
         return render(request, 'shopInfo.html', ctx)
     else:
         raise Http404('找不到商户')
+
+
+@require_GET
+def shop_mine(request):
+    ctx = get_login_context(request)
+    if ctx['login']:
+        return render(request, 'shopInfo.html', ctx)
+    else:
+        raise Http404('找不到商户')
+
+@require_GET
+def shop_create(request):
+    ctx = get_login_context(request)
+    if ctx['login']:
+        return render(request, 'shopInfo.html', ctx)
+    else:
+        raise Http404('找不到商户')
+
 

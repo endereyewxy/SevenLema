@@ -7,7 +7,11 @@
     <title>吃了么-店铺管理</title>
     {% include 'includes.html' %}
     <link href="{% static 'css/header.css' %}" rel="stylesheet">
+    <script type="text/javascript"
+            src="http://api.map.baidu.com/getscript?v=3.0&ak=tdfjfQq8B4ETmpg93UMWGWrL8yprpI5Q"></script>
     <script src="{% static 'js/miscellaneous.js' %}"></script>
+    <script src="{% static 'js/locator.js' %}"></script>
+    <script src="{% static 'js/paginator.js' %}"></script>
     <script src="{% static 'js/shopInfo.js' %}"></script>
     <style>
         html,
@@ -59,7 +63,7 @@
                 </div>
                 <div class="col-6">
                     <a type="button" class="btn btn-secondary" id="create-shop" style="width: 100%"
-                       data-toggle="modal" data-target="#createShopModal">创建商铺</a>
+                       data-toggle="modal" data-target="#create-shop-modal">创建商铺</a>
                 </div>
             </div>
         </div>
@@ -80,7 +84,7 @@
 <!-- 模板容器位置 -->
 <script id="shop-info-template" type="text/x-jquery-tmpl">
     <div class="accordion" id="accordionExample" style="margin-top: 10px">
-        <div class="card">
+        <a class="card" href="/shop/${shop_id}">
             <div class="card-header" id="headingOne">
                 <h2 class="mb-0">
                     <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse"
@@ -127,11 +131,17 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="tab-pane fade" role="tabpanel"
-                                     aria-labelledby="list-profile-list" id="dishes-container">
+                                <div class="tab-pane fade">
+                                     <div class="row">
+                                        <button type="button" class="btn btn-outline-info"
+                                                style="float: right;" data-toggle="modal"
+                                                data-target="#create-dish-modal">新增菜品
+                                        </button>
+                                     </div>
+                                     <div class="row" role="tabpanel" aria-labelledby="list-profile-list"
+                                            id="dishes-container">
+                                     </div>
                                 </div>
-
                                 <div class="tab-pane fade" id="list-messages" role="tabpanel"
                                      aria-labelledby="list-messages-list" id="orders-container">
                                 </div>
@@ -140,22 +150,13 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </a>
     </div>
-
-
-
-
-
-
-
-
-
 
 </script>
 
 <!--shop弹窗创建-->
-<div class="modal fade" id="createShopModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+<div class="modal fade" id="create-shop-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
      aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -255,8 +256,70 @@
     </div>
 </div>
 
+<!-- 新增菜品弹窗 -->
+<div class="modal fade" id="create-dish-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">菜品信息</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="dish_id" id="dish-edit-id">
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><span>菜名</span></div>
+                            </div>
+                            <input name="name" type="text" class="form-control" placeholder="留空表示不修改"
+                                   autocomplete="off" aria-label="Name">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><span>价格</span></div>
+                            </div>
+                            <input name="price" type="number" class="form-control" placeholder="留空表示不修改"
+                                   autocomplete="off" aria-label="Price">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><span>描述</span></div>
+                            </div>
+                            <textarea name="desc" class="form-control" placeholder="留空表示不修改" autocomplete="off"
+                                      aria-label="Description"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input name="image" class="file" type="file" data-show-upload="false"
+                               data-show-preview="false" data-allowed-file-extensions='["jpg", "png", "svg"]'>
+                    </div>
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="dish-serving" checked="checked"
+                                   aria-label="Serving">
+                            <label class="custom-control-label" for="dish-serving">是否有货</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="dish-edit">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
 
-<!--新增菜品-->
+
+<!--修改菜品-->
 <div class="modal fade" id="dishModal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -355,6 +418,7 @@
 
 
 
+
 </script>
 
 <script id="orders-template" type="text/x-jquery-tmpl">
@@ -376,11 +440,6 @@
             </button>
         </div>
     </div>
-
-
-
-
-
 </script>
 
 </body>
