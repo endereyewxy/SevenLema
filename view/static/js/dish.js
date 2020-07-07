@@ -42,11 +42,9 @@ function amount_change(dish_id) {
             if (dish_id === card.dish_id) {
                 render_price_and_amount(-card.price * card.amount, -card.amount);
                 card_list.splice(i, 1);
-                input.parents('.card').addClass('animate__animated animate__fadeOutRight');
-                new Promise((r) => setTimeout(r, 500)).then(() => {
-                    const container = $('#card-list-container');
-                    container.children().slice(i).remove();
-                    miscellaneous.loadTemplate(container, $('#card-list-template'), card_list.slice(i), true);
+                miscellaneous.animate(input.parents('.card'), 'fadeOutRight', (target) => {
+                    miscellaneous.animate($('#card-list-container').children().slice(i + 1), 'slideInUp');
+                    target.remove();
                 });
                 return false;
             }
