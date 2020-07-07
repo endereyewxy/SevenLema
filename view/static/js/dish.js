@@ -54,7 +54,9 @@ function amount_change(dish_id) {
             }
         });
     } else {
-        !(changed_amount % 1) && (changed_amount = Number(changed_amount.toFixed(0)));
+        if(changed_amount % 1 !==0) {
+            changed_amount = Number(changed_amount.toFixed(0));
+        }
         $.each(card_list, (i, card) => {
             if (dish_id === card.dish_id) {
                 const delta = changed_amount - card.amount;
