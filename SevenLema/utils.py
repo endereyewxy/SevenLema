@@ -24,7 +24,7 @@ def upload_image(image):
     ext = image.name.split('.')[-1]
     if ext not in ['svg', 'jpg', 'png']:
         return False, JsonResponse({'code': 101, 'msg': '图片格式不支持'})
-    tok = md5(str(uuid4()).encode('utf-8')).hexdigest()[8:-12]
+    tok = md5(str(uuid4()).encode('utf-8')).hexdigest()
     with open(os.path.join(settings.STATIC_ROOT, 'images', tok + '.' + ext), 'wb') as f:
         for chunk in image.chunks():
             f.write(chunk)
