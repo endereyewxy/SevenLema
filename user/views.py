@@ -32,6 +32,8 @@ def register(request):
         loc_lng= loc_lng,
         loc_lat= loc_lat,
         phone=   phone)
+
+    user.set_salt()
     user.set_password(password)
     user.save()
 

@@ -1,7 +1,8 @@
 from django.urls import path
-from shop.views import create, edit
+from shop.views import create, edit, mine
 
 urlpatterns = [
     path('create/', create),
-    path('edit/', edit),
+    path('mine/',   mine),
+    path('edit/',   edit),
 ]

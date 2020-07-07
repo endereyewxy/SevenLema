@@ -10,8 +10,8 @@
 | -------- | ------------ | -------- | -------- | ------------------- |
 | id       | INTEGER      |          | 是       | 主键，自增          |
 | username | VARCHAR(20)  | 用户名   | 是       |                     |
-| password | CHAR(16)     | 密码     | 是       | 密码加盐之后的MD5值 |
-| salt     | CHAR(16)     | 盐       | 是       |                     |
+| password | CHAR(32)     | 密码     | 是       | 密码加盐之后的MD5值 |
+| salt     | CHAR(32)     | 盐       | 是       |                     |
 | addr     | VARCHAR(50)  | 地址     | 否       |                     |
 | loc_lng  | DECIMAL(9,5) | 位置经度 | 否       |                     |
 | loc_lat  | DECIMAL(9,5) | 位置纬度 | 否       |                     |
@@ -26,7 +26,7 @@
 | id        | INTEGER      |            | 是       | 主键，自增                 |
 | user_id   | INTEGER      | 所属用户ID | 是       | 表user的外键               |
 | name      | VARCHAR(50)  | 名称       | 是       |                            |
-| image     | CHAR(16)     | 图片       | 是       |                            |
+| image     | CHAR(36)     | 图片       | 是       |                            |
 | desc      | TEXT         | 描述       | 是       |                            |
 | addr      | VARCHAR(50)  | 地址       | 是       |                            |
 | loc_lng   | DECIMAL(9,5) | 位置经度   | 是       |                            |
@@ -45,7 +45,7 @@
 | id      | INTEGER     |            | 是       | 主键，自增                 |
 | shop_id | INTEGER     | 所属商户ID | 是       | 表shop的外键               |
 | name    | VARCHAR(50) | 名称       | 是       |                            |
-| image   | CHAR(16)    | 图片       | 是       |                            |
+| image   | CHAR(36)    | 图片       | 是       |                            |
 | desc    | TEXT        | 描述       | 是       |                            |
 | price   | INTEGER     | 单价       | 是       | 单位为分（除100为RMB价格） |
 | sales   | INTEGER     | 销量       | 是       |                            |

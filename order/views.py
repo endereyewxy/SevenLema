@@ -1,24 +1,14 @@
 import time
 
-from django.core.paginator import Paginator, EmptyPage
 from django.forms import model_to_dict
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_GET
 
+from SevenLema.utils import check_login_status, add_page_info
 from cmdb.models.dish import Dish
 from cmdb.models.dish_order import DishOrder
 from cmdb.models.order import Order
 from cmdb.models.shop import Shop
-from cmdb.models.user import User
-
-
-def check_login_status(request):
-    if 'id' in request.session:
-        try:
-            return True, User.objects.get(id=request.session['id'])
-        except User.DoesNotExist:
-            pass
-    return False, JsonResponse({'code': 103, 'msg': '用户尚未登录'})
 
 
 @require_POST
@@ -109,17 +99,6 @@ def order_info(order):
     return json
 
 
-def add_page_info(qs, page, limit):
-    max_page = 0
-    try:
-        paginator = Paginator(qs, limit)
-        max_page  = paginator.num_pages
-        qs        = paginator.page(page)
-    except EmptyPage:
-        qs        = []
-    return qs, max_page
-
-
 @require_GET
 def info(request):
     login, user = check_login_status(request)
@@ -142,32 +121,27 @@ def info(request):
     except ValueError:
         return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
 
-    # User get order info
-    if order_id is not None:
-        try:
-            order_id = int(order_id)
-        except ValueError:
-            return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
-        order = Order.objects.get(id=order_id)
-        if user.id != order.user_id:
-            return JsonResponse({'code': 103, 'msg': '权限不足'})
-        if page == 1 and (not unfinished or order.tm_finished is None):
-            return JsonResponse({'code': 0, 'msg': '', 'page': 1, 'data': [order_info(order)]})
-        else:
-            return JsonResponse({'code': 0, 'msg': '', 'page': 1, 'data': []})
+    try:
+        # User get order info
+        if order_id is not None:
+            order = Order.objects.get(id=int(order_id))
+            if user.id != order.user_id:
+                return JsonResponse({'code': 103, 'msg': '权限不足'})
+            if page == 1 and (not unfinished or order.tm_finished is None):
+                return JsonResponse({'code': 0, 'msg': '', 'page': 1, 'data': [order_info(order)]})
+            else:
+                return JsonResponse({'code': 0, 'msg': '', 'page': 1, 'data': []})
 
-    # Shop get order info
-    elif shop_id is not None:
-        try:
-            shop_id = int(shop_id)
-        except ValueError:
-            return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
-        shop = Shop.objects.get(id=shop_id)
-        if shop.user_id != user.id:
-            return JsonResponse({'code': 103, 'msg': '权限不足'})
-        qs = Order.objects.filter(shop_id=shop_id)
-    else:
-        qs = Order.objects.filter(user=user)
+        # Shop get order info
+        elif shop_id is not None:
+            shop = Shop.objects.get(id=int(shop_id))
+            if shop.user_id != user.id:
+                return JsonResponse({'code': 103, 'msg': '权限不足'})
+            qs = Order.objects.filter(shop_id=shop_id)
+        else:
+            qs = Order.objects.filter(user=user)
+    except ValueError:
+        return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
 
     if unfinished:
         qs = qs.filter(tm_finished=None)

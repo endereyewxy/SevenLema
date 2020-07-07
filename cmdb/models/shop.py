@@ -8,7 +8,7 @@ from .user import User
 class Shop(models.Model):
     user      = models.ForeignKey(User, models.CASCADE)
     name      = models.CharField(max_length=50)
-    image     = models.CharField(max_length=16)
+    image     = models.CharField(max_length=36)
     desc      = models.TextField()
     addr      = models.CharField(max_length=50)
     loc_lng   = models.DecimalField(max_digits=9, decimal_places=5)

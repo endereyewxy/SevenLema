@@ -8,7 +8,7 @@ from .shop import Shop
 class Dish(models.Model):
     shop    = models.ForeignKey(Shop, models.CASCADE)
     name    = models.CharField(max_length=50)
-    image   = models.CharField(max_length=16)
+    image   = models.CharField(max_length=36)
     desc    = models.TextField()
     price   = models.IntegerField()
     sales   = models.IntegerField()

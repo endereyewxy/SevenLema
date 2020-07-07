@@ -1,27 +1,40 @@
-import os
-from hashlib import md5
-from uuid import uuid4
-
-from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 
+from SevenLema.utils import upload_image, check_login_status
 from cmdb.models.dish import Dish
-from cmdb.models.user import User
-
-
-def check_login_status(request):
-    if 'id' in request.session:
-        try:
-            return True, User.objects.get(id=request.session['id'])
-        except User.DoesNotExist:
-            pass
-    return False, JsonResponse({'code': 103, 'msg': '用户尚未登录'})
 
 
 @require_POST
 def create(request):
-    pass
+    login, user = check_login_status(request)
+    if not login:
+        return user
+
+    shop_id = request.POST.get('shop_id')
+    name    = request.POST.get('name')
+    image   = request.POST.get('image')
+    desc    = request.POST.get('desc')
+    price   = request.POST.get('price')
+
+    if None in [shop_id, name, image, desc, price]:
+        return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
+
+    try:
+        dish = Dish.objects.create(
+            shop_id=shop_id,
+            name   =name,
+            image  =image,
+            desc   =desc,
+            price  =0,
+            sales  =0,
+            serving=True)
+        dish.set_actual_price(float(price))
+    except ValueError:
+        return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
+    dish.save()
+
+    return JsonResponse({'code': 0, 'msg': '', 'data': {'dish_id': dish.id}})
 
 
 @require_POST
@@ -51,15 +64,7 @@ def edit(request):
 
     image = request.FILES.get('image')
     if image is not None:
-        if image.size > 20480000:
-            return JsonResponse({'code': 105, 'msg': '图片体积过大'})
-        # Generate unique name
-        ext = image.name.split('.')[-1]
-        tok = md5(str(uuid4()).encode('utf-8')).hexdigest()[8:-12]
-        with open(os.path.join(settings.STATIC_ROOT, 'images', tok + '.' + ext), 'wb') as f:
-            for chunk in image.chunks():
-                f.write(chunk)
-        dish.image = tok + '.' + ext
+        dish.image = upload_image(image)
 
     desc = request.POST.get('desc')
     if desc is not None:
