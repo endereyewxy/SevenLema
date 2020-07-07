@@ -1,5 +1,6 @@
+from django.forms import model_to_dict
 from django.http import JsonResponse
-from django.views.decorators.http import require_POST
+from django.views.decorators.http import require_POST, require_GET
 
 from SevenLema.utils import check_login_status, upload_image
 from cmdb.models.shop import Shop
@@ -49,6 +50,24 @@ def create(request):
     return JsonResponse({'code': 0, 'msg': '', 'data': {'shop_id': shop.id}})
 
 
+@require_GET
+def mine(request):
+    login, user = check_login_status(request)
+    if not login:
+        return user
+
+    data = []
+    for shop in Shop.objects.filter(user=user):
+        obj = model_to_dict(shop)
+        obj['shop_id'] = obj['id']
+        del obj['id']
+        obj['loc_lng'] = float(obj['loc_lng'])
+        obj['loc_lat'] = float(obj['loc_lat'])
+        obj['avg_price'] = shop.get_actual_avg_price()
+    return JsonResponse({'code': 0, 'msg': '', 'data': data})
+
+
+@require_POST
 def edit(request):
     # Login in check
     login, user = check_login_status(request)
