@@ -11,12 +11,11 @@
     background-color: rgba(0, 0, 0, 0.9);
 }
 
-.sidebar .close-btn {
+.sidebar .close {
     position: absolute;
-    top: 0;
+    top: 10px;
     right: 25px;
     font-size: 36px;
-    margin-left: 50px;
     color: white;
 }
 

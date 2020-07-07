@@ -1,4 +1,4 @@
-let card_list = [], serving = false;
+let card_list = [], total_price = 0, total_amount = 0, serving = false;
 
 function change_dish_info() {
     let data = new FormData(document.getElementById('dish-form'));
@@ -31,65 +31,71 @@ function commit_an_order() {
         loc_lat: locator.lat(),
         remarks: $('#remarks').val()
     };
-    miscellaneous.web.post('/order/new/', data, (resp) => window.location.href = '/');
+    const button = $(this);
+    miscellaneous.loadingButton(button);
+    miscellaneous.web.post('/order/new/', data,
+        () => window.location.href = '/',
+        () => miscellaneous.loadingButton(button));
 }
 
 function amount_change(dish_id) {
     const input = $('#dish-' + dish_id);
     let changed_amount = Number(input.val());
     if (changed_amount <= 0) {
-        for (let i = 0; i < card_list.length; i++) {
-            if (dish_id === card_list[i].dish_id) {
+        $.each(card_list, (i, card) => {
+            if (dish_id === card.dish_id) {
+                render_price_and_amount(-card.price * card.amount, -card.amount);
                 card_list.splice(i, 1);
-                $('#card-list-container').html($('#card-list-template').tmpl(card_list));
-                break;
+                miscellaneous.animate(input.parents('.card'), 'fadeOutRight', (target) => {
+                    miscellaneous.animate($('#card-list-container').children().slice(i + 1), 'slideInUp');
+                    target.remove();
+                });
+                return false;
             }
-        }
+        });
     } else {
-        !(changed_amount % 1) && (changed_amount = Number(changed_amount.toFixed(0)));
-        for (let i = 0; i < card_list.length; i++) {
-            if (dish_id === card_list[i].dish_id) {
-                card_list[i].amount = changed_amount;
-                break;
-            }
+        if(changed_amount % 1 !==0) {
+            changed_amount = Number(changed_amount.toFixed(0));
         }
+        $.each(card_list, (i, card) => {
+            if (dish_id === card.dish_id) {
+                const delta = changed_amount - card.amount;
+                render_price_and_amount(card.price * delta, delta);
+                card.amount = changed_amount;
+                return false;
+            }
+        });
     }
     !card_list.length && $('#submit-order').attr('disabled', 'disabled');
-    calc_total_price();
     input.val(changed_amount);
 }
 
 function add_dish_to_card(name, dish_id, image, price) {
-    let flag = false;
-    if (card_list.length === 0 && $('.alert').length === 0) {
-        $('#submit-order').removeAttr('disabled');
-    }
+    console.log(dish_id, price);
+    card_list.length === 0 && $('.alert').length === 0 && $('#submit-order').removeAttr('disabled');
+    render_price_and_amount(price, 1);
     for (let i = 0; i < card_list.length; i++) {
         if (card_list[i].dish_id === dish_id) {
-            card_list[i].amount++;
-            flag = true;
-            break;
+            $('#dish-' + dish_id).val(++card_list[i].amount);
+            return;
         }
     }
-    !flag && (card_list = card_list.concat([{
+    const new_card = [{
         name: name,
         dish_id: dish_id,
         image: image,
         price: price,
         amount: 1
-    }]));
-    calc_total_price();
-    $('#card-list-container').html($('#card-list-template').tmpl(card_list));
+    }];
+    card_list = card_list.concat(new_card);
+    miscellaneous.loadTemplate($('#card-list-container'), $('#card-list-template'), new_card, true);
 }
 
-function calc_total_price() {
-    let sum = 0, amount = 0;
-    for (let i = 0; i < card_list.length; i++) {
-        sum += card_list[i].price * card_list[i].amount;
-        amount += card_list[i].amount;
-    }
-    $('.badge').text(amount ? amount : '');
-    $('#total-price').val('总价：￥' + sum.toFixed(2));
+function render_price_and_amount(price, amount) {
+    total_price += price;
+    total_amount += amount;
+    $('.badge').text(total_amount ? total_amount : '');
+    $('#total-price').val('总价：￥' + total_price.toFixed(2));
 }
 
 function load_dish() {
@@ -103,11 +109,11 @@ function load_dish() {
     };
     miscellaneous.web.get('/search/dish/', data, (resp) => {
         paginator.maximumPage(resp.page);
-        $('#data-container').html($('#data-template').tmpl(resp.data));
+        miscellaneous.loadTemplate($('#data-container'), $('#data-template'), resp.data);
     });
 }
 
-$(document).ready(function () {
+$(document).ready(() => {
     $('#commit').click(commit_an_order);
     $('#dish-edit').click(change_dish_info);
     $('#dish-modal').on('show.bs.modal', (evt) => $('#dish-edit-id').val($(evt.relatedTarget).attr('id')));

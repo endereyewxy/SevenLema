@@ -14,7 +14,7 @@ const load_shop = () => {
     }
     miscellaneous.web.get('/search/shop/', data, (resp) => {
         paginator.maximumPage(resp.page);
-        $('#data-container').html($('#data-template').tmpl(resp.data));
+        miscellaneous.loadTemplate($('#data-container'), $('#data-template'), resp.data);
     });
 };
 
