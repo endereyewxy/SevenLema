@@ -39,7 +39,8 @@
                         ${typeof dist !== 'number' ? '' : dist.toFixed(0) <= 10 ? '在您附近' : dist.toFixed(0) >= 1000 ? '据您约' + (dist / 1000).toFixed(0) + '公里' : '据您约' + dist.toFixed(0) + '米'}
                     </h6>
                     <p class="card-text">${desc}</p>
-                    <p class="card-text text-muted text-right">地址：${addr} &nbsp; 电话号码：${phone}</p>
+                    <p class="card-text text-muted text-right">${addr}</p>
+                    <p class="card-text text-muted text-right">电话号码：${phone}</p>
                     <p class="card-text text-right" style="font-weight: bold; color: red">
                         ${serving ? '' : '商家休息中'}
                     </p>
