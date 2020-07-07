@@ -7,6 +7,25 @@
         root.miscellaneous = factory();
     }
 }(this, function () {
+    const alert = (msg) => {
+        let container = $('#alert-container');
+        if (!container.length) {
+            container = $('<div id="alert-container" style="position: fixed;top: 10px;right: 10px"></div>')
+                .appendTo($('body'));
+        }
+        const target = $(
+            `<div class="alert alert-danger alert-dismissible" role="alert">
+                <strong>${msg}</strong>
+                <a type="button" class="close" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </a>
+            </div>`
+        );
+        target.children('a').click(() => animate(target, 'fadeOutLeft', () => target.remove()));
+        animate(target, 'fadeInUp');
+        target.appendTo(container);
+    };
+
     const popover = (container, content) => container.popover({
         html: true,
         content: () => $(content.html().replace(/-1/g, '')),
@@ -14,26 +33,31 @@
         trigger: 'click',
     });
 
-    const html_loading = '<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>';
-
     const loading_button = (target) => {
         let sr = target.children('.sr-only');
         target.html(sr.length
             ? sr.html()
-            : html_loading + '<span class="sr-only">' + target.html() + '</span>');
+            : `<span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+               <span class="sr-only">${target.html()}</span>`);
         sr.length ? target.removeAttr('disabled') : target.attr('disabled', 'disabled');
+    };
+
+    const animate = (target, effect, finished) => {
+        const classes = `animate__animated animate__${effect}`;
+        target.addClass(classes)[0].addEventListener('animationend', () => {
+            target.removeClass(classes);
+            finished && finished(target);
+        });
+        return target;
     };
 
     const load_template = (container, template, data, keep = false) => {
         if (!data.length) {
             return;
         }
-        const rec = (i) => {
-            template.tmpl(data[i]).addClass('animate__animated animate__fadeInUp').appendTo(container);
-            i < data.length - 1 && new Promise((r) => setTimeout(r, 100)).then(() => rec(i + 1));
-        };
         !keep && container.html('');
-        rec(0);
+        animate(template.tmpl(data), 'fadeInUp').each(
+            (i, item) => setTimeout(() => container.append(item), 100 * i));
     };
 
     const web_callback = (done, failed) => (resp) => {
@@ -53,7 +77,9 @@
     };
 
     return {
+        alert: alert,
         popover: popover,
+        animate: animate,
         loadingButton: loading_button,
         loadTemplate: load_template,
         web: {

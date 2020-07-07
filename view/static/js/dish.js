@@ -31,7 +31,11 @@ function commit_an_order() {
         loc_lat: locator.lat(),
         remarks: $('#remarks').val()
     };
-    miscellaneous.web.post('/order/new/', data, (resp) => window.location.href = '/');
+    const button = $(this);
+    miscellaneous.loadingButton(button);
+    miscellaneous.web.post('/order/new/', data,
+        () => window.location.href = '/',
+        () => miscellaneous.loadingButton(button));
 }
 
 function amount_change(dish_id) {
@@ -42,17 +46,17 @@ function amount_change(dish_id) {
             if (dish_id === card.dish_id) {
                 render_price_and_amount(-card.price * card.amount, -card.amount);
                 card_list.splice(i, 1);
-                input.parents('.card').addClass('animate__animated animate__fadeOutRight');
-                new Promise((r) => setTimeout(r, 500)).then(() => {
-                    const container = $('#card-list-container');
-                    container.children().slice(i).remove();
-                    miscellaneous.loadTemplate(container, $('#card-list-template'), card_list.slice(i), true);
+                miscellaneous.animate(input.parents('.card'), 'fadeOutRight', (target) => {
+                    miscellaneous.animate($('#card-list-container').children().slice(i + 1), 'slideInUp');
+                    target.remove();
                 });
                 return false;
             }
         });
     } else {
-        !(changed_amount % 1) && (changed_amount = Number(changed_amount.toFixed(0)));
+        if(changed_amount % 1 !==0) {
+            changed_amount = Number(changed_amount.toFixed(0));
+        }
         $.each(card_list, (i, card) => {
             if (dish_id === card.dish_id) {
                 const delta = changed_amount - card.amount;
@@ -109,7 +113,7 @@ function load_dish() {
     });
 }
 
-$(document).ready(function () {
+$(document).ready(() => {
     $('#commit').click(commit_an_order);
     $('#dish-edit').click(change_dish_info);
     $('#dish-modal').on('show.bs.modal', (evt) => $('#dish-edit-id').val($(evt.relatedTarget).attr('id')));
