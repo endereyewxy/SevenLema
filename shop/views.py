@@ -64,6 +64,7 @@ def mine(request):
         obj['loc_lng'] = float(obj['loc_lng'])
         obj['loc_lat'] = float(obj['loc_lat'])
         obj['avg_price'] = shop.get_actual_avg_price()
+        data.append(obj)
     return JsonResponse({'code': 0, 'msg': '', 'data': data})
 
 
