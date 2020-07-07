@@ -31,7 +31,11 @@ function commit_an_order() {
         loc_lat: locator.lat(),
         remarks: $('#remarks').val()
     };
-    miscellaneous.web.post('/order/new/', data, (resp) => window.location.href = '/');
+    const button = $(this);
+    miscellaneous.loadingButton(button);
+    miscellaneous.web.post('/order/new/', data,
+        () => window.location.href = '/',
+        () => miscellaneous.loadingButton(button));
 }
 
 function amount_change(dish_id) {
@@ -107,7 +111,7 @@ function load_dish() {
     });
 }
 
-$(document).ready(function () {
+$(document).ready(() => {
     $('#commit').click(commit_an_order);
     $('#dish-edit').click(change_dish_info);
     $('#dish-modal').on('show.bs.modal', (evt) => $('#dish-edit-id').val($(evt.relatedTarget).attr('id')));
