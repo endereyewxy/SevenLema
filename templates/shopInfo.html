@@ -84,20 +84,19 @@
 <!-- 模板容器位置 -->
 <script id="shop-info-template" type="text/x-jquery-tmpl">
     <div class="accordion" id="accordionExample" style="margin-top: 10px">
-        <a class="card" href="/shop/${shop_id}">
+        <div class="card" >
             <div class="card-header" id="headingOne">
                 <h2 class="mb-0">
                     <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse"
-                            data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
-                        商户名称: ${ name }
+                            data-target="#shop-collapse-${shop_id}" aria-expanded="true" aria-controls="collapseTwo">
+                        商户ID: ${ shop_id } &nbsp; &nbsp; 商户名称: ${ name }
                     </button>
                 </h2>
             </div>
 
-            <div id="collapseTwo" class="collapse show" aria-labelledby="headingOne"
+            <div id="shop-collapse-${shop_id}" class="collapse show"
                  data-parent="#accordionExample">
                 <div class="card-body">
-
                     <div class="row">
                         <div class="col-4">
                             <div class="list-group" id="list-tab" role="tablist" style="margin-left: 0px">
@@ -118,12 +117,13 @@
                                      aria-labelledby="list-home-list">
                                     <div class="card">
                                         <div class="card-body" id="shopCardId">
-                                            <p class="card-text"><b>商户名称:</b> ${ usename }.</p>
+                                            <p class="card-text"><b>商户名称:</b> ${ name }.</p>
                                             <p class="card-text"><b>商户说明:</b> ${ desc }.</p>
                                             <p class="card-text"><b>商户地址:</b> ${ addr }.</p>
-                                            <p class="card-text"><b>商户电话号码:</b> ${ phone }$.</p>
+                                            <p class="card-text"><b>商户电话号码:</b> ${ phone }.</p>
                                             <p class="card-text"><b>是否营业:</b> ${ serving }.</p>
-                                            <p class="card-text"><b>商户图片:</b> ${ image }.</p>
+                                            <img src="{% static 'images' %}/${image}" class="card-img" alt="${name}">
+
                                             <button type="button" class="btn btn-outline-info"
                                                     style="float: right;" data-toggle="modal"
                                                     data-target="#shopModal">修改
@@ -150,9 +150,8 @@
                     </div>
                 </div>
             </div>
-        </a>
+        </div>
     </div>
-
 </script>
 
 <!--shop弹窗创建-->

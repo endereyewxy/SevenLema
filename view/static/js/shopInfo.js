@@ -1,8 +1,7 @@
 let serving = false;
 
 function load_shop_info() {
-    const data = { };
-    miscellaneous.web.get('/shop/mine', data, (resp) => {
+    miscellaneous.web.get('/shop/mine', {}, (resp) => {
         paginator.maximumPage(resp.page);
         miscellaneous.loadTemplate($('#shop-info-container'), $('#shop-info-template'), resp.data);
     });
@@ -97,7 +96,7 @@ function create_shop() {
         phone: $('#phone').val()
     };
     $.ajax({
-        url: '/shop/create',
+        url: '/shop/create/',
         data: data,
         processData: false,
         contentType: false,
@@ -150,11 +149,12 @@ $(document).ready(() => {
 });
 
 $(document).ready(function () {
+    paginator.change(load_shop_info);
     load_shop_info();
     $('#create-shop').click(create_shop);
     $('#list-messages-list').click(load_order_info);
+    $('#logout').click(
+        () => miscellaneous.web.post('/user/logout/', {}, () => window.location.href = '/'));
 });
-
-
 
 

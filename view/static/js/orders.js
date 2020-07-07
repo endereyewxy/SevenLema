@@ -3,7 +3,7 @@ function load_orders() {
         page: paginator.currentPage(),
         limit: paginator.limit()
     };
-    miscellaneous.web.get('/order/info', data, (resp) => {
+    miscellaneous.web.get('/order/info/', data, (resp) => {
         paginator.maximumPage(resp.page);
         miscellaneous.loadTemplate($('#orders-container'), $('#orders-template'), resp.data);
     });
