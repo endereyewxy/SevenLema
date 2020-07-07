@@ -1,4 +1,6 @@
 <meta charset="UTF-8">
+{% load static %}
+<link href="{% static 'images/favicon.svg' %}" type="image/svg" rel="shortcut icon">
 <link href="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.staticfile.org/bootstrap-fileinput/5.1.1/css/fileinput.min.css" rel="stylesheet">
 <link href="https://cdn.staticfile.org/animate.css/4.1.0/animate.min.css" rel="stylesheet">
@@ -7,7 +9,6 @@
 <script src="https://cdn.staticfile.org/twitter-bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.staticfile.org/bootstrap-fileinput/5.1.1/js/fileinput.min.js"></script>
 <script src="https://cdn.staticfile.org/bootstrap-fileinput/5.1.1/js/locales/zh.min.js"></script>
-{% load static %}
 <style>
     body {
         background-image: url('{% static 'images/background.jpg' %}');
