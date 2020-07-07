@@ -34,7 +34,6 @@ def register(request):
         phone=   phone)
 
     user.set_salt()
-
     user.set_password(password)
     user.save()
 

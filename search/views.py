@@ -1,10 +1,10 @@
 # Developer: endereye <endereyewxy@gmail.com>
 from math import radians
 
-from django.core.paginator import Paginator, EmptyPage
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 
+from SevenLema.utils import add_page_info
 from cmdb.models.dish import Dish
 from cmdb.models.shop import Shop
 
@@ -38,17 +38,6 @@ def dish_to_json(obj):
         'sales':   obj.sales,
         'serving': obj.serving
     }
-
-
-def add_page_info(qs, page, limit):
-    max_page = 0
-    try:
-        paginator = Paginator(qs, limit)
-        max_page  = paginator.num_pages
-        qs        = paginator.page(page)
-    except EmptyPage:
-        qs        = []
-    return qs, max_page
 
 
 @require_GET
