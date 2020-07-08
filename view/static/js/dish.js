@@ -2,9 +2,7 @@ let card_list = [], total_price = 0, total_amount = 0, serving = false;
 
 function change_dish_info() {
     let data = new FormData(document.getElementById('dish-form'));
-    for (let i = 0; i < 3; i++) {
-        !data.get(['name', 'price', 'desc'][i]).length && data.delete(['name', 'price', 'desc'][i]);
-    }
+    $.each(['name', 'price', 'desc'], (_, key) => !data.get(key).length && data.delete(key));
     data.append('serving', $('#dish-serving:checked').length !== 0 ? 'true' : 'false');
     $.ajax({
         url: '/dish/edit/',
@@ -54,7 +52,7 @@ function amount_change(dish_id) {
             }
         });
     } else {
-        if(changed_amount % 1 !==0) {
+        if (changed_amount % 1 !== 0) {
             changed_amount = Number(changed_amount.toFixed(0));
         }
         $.each(card_list, (i, card) => {
@@ -114,6 +112,22 @@ function load_dish() {
 }
 
 $(document).ready(() => {
+    const drag = $("#shop-card");
+    drag.bind("mousedown", function (evt) {
+        const offset_x = $(this)[0].offsetLeft;
+        const offset_y = $(this)[0].offsetTop;
+        const mouse_x = evt.pageX, mouse_y = evt.pageY;
+        $(document).bind("mousemove", function (ev) {
+            const _x = ev.pageX - mouse_x;
+            const _y = ev.pageY - mouse_y;
+            const now_x = (offset_x + _x) + "px";
+            const now_y = (offset_y + _y) + "px";
+            drag.css({top: now_y, left: now_x});
+        });
+    });
+    $(document).bind("mouseup", function () {
+        $(this).unbind("mousemove");
+    });
     $('#commit').click(commit_an_order);
     $('#dish-edit').click(change_dish_info);
     $('#dish-modal').on('show.bs.modal', (evt) => $('#dish-edit-id').val($(evt.relatedTarget).attr('id')));

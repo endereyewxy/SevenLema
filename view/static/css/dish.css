@@ -31,5 +31,7 @@
     position: fixed;
     left: 20px;
     width: 15%;
-    top: 30%;
+    top: 50%;
+    transform: translate(0, -50%);
+    z-index: 50;
 }

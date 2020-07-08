@@ -34,7 +34,8 @@
         <div class="flex-grow-1" id="card-list-container"></div>
     </div>
 {% endif %}
-<div class="card" id="shop-card">
+<div class="card shadow" id="shop-card">
+    <div class="card-header">点击拖动</div>
     <img class="card-img-top" src="{% static 'images' %}/{{ shop_obj.image }}" alt="{{ shop_obj.name }}">
     <div class="card-body">
         <h5 class="card-title">{{ shop_obj.name }}</h5>
