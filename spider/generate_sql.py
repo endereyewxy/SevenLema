@@ -34,7 +34,7 @@ if __name__ == '__main__':
             images.append((img, shop['image']))
             shop_id += 1
             for dish in shop['dishes']:
-                img = get_image_name(shop['image'])
+                img = get_image_name(dish['image'])
                 f.write(
                     f"INSERT INTO cmdb_dish"
                     f"(name, image, desc, price, sales, serving, shop_id)"
