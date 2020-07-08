@@ -188,6 +188,18 @@
                         <input type="text" class="form-control" id="recipient-name" name="addr">
                     </div>
                     <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">经度:</label>
+                        <input type="text" class="form-control" id="recipient-name" name="loc_lng">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">商户地址:</label>
+                        <input type="text" class="form-control" id="recipient-name" name="loc_lat">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">商户人均消费:</label>
+                        <input type="text" class="form-control" id="recipient-name" name="avg_price">
+                    </div>
+                    <div class="form-group">
                         <label for="recipient-name" class="col-form-label">商户电话号码:</label>
                         <input type="text" class="form-control" id="recipient-name" name="phone">
                     </div>
@@ -334,6 +346,7 @@
         </div>
     </div>
 </div>
+
 <!--shop弹窗修改-->
 <div class="modal fade" id="change-shop-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
      aria-hidden="true">
@@ -392,10 +405,10 @@
 
 
 <!--弹窗设置订单已送达-->
-<div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="orderModalLabel"
+<div class="modal fade" id="finish-order-modal" tabindex="-1" role="dialog" aria-labelledby="orderModalLabel"
      aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+        <div class="modal-content" id="finish-order-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="orderModalLabel">提示</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -407,7 +420,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                <a type="button" class="btn btn-primary" href="#">确定</a>
+                <button type="button" class="btn btn-primary" id="finish-order-edit">确定</button>
             </div>
         </div>
     </div>
@@ -448,7 +461,7 @@
             <p class="card-text"><b>送达时间：</b>${ tm_finished }</p>
             <button type="button" class="btn btn-outline-info"
                     style="float: right;" data-toggle="modal"
-                    data-target="#orderModal">设置为已送达
+                    data-target="#finish-order-modal">设置为已送达
             </button>
         </div>
     </div>

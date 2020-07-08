@@ -87,19 +87,11 @@ function create_dish() {
 }
 
 function create_shop() {
-    // const loc_lng = $('input[name=loc_lng]'), loc_lat = $('input[name=loc_lat]');
-    // locator.change(() => {
-    //     loc_lng.val(locator.lng());
-    //     loc_lat.val(locator.lat());
-    //     $('#locator-addr').text('定位到：' + locator.address()).removeAttr('hidden');
-    // });
-    // locator.create();
-    // $('#locator-show').click(() => locator.render($('input[name=addr]').val()));
-
     let data = new FormData(document.getElementById('create-shop-form'));
-    for (let i = 0; i < 3; i++) {
-        !data.get(['name', 'price', 'desc'][i]).length && data.delete(['name', 'price', 'desc'][i]);
-    }
+
+    // for (let i = 0; i < 6; i++) {
+    //     !data.get(['name', 'price', 'desc', 'addr', 'avg_price', 'phone'][i]).length && data.delete(['name', 'price', 'desc', 'addr', 'avg_price', 'phone'][i]);
+    // }
 
     $.ajax({
         url: '/shop/create/',
@@ -112,9 +104,14 @@ function create_shop() {
 }
 
 function check_order_finish() {
-    data = {order_id: order_id};
-    miscellaneous.web.get('/order/finish', data, (resp) => {
-        $('#orders-container').html($('#orders-template').tmpl(resp.data));
+    let data = new document.getElementById('finish-order-content');
+    $.ajax({
+        url: '/order/finish/',
+        data: data,
+        processData: false,
+        contentType: false,
+        type: 'post',
+        success: (resp) => resp.code ? alert(resp.msg) : ($('#change-shop-modal').modal('hide') & load_order_info(Number(data.get('shop_id')))),
     });
 }
 
@@ -143,6 +140,13 @@ $(document).ready(() => {
     $('#create-shop-modal').on('show.bs.modal', (evt) => {
         $('#create-shop-edit-id')
             .val($(evt.relatedTarget).attr('id'));
+    });
+
+    $('#finish-order-edit').click(check_order_finish);
+    $('#finish-order-modal').on('show.bs.modal', (evt) => {
+        $('#change-dish-edit-id')
+            .val($(evt.relatedTarget).attr('id'))
+            .attr('shop-id', $(evt.relatedTarget).attr('shop-id'));
     });
 
     $('#logout').click(
