@@ -106,7 +106,7 @@ function create_shop() {
 
 function finish_order_commit() {
     miscellaneous.web.post('/order/finish/', {order_id: $(this).attr('order-id')},
-        () => $('#finish-order-modal').modal('hide')); // & load_order_info());
+        () => $('#finish-order-modal').modal('hide') & load_order_info(Number($(this).attr('shop-id'))));
 }
 
 
@@ -138,7 +138,9 @@ $(document).ready(() => {
     $('#create-shop-commit').click(create_shop);
     $('#finish-order-commit').click(finish_order_commit);
     $('#finish-order-modal').on('show.bs.modal', (evt) => {
-        $('#finish-order-commit').attr('order-id', $(evt.relatedTarget).attr('order-id'));
+        $('#finish-order-commit')
+            .attr('order-id', $(evt.relatedTarget).attr('order-id'))
+            .attr('shop-id', $(evt.relatedTarget).parent().parent().parent().attr('id').split('-')[2]);
     });
     $('#logout').click(
         () => miscellaneous.web.post('/user/logout/', {}, () => window.location.href = '/'));
