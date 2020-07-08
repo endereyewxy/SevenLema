@@ -2,38 +2,28 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
-from SevenLema.utils import require_login
+from SevenLema.utils import require_login, require_post_param
 from cmdb.models.user import User
 
 
 @require_POST
-def register(request):
-    username = request.POST.get('username')
-    password = request.POST.get('password')
-    addr     = request.POST.get('addr')
-    loc_lng  = request.POST.get('loc_lng')
-    loc_lat  = request.POST.get('loc_lat')
-    phone    = request.POST.get('phone')
-
-    if None in [username, password, phone] or len(phone) != 11:
-        return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
-    if loc_lng is not None:
-        try:
-            loc_lng = float(loc_lng)
-            loc_lat = float(loc_lat)
-        except ValueError:
-            return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
-
+@require_post_param('username')
+@require_post_param('password')
+@require_post_param('addr')
+@require_post_param('loc_lng', float)
+@require_post_param('loc_lat', float)
+@require_post_param('phone')
+def register(request, username, addr, loc_lng, loc_lat, phone):
     if User.objects.filter(username__exact=username).exists():
         return JsonResponse({'code': 104, 'msg': '用户名冲突'})
 
     user = User.objects.create(
         username=username,
-        addr=    addr,
-        loc_lng= loc_lng,
-        loc_lat= loc_lat,
-        phone=   phone)
-
+        addr    =addr,
+        loc_lng =loc_lng,
+        loc_lat =loc_lat,
+        phone   =phone
+    )
     user.set_salt()
     user.set_password(password)
     user.save()
@@ -43,11 +33,9 @@ def register(request):
 
 
 @require_POST
-def login(request):
-    username = request.POST.get('username')
-    password = request.POST.get('password')
-    if None in [username, password]:
-        return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
+@require_post_param('username')
+@require_post_param('password')
+def login(request, username, password):
     try:
         user = User.objects.get(username__exact=username)
         if user.check_password(password):
@@ -62,6 +50,6 @@ def login(request):
 @require_login
 @csrf_exempt
 def logout(request, user):
-    assert user.id == request.session['id']  # Tell PyCharm that we did use the user parameter
+    assert user.id == request.session['id']  # tell PyCharm that we did use the user parameter
     del request.session['id']
     return JsonResponse({'code': 0, 'msg': '', 'data': None})

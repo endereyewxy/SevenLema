@@ -4,7 +4,7 @@ from django.forms import model_to_dict
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_GET
 
-from SevenLema.utils import require_login, add_page_info
+from SevenLema.utils import require_login, add_page_info, require_post_param, require_get_param
 from cmdb.models.dish import Dish
 from cmdb.models.dish_order import DishOrder
 from cmdb.models.order import Order
@@ -13,25 +13,20 @@ from cmdb.models.shop import Shop
 
 @require_POST
 @require_login
-def new(request, user):
+@require_post_param('shop_id', int)
+@require_post_param('addr')
+@require_post_param('loc_lng', float)
+@require_post_param('loc_lat', float)
+@require_post_param('remarks')
+def new(request, user, shop_id, addr, loc_lng, loc_lat, remarks):
     # Get post parameters
-    shop_id  = request.POST.get('shop_id')
     dish_ids = request.POST.getlist('dish_id[]')
     amounts  = request.POST.getlist('amount[]')
-    addr     = request.POST.get('addr')
-    loc_lng  = request.POST.get('loc_lng')
-    loc_lat  = request.POST.get('loc_lat')
-    remarks  = request.POST.get('remarks')
-
-    # Necessarily parameter checks
-    if None in [shop_id, dish_ids, amounts, addr, loc_lng, loc_lat, remarks] or len(dish_ids) != len(amounts):
+    if None not in [dish_ids, amounts]:
         return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
     try:
-        shop_id = int(shop_id)
         dish_ids = [int(x) for x in dish_ids]
         amounts  = [int(x) for x in amounts]
-        loc_lng = float(loc_lng)
-        loc_lat = float(loc_lat)
     except ValueError:
         return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
 
@@ -98,23 +93,12 @@ def order_info(order):
 
 @require_GET
 @require_login
-def info(request, user):
-    # Get post parameters
-    order_id   = request.GET.get('order_id')
-    shop_id    = request.GET.get('shop_id')
-    page       = request.GET.get('page')
-    limit      = request.GET.get('limit')
-    unfinished = request.GET.get('unfinished')
-
-    if None in [page, limit]:
-        return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
-    try:
-        page       = int(page)
-        limit      = int(limit)
-        unfinished = unfinished == 'true'
-    except ValueError:
-        return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
-
+@require_get_param('order_id',   int, False)
+@require_get_param('shop_id',    int, False)
+@require_get_param('page',       int)
+@require_get_param('limit',      int)
+@require_get_param('unfinished', bool, False)
+def info(request, user, order_id, shop_id, page, limit, unfinished):
     try:
         # User get order info
         if order_id is not None:
@@ -148,16 +132,8 @@ def info(request, user):
 
 @require_POST
 @require_login
-def finish(request, user):
-    # Get post parameters
-    order_id = request.POST.get('order_id')
-    if order_id is None:
-        return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
-    try:
-        order_id = int(order_id)
-    except ValueError:
-        return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
-
+@require_post_param('order_id', int)
+def finish(request, user, order_id):
     # User connection check
     try:
         order = Order.objects.get(id=order_id)

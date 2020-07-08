@@ -4,7 +4,7 @@ from math import radians
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 
-from SevenLema.utils import add_page_info
+from SevenLema.utils import add_page_info, require_get_param
 from cmdb.models.dish import Dish
 from cmdb.models.shop import Shop
 
@@ -41,29 +41,15 @@ def dish_to_json(obj):
 
 
 @require_GET
-def shop(request):
-    # Fetch general parameters
-    name    = request.GET.get('name')
-    order   = request.GET.get('order')
-    # TODO implement tags
-    # tags    = request.GET.getlist('tags', [])
-    page    = request.GET.get('page')
-    limit   = request.GET.get('limit')
-    serving = request.GET.get('serving')
-
-    # Check validness
-    if None in [name, order] or not (page + limit).isdigit():
-        return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
-
-    # Convert parameters to their actual type
-    page    = int(page)
-    limit   = int(limit)
-    serving = serving == 'true'
-
-    # Perform queries
+@require_get_param('name')
+@require_get_param('order')
+@require_get_param('page',    int)
+@require_get_param('limit',   int)
+@require_get_param('serving', bool)
+def shop(request, name, order, page, limit, serving):
     qs = Shop.objects.filter(name__icontains=name)
     if serving:
-        qs = qs.filter(serving__exact=True)
+        qs = qs.filter(serving=True)
 
     # Sort results
     if order == 'dist':
@@ -106,25 +92,13 @@ def shop(request):
 
 
 @require_GET
-def dish(request):
-    # Fetch general parameters
-    shop_id = request.GET.get('shop_id')
-    name    = request.GET.get('name')
-    order   = request.GET.get('order')
-    page    = request.GET.get('page')
-    limit   = request.GET.get('limit')
-    serving = request.GET.get('serving')
-
-    # Check validness
-    if None in [shop_id, name, order, page, limit] or not (page + limit).isdigit():
-        return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
-
-    # Convert parameters to their actual types
-    shop_id = int(shop_id)
-    page    = int(page)
-    limit   = int(limit)
-    serving = serving == 'true'
-
+@require_get_param('shop_id', int)
+@require_get_param('name')
+@require_get_param('order')
+@require_get_param('page',    int)
+@require_get_param('limit',   int)
+@require_get_param('serving', bool)
+def dish(request, shop_id, name, order, page, limit, serving):
     # Verify shop_id exists
     if not Shop.objects.filter(id=shop_id).exists():
         return JsonResponse({'code': 102, 'msg': '商户不存在'})

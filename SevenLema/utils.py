@@ -22,17 +22,58 @@ def require_login(view):
     return wrapper
 
 
-def upload_image(image):
-    if image.size > 20480000:
-        return False, JsonResponse({'code': 105, 'msg': '图片体积过大'})
-    ext = image.name.split('.')[-1]
-    if ext not in ['svg', 'jpg', 'png']:
-        return False, JsonResponse({'code': 101, 'msg': '图片格式不支持'})
-    tok = md5(str(uuid4()).encode('utf-8')).hexdigest()
-    with open(os.path.join(settings.STATIC_ROOT, 'images', tok + '.' + ext), 'wb') as f:
-        for chunk in image.chunks():
-            f.write(chunk)
-    return True, tok + '.' + ext
+def __require_param(is_post, param, type_=None, required=True):
+    def decorator(view):
+        def wrapper(request, *args, **kwargs):
+            arg = request.POST.get(param) if is_post else request.GET.get(param)
+            if arg is None and not required:
+                kwargs[param] = None
+                return view(request, *args, **kwargs)
+            if arg is not None:
+                try:
+                    kwargs[param] = arg if type_ is None else type_(arg)
+                    return view(request, *args, **kwargs)
+                except ValueError:
+                    pass
+            return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
+
+        return wrapper
+
+    return decorator
+
+
+def require_post_param(param, type_=None, required=True):
+    return __require_param(True, param, type_, required)
+
+
+def require_get_param(param, type_=None, required=True):
+    return __require_param(False, param, type_, required)
+
+
+def require_image(required=True):
+    def decorator(view):
+        def wrapper(request, *args, **kwargs):
+            image = request.FILES.get('image')
+            if image is not None:
+                if image.size > 20480000:
+                    return False, JsonResponse({'code': 105, 'msg': '图片体积过大'})
+                ext = image.name.split('.')[-1]
+                if ext not in ['svg', 'jpg', 'png', 'gif']:
+                    return False, JsonResponse({'code': 101, 'msg': '图片格式不支持'})
+                tok = md5(str(uuid4()).encode('utf-8')).hexdigest()
+                with open(os.path.join(settings.STATIC_ROOT, 'images', tok + '.' + ext), 'wb') as f:
+                    for chunk in image.chunks():
+                        f.write(chunk)
+                kwargs['image'] = tok + '.' + ext
+                return view(request, *args, **kwargs)
+            elif not required:
+                kwargs['image'] = None
+                return view(request, *args, **kwargs)
+            return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
+
+        return wrapper
+
+    return decorator
 
 
 def add_page_info(qs, page, limit):

@@ -1,50 +1,40 @@
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 
-from SevenLema.utils import upload_image, require_login
+from SevenLema.utils import require_login, require_post_param, require_image
 from cmdb.models.dish import Dish
 
 
 @require_POST
 @require_login
-def create(request):
-    shop_id = request.POST.get('shop_id')
-    name    = request.POST.get('name')
-    image   = request.POST.get('image')
-    desc    = request.POST.get('desc')
-    price   = request.POST.get('price')
-
-    if None in [shop_id, name, image, desc, price]:
-        return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
-
-    try:
-        dish = Dish.objects.create(
-            shop_id=shop_id,
-            name   =name,
-            image  =image,
-            desc   =desc,
-            price  =0,
-            sales  =0,
-            serving=True)
-        dish.set_actual_price(float(price))
-    except ValueError:
-        return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
+@require_post_param('shop_id', int)
+@require_post_param('name')
+@require_image()
+@require_post_param('desc')
+@require_post_param('price',   float)
+def create(request, shop_id, name, image, desc, price):
+    dish = Dish.objects.create(
+        shop_id=shop_id,
+        name   =name,
+        image  =image,
+        desc   =desc,
+        price  =0,
+        sales  =0,
+        serving=True)
+    dish.set_actual_price(price)
     dish.save()
-
     return JsonResponse({'code': 0, 'msg': '', 'data': {'dish_id': dish.id}})
 
 
 @require_POST
 @require_login
-def edit(request, user):
-    dish_id = request.POST.get('dish_id')
-    if dish_id is None:
-        return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
-    try:
-        dish_id = int(dish_id)
-    except ValueError:
-        return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
-
+@require_post_param('dish_id', int)
+@require_post_param('name',    None,  False)
+@require_image(False)
+@require_post_param('desc',    None,  False)
+@require_post_param('price',   float, False)
+@require_post_param('serving', bool,  False)
+def edit(request, user, dish_id, name, image, desc, price, serving):
     try:
         dish = Dish.objects.get(id=dish_id)
         if dish.shop.user_id != user.id:
@@ -52,29 +42,15 @@ def edit(request, user):
     except Dish.DoesNotExist:
         return JsonResponse({'code': 102, 'msg': '菜品不存在'})
 
-    name = request.POST.get('name')
     if name is not None:
         dish.name = name
-
-    image = request.FILES.get('image')
     if image is not None:
-        dish.image = upload_image(image)
-
-    desc = request.POST.get('desc')
+        dish.image = image
     if desc is not None:
         dish.desc = desc
-
-    price = request.POST.get('price')
     if price is not None:
-        try:
-            price = float(price)
-        except ValueError:
-            return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
         dish.set_actual_price(price)
-
-    serving = request.POST.get('serving')
     if serving is not None:
-        dish.serving = serving == 'true'
-
+        dish.serving = serving
     dish.save()
     return JsonResponse({'code': 0, 'msg': '', 'data': None})
