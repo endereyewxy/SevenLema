@@ -19,34 +19,35 @@ function load_order_info(shop_id) {
     });
 }
 
-function change_shop_info() {
-    let data = new FormData(document.getElementById('shop-form'));
+function change_shop_info(shop_id) {
+    let data = new FormData(document.getElementById('change-shop-form'));
 
-    const loc_lng = $('input[name=loc_lng]'), loc_lat = $('input[name=loc_lat]');
-    locator.change(() => {
-        loc_lng.val(locator.lng());
-        loc_lat.val(locator.lat());
-        $('#locator-addr').text('定位到：' + locator.address()).removeAttr('hidden');
-    });
-    locator.create();
-    $('#locator-show').click(() => locator.render($('input[name=addr]').val()));
+    // const loc_lng = $('input[name=loc_lng]'), loc_lat = $('input[name=loc_lat]');
+    // locator.change(() => {
+    //     loc_lng.val(locator.lng());
+    //     loc_lat.val(locator.lat());
+    //     $('#locator-addr').text('定位到：' + locator.address()).removeAttr('hidden');
+    // });
+    // locator.create();
+    // $('#locator-show').click(() => locator.render($('input[name=addr]').val()));
 
     for (let i = 0; i < 4; i++) {
-        !data.get(['name', 'desc', 'addr', 'phone', 'image']).length && data.delete(['name', 'desc', 'addr', 'phone', 'image'][i]);
+        !data.get(['name', 'desc', 'addr', 'phone'][i]).length && data.delete(['name', 'desc', 'addr', 'phone'][i]);
     }
-    data.append('serving', $('#shop-serving:checked').length !== 0 ? 'true' : 'false');
+    data.append('serving', $('#shop-serving:checked').length !== 0 ? 'true' : 'false')
     $.ajax({
         url: '/shop/edit',
+        shop_id: shop_id,
         data: data,
         processData: false,
         contentType: false,
         type: 'post',
-        success: (resp) => resp.code ? alert(resp.msg) : ($('#shopModal').modal('hide') & load_dish())
+        success: (resp) => resp.code ? alert(resp.msg) : ($('#change-shop-modal').modal('hide') & load_shop_info())
     });
 }
 
 function change_dish_info() {
-    let data = new FormData(document.getElementById('dish-form'));
+    let data = new FormData(document.getElementById('change-dish-form'));
     for (let i = 0; i < 3; i++) {
         !data.get(['name', 'price', 'desc'][i]).length && data.delete(['name', 'price', 'desc'][i]);
     }
@@ -57,7 +58,7 @@ function change_dish_info() {
         processData: false,
         contentType: false,
         type: 'post',
-        success: (resp) => resp.code ? alert(resp.msg) : ($('#dish-modal').modal('hide') & load_dish())
+        success: (resp) => resp.code ? alert(resp.msg) : ($('#change-dish-modal').modal('hide') & load_dish_info($('#change-dish-edit-id').attr('shop-id')))
     });
 }
 
@@ -126,17 +127,26 @@ function load_dish_info(shop_id) {
     };
     miscellaneous.web.get('/search/dish/', data, (resp) => {
         paginator.maximumPage(resp.page);
+        for(let i=0;i<resp.data.length;i++){
+            resp.data[i].shop_id=shop_id;
+        }
         miscellaneous.loadTemplate($('#dishes-container'), $('#dishes-template'), resp.data);
     });
 }
 
-$(document).ready(function () {
+$(document).ready(() => {
     paginator.change(load_shop_info);
     load_shop_info();
 
+    $('#change-dish-edit').click(change_dish_info);
+    $('#change-dish-modal').on('show.bs.modal', (evt) => {
+        $('#change-dish-edit-id')
+            .val($(evt.relatedTarget).attr('id'))
+            .attr('shop-id', $(evt.relatedTarget).attr('shop-id'));
+    });
+    $('#change-shop-edit').click(change_shop_info);
+    $('#change-shop-modal').on('show.bs.modal', (evt) => $('#change-shop-edit-id').val($(evt.relatedTarget).attr('id')));
     $('#create-shop').click(create_shop);
     $('#logout').click(
         () => miscellaneous.web.post('/user/logout/', {}, () => window.location.href = '/'));
 });
-
-
