@@ -1,11 +1,11 @@
-let serving = false;
+let serving = false, pager;
 
 const load_shop = () => {
     const data = {
         name: $('#header-search').val(),
         order: get_order(),
-        page: paginator.currentPage(),
-        limit: paginator.limit(),
+        page: pager.currentPage(),
+        limit: pager.limit(),
         serving: serving
     };
     if (get_order() === 'dist') {
@@ -13,13 +13,14 @@ const load_shop = () => {
         data['loc_lat'] = locator.lat;
     }
     miscellaneous.web.get('/search/shop/', data, (resp) => {
-        paginator.maximumPage(resp.page);
+        pager.maximumPage(resp.page);
         miscellaneous.loadTemplate($('#data-container'), $('#data-template'), resp.data);
     });
 };
 
 $(document).ready(function () {
-    paginator.change(load_shop);
+    pager = paginator.create($('.pagination'));
+    pager.change(load_shop);
     locator.change(() => {
         $('#locator-addr').text(locator.address);
         get_order() === 'dist' && load_shop();

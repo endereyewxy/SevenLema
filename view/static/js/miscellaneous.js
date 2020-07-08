@@ -65,10 +65,12 @@
         return target;
     };
 
-    const load_template = (container, template, data, keep = false) => {
+    const load_template = (container, template, data, keep = false, finish = undefined) => {
         !keep && container.html('');
-        animate(template.tmpl(data), 'fadeInUp').each(
-            (i, item) => setTimeout(() => container.append(item), 100 * i));
+        animate(template.tmpl(data), 'fadeInUp').each((i, item) => setTimeout(() => {
+            container.append(item);
+            finish && finish(data[i]);
+        }, 100 * i));
     };
 
     const web_callback = (done, failed) => (resp) => {

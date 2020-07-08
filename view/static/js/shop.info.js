@@ -1,9 +1,17 @@
-let serving = false;
+let serving = false, pager, dish_pagers, order_pagers;
 
 function load_shop_info() {
+    dish_pagers = {};
+    order_pagers = {};
     miscellaneous.web.get('/shop/mine/', {}, (resp) => {
-        paginator.maximumPage(resp.page);
-        miscellaneous.loadTemplate($('#shop-info-container'), $('#shop-info-template'), resp.data);
+        pager.maximumPage(resp.page);
+        miscellaneous.loadTemplate($('#shop-info-container'), $('#shop-info-template'), resp.data, false, (data) => {
+            const shop_id = data.shop_id;
+            dish_pagers[shop_id] = paginator.create($('#dish-pager-' + shop_id));
+            dish_pagers[shop_id].change(() => load_dish_info(shop_id));
+            order_pagers[shop_id] = paginator.create($('#order-pager-' + shop_id));
+            order_pagers[shop_id].change(() => load_order_info(shop_id));
+        });
     });
 }
 
@@ -12,11 +20,11 @@ function load_dish_info(shop_id) {
         shop_id: shop_id,
         name: '',
         order: 'sales',
-        page: 1,
-        limit: 10000
+        page: dish_pagers[shop_id].currentPage(),
+        limit: dish_pagers[shop_id].limit()
     };
     miscellaneous.web.get('/search/dish/', data, (resp) => {
-        paginator.maximumPage(resp.page);
+        dish_pagers[shop_id].maximumPage(resp.page);
         for (let i = 0; i < resp.data.length; i++) {
             resp.data[i].shop_id = shop_id;
         }
@@ -28,11 +36,11 @@ function load_dish_info(shop_id) {
 function load_order_info(shop_id) {
     const data = {
         shop_id: shop_id,
-        page: paginator.currentPage(),
-        limit: paginator.limit()
+        page: order_pagers[shop_id].currentPage(),
+        limit: order_pagers[shop_id].limit()
     };
     miscellaneous.web.get('/order/info/', data, (resp) => {
-        paginator.maximumPage(resp.page);
+        order_pagers[shop_id].maximumPage(resp.page);
         $.each(resp.data, (i, data) =>
             resp.data[i].dishes = data.dishes.map((dish) => dish.name + '&times;' + dish.amount).join(', '));
         miscellaneous.loadTemplate($('#orders-container-' + shop_id), $('#orders-template'), resp.data);
@@ -40,35 +48,41 @@ function load_order_info(shop_id) {
 }
 
 function change_shop_info() {
-    let data = new FormData(document.getElementById('change-shop-form'));
-    $.each(['name', 'desc', 'addr', 'phone'], (_, key) => !data.get(key).length && data.delete(key));
-    data.append('serving', $('#shop-serving:checked').length !== 0 ? 'true' : 'false');
-    $.ajax({
-        url: '/shop/edit/',
-        data: data,
-        processData: false,
-        contentType: false,
-        type: 'post',
-        success: (resp) => resp.code
-            ? miscellaneous.alert(resp.msg)
-            : ($('#change-shop-modal').modal('hide') & load_shop_info())
-    });
+    $('#change-shop-form').addClass('was-validated');
+    if (!$('#change-shop-form input:invalid').length) {
+        let data = new FormData(document.getElementById('change-shop-form'));
+        $.each(['name', 'desc', 'addr', 'phone'], (_, key) => !data.get(key).length && data.delete(key));
+        data.append('serving', $('#shop-serving:checked').length !== 0 ? 'true' : 'false');
+        $.ajax({
+            url: '/shop/edit/',
+            data: data,
+            processData: false,
+            contentType: false,
+            type: 'post',
+            success: (resp) => resp.code
+                ? miscellaneous.alert(resp.msg)
+                : ($('#change-shop-modal').modal('hide') & load_shop_info())
+        });
+    }
 }
 
 function change_dish_info() {
-    let data = new FormData(document.getElementById('change-dish-form'));
-    $.each(['name', 'price', 'desc'], (_, key) => !data.get(key).length && data.delete(key));
-    data.append('serving', $('#dish-serving:checked').length !== 0 ? 'true' : 'false');
-    $.ajax({
-        url: '/dish/edit/',
-        data: data,
-        processData: false,
-        contentType: false,
-        type: 'post',
-        success: (resp) => resp.code
-            ? miscellaneous.alert(resp.msg)
-            : ($('#change-dish-modal').modal('hide') & load_dish_info($('#change-dish-id').attr('shop-id')))
-    });
+    $('#change-dish-form').addClass('was-validated');
+    if (!$('#change-dish-form input:invalid').length) {
+        let data = new FormData(document.getElementById('change-dish-form'));
+        $.each(['name', 'price', 'desc'], (_, key) => !data.get(key).length && data.delete(key));
+        data.append('serving', $('#dish-serving:checked').length !== 0 ? 'true' : 'false');
+        $.ajax({
+            url: '/dish/edit/',
+            data: data,
+            processData: false,
+            contentType: false,
+            type: 'post',
+            success: (resp) => resp.code
+                ? miscellaneous.alert(resp.msg)
+                : ($('#change-dish-modal').modal('hide') & load_dish_info($('#change-dish-id').attr('shop-id')))
+        });
+    }
 }
 
 
@@ -112,7 +126,8 @@ function finish_order_commit() {
 
 
 $(document).ready(() => {
-    paginator.change(load_shop_info);
+    pager = paginator.create($('#global-pager'));
+    pager.change(load_shop_info);
     load_shop_info();
     const loc_lng = $('input[name=loc_lng]'), loc_lat = $('input[name=loc_lat]');
     locator.change(() => {

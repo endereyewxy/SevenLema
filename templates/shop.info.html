@@ -39,8 +39,8 @@
     <div class="row">
         <div class="col-12" id="shop-info-container"></div>
     </div>
-    <div class="flex-grow-1" id="info-container"></div>
-    <ul class="pagination justify-content-center"></ul>
+    <ul class="pagination justify-content-center" id="global-pager"></ul>
+    <span>&nbsp;</span>
 </div>
 <script id="shop-info-template" type="text/x-jquery-tmpl">
     <div class="accordion mb-1" id="shop-${shop_id}">
@@ -81,6 +81,7 @@
                                             <p class="card-text"><b>商户名称：</b>&nbsp; ${name}</p>
                                             <p class="card-text"><b>商户说明：</b>&nbsp; ${desc}</p>
                                             <p class="card-text"><b>商户地址：</b>&nbsp; ${addr}</p>
+                                            <p class="card-text"><b>人均消费：</b>&nbsp; ￥${avg_price}</p>
                                             <p class="card-text"><b>电话号码：</b>&nbsp; ${phone}</p>
                                             <p class="card-text">
                                                 <b>是否营业：</b>&nbsp;
@@ -96,17 +97,18 @@
                                     </div>
                                 </div>
                                 <div class="tab-pane fade" id="dish-list-${shop_id}">
-                                     <div class="text-right mb-3">
+                                    <div class="text-right mb-3">
                                         <button type="button" class="btn btn-outline-info" data-toggle="modal"
                                                 data-target="#create-dish-modal" shop-id="${shop_id}">
                                             新增菜品
                                         </button>
-                                     </div>
-                                     <div class="card-columns" role="tabpanel" id="dishes-container-${shop_id}">
-                                     </div>
+                                    </div>
+                                    <div class="list-group mb-3" role="tabpanel" id="dishes-container-${shop_id}"></div>
+                                    <ul class="pagination justify-content-center" id="dish-pager-${shop_id}"></ul>
                                 </div>
                                 <div class="tab-pane fade" id="order-list-${shop_id}">
-                                     <div class="col-12" role="tabpanel" id="orders-container-${shop_id}"></div>
+                                     <div class="col-12 mb-3" role="tabpanel" id="orders-container-${shop_id}"></div>
+                                    <ul class="pagination justify-content-center" id="order-pager-${shop_id}"></ul>
                                 </div>
                             </div>
                         </div>
@@ -216,7 +218,8 @@
                                 <div class="input-group-text"><span>价格</span></div>
                             </div>
                             <input name="price" type="text" class="form-control" placeholder="留空表示不修改"
-                                   autocomplete="off" aria-label="Price">
+                                   autocomplete="off" aria-label="Price" pattern="\d+(\.\d?\d?)?">
+                            <div class="invalid-feedback">请输入正确的价格</div>
                         </div>
                     </div>
                     <div class="form-group">
@@ -319,19 +322,29 @@
                     <input type="hidden" name="shop_id" id="change-shop-id">
                     <div class="form-group">
                         <label class="col-form-label">商户名称：</label>
-                        <input type="text" class="form-control" name="name" aria-label="Name">
+                        <input type="text" class="form-control" name="name" aria-label="Name"
+                               placeholder="留空表示不修改">
                     </div>
                     <div class="form-group">
                         <label class="col-form-label">商户说明：</label>
-                        <textarea class="form-control" name="desc" aria-label="Description"></textarea>
+                        <textarea class="form-control" name="desc" aria-label="Description"
+                                  placeholder="留空表示不修改"></textarea>
                     </div>
                     <div class="form-group">
                         <label class="col-form-label">商户地址：</label>
-                        <input type="text" class="form-control" name="addr" aria-label="Address">
+                        <input type="text" class="form-control" name="addr" aria-label="Address"
+                               placeholder="留空表示不修改">
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">人均消费：</label>
+                        <input type="text" class="form-control" name="avg_price" aria-label="Average Price"
+                               pattern="\d+(\.\d?\d?)?" placeholder="留空表示不修改">
+                        <div class="invalid-feedback">请输入正确的人均消费</div>
                     </div>
                     <div class="form-group">
                         <label class="col-form-label">商户电话号码：</label>
-                        <input type="text" class="form-control" name="phone" aria-label="Phone">
+                        <input type="text" class="form-control" name="phone" aria-label="Phone"
+                               placeholder="留空表示不修改">
                     </div>
                     <div class="form-group">
                         <div class="custom-control custom-checkbox">
@@ -372,21 +385,27 @@
     </div>
 </div>
 <script id="dishes-template" type="text/x-jquery-tmpl">
-<div class="card">
-    <img src="{% static 'images' %}/${image}" class="card-img" alt="${name}">
-    <div class="card-body">
-        <p class="card-text"><b>菜品名称：</b>&nbsp;${name}</p>
-        <p class="card-text"><b>菜品说明：</b>&nbsp;${desc}</p>
-        <p class="card-text"><b>菜品单价：</b>&nbsp;￥${price}</p>
-        <p class="card-text"><b>是否有货：</b>&nbsp;${serving ? '有货' : '已售罄'}</p>
-        <div class="text-right">
-            <button class="btn btn-outline-info" data-toggle="modal" data-target="#change-dish-modal"
-                    dish-id="${dish_id}" shop-id="${shop_id}">
-                修改
-            </button>
+    <div class="card list-group-item">
+        <div class="row no-gutters">
+            <div class="col-md-4">
+                <img src="{% static 'images' %}/${image}" class="card-img" alt="${name}">
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <p class="card-text"><b>菜品名称：</b>&nbsp;${name}</p>
+                    <p class="card-text"><b>菜品说明：</b>&nbsp;${desc}</p>
+                    <p class="card-text"><b>菜品单价：</b>&nbsp;￥${price}</p>
+                    <p class="card-text"><b>是否有货：</b>&nbsp;${serving ? '有货' : '已售罄'}</p>
+                    <div class="text-right">
+                        <button class="btn btn-outline-info" data-toggle="modal" data-target="#change-dish-modal"
+                                dish-id="${dish_id}" shop-id="${shop_id}">
+                            修改
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-</div>
 </script>
 <script id="orders-template" type="text/x-jquery-tmpl">
     <div class="card">

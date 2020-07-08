@@ -1,4 +1,4 @@
-let card_list = [], total_price = 0, total_amount = 0, serving = false;
+let card_list = [], total_price = 0, total_amount = 0, serving = false, pager;
 
 function change_dish_info() {
     let data = new FormData(document.getElementById('dish-form'));
@@ -101,12 +101,12 @@ function load_dish() {
         shop_id: shop_id,
         name: $('#header-search').val(),
         order: get_order(),
-        page: paginator.currentPage(),
-        limit: paginator.limit(),
+        page: pager.currentPage(),
+        limit: pager.limit(),
         serving: serving
     };
     miscellaneous.web.get('/search/dish/', data, (resp) => {
-        paginator.maximumPage(resp.page);
+        pager.maximumPage(resp.page);
         miscellaneous.loadTemplate($('#data-container'), $('#data-template'), resp.data);
     });
 }
@@ -131,7 +131,8 @@ $(document).ready(() => {
     $('#commit').click(commit_an_order);
     $('#dish-edit').click(change_dish_info);
     $('#dish-modal').on('show.bs.modal', (evt) => $('#dish-edit-id').val($(evt.relatedTarget).attr('id')));
-    paginator.change(load_dish);
+    pager = paginator.create($('.pagination'));
+    pager.change(load_dish);
     locator.change(() => $('#locator-addr').text(locator.address()));
     default_lng !== undefined ? locator.create(default_lng, default_lat) : locator.create();
     $('#header-search-button,#price,#sales').click(load_dish);
