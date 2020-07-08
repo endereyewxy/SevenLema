@@ -42,7 +42,7 @@
             html = add_page(html, cur_page - 2, Math.min(cur_page + 2, max_page));
             cur_page + 2 < max_page && (html += html_dots);
         }
-        html += html_next + html_se_l;
+        html += html_next + '&nbsp;' + html_se_l;
         for (let i = 5; i <= 30; i += 5) {
             html += '<option value="' + i + '"' + (i === limit_ ? ' selected' : '') + '>' + i + '条/页</option>';
         }

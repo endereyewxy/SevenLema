@@ -148,7 +148,7 @@ def info(request):
     qs, max_page = add_page_info(qs, page, limit)
     data = []
     for order in qs:
-        data.append(order_info(order))
+        data = [order_info(order)] + data
     return JsonResponse({'code': 0, 'msg': '', 'page': max_page, 'data': data})
 
 

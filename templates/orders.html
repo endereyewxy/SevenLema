@@ -1,97 +1,108 @@
 <!DOCTYPE html>
 {% load static %}
-<html lang="en">
-
+<html lang="zh">
 <head>
-    <meta charset="UTF-8">
     <title>吃了么-我的订单</title>
     {% include 'includes.html' %}
-    <script type="text/javascript"
-            src="http://api.map.baidu.com/getscript?v=3.0&ak=tdfjfQq8B4ETmpg93UMWGWrL8yprpI5Q"></script>
-    <script src="/static/js/orders.js"></script>
-
-    <style>
-        html,
-        body,
-        .container {
-            height: 100%;
-        }
-
-        .row {
-            margin: 10px;
-        }
-
-        .btn-group {
-            width: 100%;
-        }
-
-        .flex-grow-1 {
-            overflow: scroll;
-            scrollbar-width: none;
-        }
-
-        div::-webkit-scrollbar {
-            width: 0;
-        }
-
-        .div-title {
-            text-align: center;
-            color: dimgray;
-            font-size: 40px;
-            font-weight: bolder;
-            font-family: cursive;
-        }
-    </style>
+    <link href="{% static 'css/header.css' %}" rel="stylesheet">
+    <script src="{% static 'js/miscellaneous.js' %}"></script>
+    <script src="{% static 'js/paginator.js' %}"></script>
+    <script src="{% static 'js/header.js' %}"></script>
+    <script src="{% static 'js/orders.js' %}"></script>
 </head>
-
 <body>
 <div class="container d-flex flex-column">
-    {% include 'ordersHeader.html' %}
-
-    <div class="row">
-        <div class="col-12">
-            <!-- 模板填充区域 -->
-            <div id="orders-container" class="list-group list-group-flush mb-3"></div>
-        </div>
-    </div>
-    <div class="flex-grow-1" id="info-container"></div>
-    <ul class="pagination justify-content-center"></ul>
-
-</div>
-
-</body>
-<script id="orders-template" type="text/x-jquery-tmpl">
-    <div class="accordion" id="accordionExample">
-        <div class="card">
-            <div class="card-header">
-                <h2 class="mb-0">
-                    <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse"
-                            data-target="#order-collapse-${id}" aria-expanded="true" aria-controls="collapseOne">
-                        订单号：${id}
-                    </button>
-                </h2>
+    <span>&nbsp;</span>
+    <button class="btn btn-lg btn-dark" onclick="document.body.scrollTop = 0;document.documentElement.scrollTop = 0"
+            id="btn-top" data-toggle="tooltip" title="返回顶部">
+        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-up" fill="currentColor"
+             xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-1 0V4a.5.5 0 0 1 .5-.5z"></path>
+            <path fill-rule="evenodd"
+                  d="M7.646 2.646a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8 3.707 5.354 6.354a.5.5 0 1 1-.708-.708l3-3z"></path>
+        </svg>
+    </button>
+    <div class="row header mb-2">
+        <a class="col-4" style="background-image: url('{% static 'images/logo.svg' %}')" href="/"></a>
+        <div class="col-8">
+            <div class="row">
+                <div class="col-6">
+                </div>
+                <div class="col-6">
+                    <div class="btn-group" role="group">
+                        <a class="btn btn-secondary" id="user-info">{{ username }}</a>
+                        <a type="button" class="btn btn-secondary" id="logout">登出</a>
+                    </div>
+                </div>
             </div>
-            <div id="order-collapse-${id}" class="collapse show"
-                 data-parent="#accordionExample">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-3">
-                        </div>
-                        <div class="col-6">
-                            <p class="card-text"><b>菜品名称：</b>${shop_name}</p>
-                            <p class="card-text"><b>所购菜品：</b>${dishes}</p>
-                            <p class="card-text"><b>送达地址：</b>${addr}</p>
-                            <p class="card-text"><b>订单备注：</b>${remarks}</p>
-                            <p class="card-text"><b>下单时间：</b>${tm_ordered}</p>
-                            <p class="card-text"><b>送达时间：</b>${tm_finished}</p>
-                        </div>
-                        <div class="col-3"></div>
+            <div class="row">
+                <div class="col-6"></div>
+                <div class="col-6">
+                    <div class="btn-group" role="group">
+                        <a type="button" href="/" class="btn btn-secondary" id="logout">回到主页</a>
+                        <a type="button" href="/mine/shop" class="btn btn-secondary">我的店铺</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
+    <div id="user-wrapper" hidden>
+        <div class="card" style="width: 250px;">
+            <div class="card-body">
+                <h5 class="card-title" style="font-weight: bold">{{ username }}</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">电话：{{ phone }}</li>
+                <li class="list-group-item">地址：{{ addr }}</li>
+            </ul>
+            <div class="card-body">
+                <a href="/orders" class="card-link">查看订单</a>
+                <a href="/mine/shop" class="card-link">我的店铺</a>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div id="orders-container" class="list-group list-group-flush mb-3"></div>
+        </div>
+    </div>
+    <div class="flex-grow-1" id="info-container"></div>
+    <ul class="pagination justify-content-center"></ul>
+    <span>&nbsp;</span>
+</div>
+</body>
+<script id="orders-template" type="text/x-jquery-tmpl">
+    <div class="accordion" id="order-${id}">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="text-decoration-none">
+                    <button class="btn btn-block text-left" type="button" data-toggle="collapse"
+                            data-target="#order-collapse-${id}" aria-expanded="true">
+                        订单号：${id}
+                    </button>
+                </h2>
+            </div>
+            <div id="order-collapse-${id}" class="collapse show" data-parent="#order-${id}">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-3">
+                        </div>
+                        <div class="col-9">
+                            <p class="card-text"><b>商户名称：</b>${shop_name}</p>
+                            <p class="card-text"><b>所购菜品：</b>${dishes}</p>
+                            <p class="card-text"><b>送达地址：</b>${addr}</p>
+                            <p class="card-text"><b>订单备注：</b>${remarks}</p>
+                            <p class="card-text"><b>下单时间：</b>${miscellaneous.parseTime(tm_ordered)}</p>
+                            <p class="card-text">
+                                <b>送达时间：</b>
+                                ${tm_finished ? miscellaneous.parseTime(tm_finished) : '尚未送达'}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </script>
 {% csrf_token %}
 </html>
