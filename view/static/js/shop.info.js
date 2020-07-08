@@ -75,9 +75,10 @@ function change_dish_info() {
 function create_dish() {
     $('#create-dish-form').addClass('was-validated');
     if (!$('#create-dish-form input:invalid').length) {
+        const data = new FormData(document.getElementById('create-dish-form'));
         $.ajax({
             url: '/dish/create/',
-            data: new FormData(document.getElementById('create-dish-form')),
+            data: data,
             processData: false,
             contentType: false,
             type: 'post',
