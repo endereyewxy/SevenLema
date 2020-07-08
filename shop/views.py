@@ -11,6 +11,7 @@ from cmdb.models.shop import Shop
 @require_post_param('name')
 @require_post_param('desc')
 @require_image()
+@require_post_param('addr')
 @require_post_param('loc_lng',   float)
 @require_post_param('loc_lat',   float)
 @require_post_param('avg_price', float)
@@ -58,7 +59,8 @@ def mine(request, user):
 @require_post_param('loc_lat',   float, False)
 @require_post_param('avg_price', float, False)
 @require_post_param('phone',     None,  False)
-def edit(request, user, shop_id, name, image, desc, addr, loc_lng, loc_lat, avg_price, phone):
+@require_post_param('serving',   bool,  False)
+def edit(request, user, shop_id, name, image, desc, addr, loc_lng, loc_lat, avg_price, phone, serving):
     try:
         shop = Shop.objects.get(id=shop_id)
     except Shop.DoesNotExist:
@@ -83,6 +85,8 @@ def edit(request, user, shop_id, name, image, desc, addr, loc_lng, loc_lat, avg_
         shop.set_actual_avg_price(avg_price)
     if phone is not None:
         shop.phone = phone
+    if serving is not None:
+        shop.serving = serving
     shop.save()
 
     return JsonResponse({'code': 0, 'msg': '成功修改商家数据'})

@@ -13,7 +13,7 @@ from cmdb.models.user import User
 @require_post_param('loc_lng', float)
 @require_post_param('loc_lat', float)
 @require_post_param('phone')
-def register(request, username, addr, loc_lng, loc_lat, phone):
+def register(request, username, password, addr, loc_lng, loc_lat, phone):
     if User.objects.filter(username__exact=username).exists():
         return JsonResponse({'code': 104, 'msg': '用户名冲突'})
 

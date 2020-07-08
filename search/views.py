@@ -45,7 +45,7 @@ def dish_to_json(obj):
 @require_get_param('order')
 @require_get_param('page',    int)
 @require_get_param('limit',   int)
-@require_get_param('serving', bool)
+@require_get_param('serving', bool, False)
 def shop(request, name, order, page, limit, serving):
     qs = Shop.objects.filter(name__icontains=name)
     if serving:
@@ -97,7 +97,7 @@ def shop(request, name, order, page, limit, serving):
 @require_get_param('order')
 @require_get_param('page',    int)
 @require_get_param('limit',   int)
-@require_get_param('serving', bool)
+@require_get_param('serving', bool, False)
 def dish(request, shop_id, name, order, page, limit, serving):
     # Verify shop_id exists
     if not Shop.objects.filter(id=shop_id).exists():

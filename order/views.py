@@ -22,7 +22,7 @@ def new(request, user, shop_id, addr, loc_lng, loc_lat, remarks):
     # Get post parameters
     dish_ids = request.POST.getlist('dish_id[]')
     amounts  = request.POST.getlist('amount[]')
-    if None not in [dish_ids, amounts]:
+    if None in [dish_ids, amounts]:
         return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
     try:
         dish_ids = [int(x) for x in dish_ids]
@@ -79,6 +79,7 @@ def new(request, user, shop_id, addr, loc_lng, loc_lat, remarks):
 def order_info(order):
     json = model_to_dict(order)
     json['username']  = order.user.username
+    json['user_phone'] = order.user.phone
     json['shop_name'] = order.shop.name
     json['dishes']    = []
     for dish_order in DishOrder.objects.filter(order_id=order.id):

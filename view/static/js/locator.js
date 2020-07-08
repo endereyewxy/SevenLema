@@ -90,7 +90,7 @@
     };
 
     const html_modal =
-        '<div class="modal fade" id="locator-modal" tabindex="-1" role="dialog" aria-hidden="true">' +
+        '<div class="modal fade" id="locator-modal" tabindex="-1" role="dialog" aria-hidden="true" style="z-index: 3000">' +
         '   <div class="modal-dialog">' +
         '       <div class="modal-content">' +
         '           <div class="modal-header"><h5 class="modal-title"></h5></div>' +

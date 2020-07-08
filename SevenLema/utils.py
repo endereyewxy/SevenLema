@@ -23,6 +23,9 @@ def require_login(view):
 
 
 def __require_param(is_post, param, type_=None, required=True):
+    if type_ == bool:
+        type_ = lambda x: x == 'true'
+
     def decorator(view):
         def wrapper(request, *args, **kwargs):
             arg = request.POST.get(param) if is_post else request.GET.get(param)

@@ -25,9 +25,9 @@ def create(request, user, shop_id, name, image, desc, price):
         name   =name,
         image  =image,
         desc   =desc,
+        price  =int(100 * price),
         sales  =0,
         serving=True)
-    dish.set_actual_price(price)
     dish.save()
     return JsonResponse({'code': 0, 'msg': '', 'data': {'dish_id': dish.id}})
 

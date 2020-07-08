@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="zh">
+<head>
+    <title>吃了么-店铺管理</title>
+    {% include 'includes.html' %}
+    <link href="{% static 'css/header.css' %}" rel="stylesheet">
+    <script type="text/javascript"
+            src="http://api.map.baidu.com/getscript?v=3.0&ak=tdfjfQq8B4ETmpg93UMWGWrL8yprpI5Q"></script>
+    <script src="{% static 'js/miscellaneous.js' %}"></script>
+    <script src="{% static 'js/locator.js' %}"></script>
+    <script src="{% static 'js/paginator.js' %}"></script>
+    <script src="{% static 'js/shop.info.js' %}"></script>
+</head>
+<body>
+<div class="container d-flex flex-column">
+    <div class="row header mb-3">
+        <a class="col-4" style="background-image: url('{% static 'images/logo.svg' %}')" href="/"></a>
+        <div class="col-8">
+            <div class="row">
+                <div class="col-6">
+                </div>
+                <div class="col-6">
+                    <div class="btn-group" role="group">
+                        <a type="button" class="btn btn-secondary" id="logout">登出</a>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-6">
+                </div>
+                <div class="col-6">
+                    <a type="button" class="btn btn-secondary" id="create-shop" style="width: 100%"
+                       data-toggle="modal" data-target="#create-shop-modal">创建商铺</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12" id="shop-info-container"></div>
+    </div>
+    <div class="flex-grow-1" id="info-container"></div>
+    <ul class="pagination justify-content-center"></ul>
+</div>
+<script id="shop-info-template" type="text/x-jquery-tmpl">
+    <div class="accordion mb-1" id="shop-${shop_id}">
+        <div class="card" >
+            <div class="card-header">
+                <h2 class="mb-0">
+                    <button class="btn btn-link btn-block text-left text-decoration-none" type="button"
+                            style="color: black" data-toggle="collapse" data-target="#shop-collapse-${shop_id}">
+                        商户ID：&nbsp;${shop_id}&nbsp;&nbsp;&nbsp;&nbsp;商户名称：&nbsp;${name}
+                    </button>
+                </h2>
+            </div>
+            <div id="shop-collapse-${shop_id}" class="collapse show" data-parent="#shop-${shop_id}">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="list-group" id="list-tab" role="tablist">
+                                <a class="list-group-item list-group-item-action active" href="#shop-list-${shop_id}"
+                                   data-toggle="list" role="tab">
+                                    商铺信息
+                                </a>
+                                <a class="list-group-item list-group-item-action" href="#dish-list-${shop_id}"
+                                   data-toggle="list" role="tab" onclick="load_dish_info(${shop_id})">
+                                    菜品信息
+                                </a>
+                                <a class="list-group-item list-group-item-action" href="#order-list-${shop_id}"
+                                   data-toggle="list" role="tab" onclick="load_order_info(${shop_id})">
+                                    订单处理
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-8">
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" role="tabpanel" id="shop-list-${shop_id}">
+                                    <div class="card">
+                                        <img src="{% static 'images' %}/${image}" class="card-img-top" alt="${name}">
+                                        <div class="card-body">
+                                            <p class="card-text"><b>商户名称：</b>&nbsp; ${name}</p>
+                                            <p class="card-text"><b>商户说明：</b>&nbsp; ${desc}</p>
+                                            <p class="card-text"><b>商户地址：</b>&nbsp; ${addr}</p>
+                                            <p class="card-text"><b>电话号码：</b>&nbsp; ${phone}</p>
+                                            <p class="card-text">
+                                                <b>是否营业：</b>&nbsp;
+                                                ${serving ? '正在营业' : '休息中'}
+                                            </p>
+                                            <div class="text-right">
+                                                <button type="button" class="btn btn-outline-info" data-toggle="modal"
+                                                        data-target="#change-shop-modal" shop-id="${shop_id}">
+                                                    修改
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="dish-list-${shop_id}">
+                                     <div class="text-right mb-3">
+                                        <button type="button" class="btn btn-outline-info" data-toggle="modal"
+                                                data-target="#create-dish-modal" shop-id="${shop_id}">
+                                            新增菜品
+                                        </button>
+                                     </div>
+                                     <div class="card-columns" role="tabpanel" id="dishes-container-${shop_id}">
+                                     </div>
+                                </div>
+                                <div class="tab-pane fade" id="order-list-${shop_id}">
+                                     <div class="col-12" role="tabpanel" id="orders-container-${shop_id}"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+<div class="modal fade" id="create-shop-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">创建商户</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="create-shop-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="loc_lng">
+                    <input type="hidden" name="loc_lat">
+                    <div class="form-group">
+                        <label class="col-form-label">商户名称：</label>
+                        <input type="text" class="form-control" name="name" aria-label="Name" required>
+                        <div class="invalid-feedback">请输入商户名称</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">商户说明：</label>
+                        <textarea class="form-control" name="desc" aria-label="Description" required></textarea>
+                        <div class="invalid-feedback">请输入商户说明</div>
+                    </div>
+                    <div class="form-group mb-2">
+                        <label class="col-form-label">商户地址：</label>
+                        <div class="input-group">
+                            <input name="addr" type="text" class="form-control" aria-label="addr"
+                                   placeholder="点击右侧按钮根据地址定位" required>
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" id="locator-show" type="button"
+                                        data-toggle="tooltip"
+                                        data-placement="bottom" title="根据地址定位">
+                                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-geo-alt"
+                                         fill="currentColor"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd"
+                                              d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="invalid-feedback">请输入地址</div>
+                        </div>
+                    </div>
+                    <div class="alert alert-primary mb-2" role="alert" id="locator-addr" hidden></div>
+                    <div class="form-group">
+                        <label class="col-form-label">人均消费：</label>
+                        <input type="text" class="form-control" name="avg_price" aria-label="Average Price"
+                               pattern="\d+(\.\d?\d?)?" required>
+                        <div class="invalid-feedback">请输入正确的人均消费</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">电话号码：</label>
+                        <input type="text" class="form-control" name="phone" aria-label="Phone" pattern="\d{7,11}"
+                               required>
+                        <div class="invalid-feedback">请输入7-11位电话号码</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">商户图片：</label>
+                        <input name="image" class="file" type="file" data-show-upload="false"
+                               data-show-preview="false" data-allowed-file-extensions='["jpg", "png", "svg"]' required>
+                        <div class="invalid-feedback">请上传一张图片</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="create-shop-commit">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="change-dish-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">菜品信息</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="change-dish-form" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="dish_id" id="change-dish-id">
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><span>菜名</span></div>
+                            </div>
+                            <input name="name" type="text" class="form-control" placeholder="留空表示不修改"
+                                   autocomplete="off" aria-label="Name">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><span>价格</span></div>
+                            </div>
+                            <input name="price" type="text" class="form-control" placeholder="留空表示不修改"
+                                   autocomplete="off" aria-label="Price">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><span>描述</span></div>
+                            </div>
+                            <textarea name="desc" class="form-control" placeholder="留空表示不修改" autocomplete="off"
+                                      aria-label="Description"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input name="image" class="file" type="file" data-show-upload="false"
+                               data-show-preview="false" data-allowed-file-extensions='["jpg", "png", "svg"]'>
+                    </div>
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" checked="checked"
+                                   aria-label="Serving" id="dish-serving">
+                            <label class="custom-control-label" for="dish-serving">是否有货</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="change-dish-commit">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="create-dish-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">菜品信息</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="create-dish-form" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="shop_id" id="create-dish-shop-id">
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><span>菜名</span></div>
+                            </div>
+                            <input name="name" type="text" class="form-control" autocomplete="off" aria-label="Name"
+                                   required>
+                            <div class="invalid-feedback">请输入菜品名称</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><span>价格</span></div>
+                            </div>
+                            <input name="price" type="number" class="form-control" autocomplete="off" aria-label="Price"
+                                   pattern="\d+(\.\d?\d?)?" required>
+                            <div class="invalid-feedback">请输入正确的价格</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><span>描述</span></div>
+                            </div>
+                            <textarea name="desc" class="form-control" autocomplete="off"
+                                      aria-label="Description"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input name="image" class="file" type="file" data-show-upload="false"
+                               data-show-preview="false" data-allowed-file-extensions='["jpg", "png", "svg"]' required>
+                        <div class="invalid-feedback">请上传一张图片</div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="create-dish-commit">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="change-shop-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">商户信息修改</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="change-shop-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="shop_id" id="change-shop-id">
+                    <div class="form-group">
+                        <label class="col-form-label">商户名称：</label>
+                        <input type="text" class="form-control" name="name" aria-label="Name">
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">商户说明：</label>
+                        <textarea class="form-control" name="desc" aria-label="Description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">商户地址：</label>
+                        <input type="text" class="form-control" name="addr" aria-label="Address">
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">商户电话号码：</label>
+                        <input type="text" class="form-control" name="phone" aria-label="Phone">
+                    </div>
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="shop-serving" checked="checked"
+                                   aria-label="Serving">
+                            <label class="custom-control-label" for="shop-serving">是否营业</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">商户图片：</label>
+                        <input name="image" class="file" type="file" data-show-upload="false"
+                               data-show-preview="false" data-allowed-file-extensions='["jpg", "png", "svg"]'>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="change-shop-commit">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="finish-order-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" id="finish-order-content">
+            <div class="modal-header">
+                <h5 class="modal-title">提示</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">确定设置订单为已送达吗？</div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="finish-order-commit">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script id="dishes-template" type="text/x-jquery-tmpl">
+<div class="card">
+    <img src="{% static 'images' %}/${image}" class="card-img" alt="${name}">
+    <div class="card-body">
+        <p class="card-text"><b>菜品名称：</b>&nbsp;${name}</p>
+        <p class="card-text"><b>菜品说明：</b>&nbsp;${desc}</p>
+        <p class="card-text"><b>菜品单价：</b>&nbsp;￥${price}</p>
+        <p class="card-text"><b>是否有货：</b>&nbsp;${serving ? '有货' : '已售罄'}</p>
+        <div class="text-right">
+            <button class="btn btn-outline-info" data-toggle="modal" data-target="#change-dish-modal"
+                    dish-id="${dish_id}" shop-id="${shop_id}">
+                修改
+            </button>
+        </div>
+    </div>
+</div>
+</script>
+<script id="orders-template" type="text/x-jquery-tmpl">
+    <div class="card">
+        <div class="card-body" aria-labelledby="dishes-info-card">
+            <p class="card-text"><b>用户名：</b>&nbsp;${username}</p>
+            <p class="card-text"><b>电话号码：</b>&nbsp;${user_phone}</p>
+            <p class="card-text"><b>所购菜品：</b>&nbsp;${dishes}</p>
+            <p class="card-text"><b>送达地址：</b>&nbsp;${addr}</p>
+            <p class="card-text"><b>订单备注：</b>&nbsp;${remarks}</p>
+            <p class="card-text"><b>下单时间：</b>&nbsp;${miscellaneous.parseTime(tm_ordered)}</p>
+            <p class="card-text">
+                <b>送达时间：</b>&nbsp;
+                ${tm_finished ? miscellaneous.parseTime(tm_finished) : '尚未送达'}
+            </p>
+            <button type="button" class="btn btn-outline-info" style="float: right;" data-toggle="modal"
+                    data-target="#finish-order-modal" order-id="${id}" ${tm_finished ? 'disabled' : ''}>
+                ${tm_finished ? '' : '设置为'}已送达
+            </button>
+        </div>
+    </div>
+</script>
+</body>
+</html>
