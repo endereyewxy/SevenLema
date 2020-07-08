@@ -72,6 +72,7 @@
 
     <div class="row" style="margin-top: 10px">
         <div class="col-12" id="shop-info-container">
+            <!-- 模板填充区域 -->
         </div>
     </div>
 
@@ -81,70 +82,73 @@
 </div>
 
 
-<!-- 模板容器位置 -->
+<!-- 模板 -->
 <script id="shop-info-template" type="text/x-jquery-tmpl">
-    <div class="accordion" id="accordionExample" style="margin-top: 10px">
+    <div class="accordion" id="shop-${shop_id}" style="margin-top: 10px">
         <div class="card" >
             <div class="card-header" id="headingOne">
                 <h2 class="mb-0">
                     <button class="btn btn-link btn-block text-left" type="button" data-toggle="collapse"
-                            data-target="#shop-collapse-${shop_id}" aria-expanded="true" aria-controls="collapseTwo">
-                        商户ID: ${ shop_id } &nbsp; &nbsp; 商户名称: ${ name }
+                            data-target="#shop-collapse-${shop_id}" aria-expanded="true">
+                        商户ID: ${ shop_id } &nbsp;&nbsp;&nbsp;&nbsp; 商户名称: ${ name }
                     </button>
                 </h2>
             </div>
-
             <div id="shop-collapse-${shop_id}" class="collapse show"
-                 data-parent="#accordionExample">
+                 data-parent="#shop-${shop_id}">
                 <div class="card-body">
                     <div class="row">
                         <div class="col-4">
                             <div class="list-group" id="list-tab" role="tablist" style="margin-left: 0px">
-                                <a class="list-group-item list-group-item-action active" id="list-home-list"
-                                   data-toggle="list" href="#list-home" role="tab"
-                                   aria-controls="home">商铺信息</a>
-                                <a class="list-group-item list-group-item-action" id="list-profile-list"
-                                   data-toggle="list" href="#list-profile" role="tab"
-                                   aria-controls="profile">菜品信息</a>
-                                <a class="list-group-item list-group-item-action" id="list-messages-list"
-                                   data-toggle="list" href="#list-messages" role="tab"
-                                   aria-controls="messages">订单处理</a>
+                                <a class="list-group-item list-group-item-action active" href="#shop-list-${shop_id}"
+                                   data-toggle="list" role="tab"
+                                   aria-controls="home" id="${shop_id}-list-shop-list">商铺信息</a>
+{#                                   TODO#}
+                                <a class="list-group-item list-group-item-action" href="#dish-list-${shop_id}"
+                                   data-toggle="list" role="tab"
+                                   onclick="load_dish_info(${shop_id})">菜品信息</a>
+                                <a class="list-group-item list-group-item-action" href="#order-list-${shop_id}"
+                                   data-toggle="list" role="tab"
+                                   onclick="load_order_info(${shop_id})">订单处理</a>
                             </div>
                         </div>
                         <div class="col-8">
                             <div class="tab-content" id="nav-tabContent">
-                                <div class="tab-pane fade show active" id="list-home" role="tabpanel"
-                                     aria-labelledby="list-home-list">
+                                <div class="tab-pane fade show active" role="tabpanel"
+                                     id="shop-list-${shop_id}">
                                     <div class="card">
-                                        <div class="card-body" id="shopCardId">
+                                        <div class="card-body">
                                             <p class="card-text"><b>商户名称:</b> ${ name }.</p>
                                             <p class="card-text"><b>商户说明:</b> ${ desc }.</p>
                                             <p class="card-text"><b>商户地址:</b> ${ addr }.</p>
                                             <p class="card-text"><b>商户电话号码:</b> ${ phone }.</p>
                                             <p class="card-text"><b>是否营业:</b> ${ serving }.</p>
                                             <img src="{% static 'images' %}/${image}" class="card-img" alt="${name}">
-
                                             <button type="button" class="btn btn-outline-info"
                                                     style="float: right;" data-toggle="modal"
-                                                    data-target="#shopModal">修改
+                                                    data-target="#change-shop-modal" id="${shop_id}">修改
                                             </button>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="tab-pane fade">
-                                     <div class="row">
+                                <div class="tab-pane fade" id="dish-list-${shop_id}">
+                                     <div class="row" style="text-align: right;">
                                         <button type="button" class="btn btn-outline-info"
-                                                style="float: right;" data-toggle="modal"
-                                                data-target="#create-dish-modal">新增菜品
+                                                data-toggle="modal"
+                                                data-target="#create-dish-modal" id="${shop_id}">新增菜品
                                         </button>
                                      </div>
-                                     <div class="row" role="tabpanel" aria-labelledby="list-profile-list"
+                                     <div class="row" role="tabpanel" aria-labelledby="list-dish-list"
                                             id="dishes-container">
                                      </div>
                                 </div>
-                                <div class="tab-pane fade" id="list-messages" role="tabpanel"
-                                     aria-labelledby="list-messages-list" id="orders-container">
+
+                                <div class="tab-pane fade" id="order-list-${shop_id}">
+                                     <div class="col-12" role="tabpanel" aria-labelledby="list-dish-list"
+                                            id="orders-container">
+                                     </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -152,6 +156,8 @@
             </div>
         </div>
     </div>
+
+
 </script>
 
 <!--shop弹窗创建-->
@@ -166,8 +172,9 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="shop-form">
+                <form id="create-shop-form">
                     {% csrf_token %}
+                    <input type="hidden" name="user_id" id="create-shop-edit-id">
                     <div class="form-group">
                         <label for="recipient-name" class="col-form-label">商户名称:</label>
                         <input type="text" class="form-control" id="recipient-name" name="name">
@@ -181,64 +188,31 @@
                         <input type="text" class="form-control" id="recipient-name" name="addr">
                     </div>
                     <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">商户电话号码:</label>
-                        <input type="text" class="form-control" id="recipient-name" name="phone">
-                    </div>
-                    <div class="form-group">
-                        <input type="checkbox" class="custom-control-input" id="create-shop-serving"
-                               aria-label="Serving">
-                        <label for="create-shop-serving" class="custom-control-label">是否营业:</label>
-                    </div>
-                    <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">商户图片:</label>
-                        <input type="file" class="form-control" id="recipient-name" name="image"
-                               data-show-upload="false"
-                               data-show-preview="false" data-allowed-file-extensions='["jpg", "png", "svg"]'>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary">确认</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!--shop弹窗修改-->
-<div class="modal fade" id="shopModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">商户信息修改</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="shop-form">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="recipient-name" class="col-form-label">商户名称:</label>
-                        <input type="text" class="form-control" id="recipient-name" name="name">
-                    </div>
-                    <div class="form-group">
-                        <label for="message-text" class="col-form-label">商户说明:</label>
-                        <textarea class="form-control" id="message-text" name="desc"></textarea>
+                        <label for="recipient-name" class="col-form-label">经度:</label>
+                        <input type="text" class="form-control" id="recipient-name" name="loc_lng">
                     </div>
                     <div class="form-group">
                         <label for="recipient-name" class="col-form-label">商户地址:</label>
-                        <input type="text" class="form-control" id="recipient-name" name="addr">
+                        <input type="text" class="form-control" id="recipient-name" name="loc_lat">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">商户人均消费:</label>
+                        <input type="text" class="form-control" id="recipient-name" name="avg_price">
                     </div>
                     <div class="form-group">
                         <label for="recipient-name" class="col-form-label">商户电话号码:</label>
                         <input type="text" class="form-control" id="recipient-name" name="phone">
                     </div>
+
+
                     <div class="form-group">
-                        <input type="checkbox" class="custom-control-input" id="shop-serving" aria-label="Serving">
-                        <label for="shop-serving" class="custom-control-label">是否营业:</label>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="shop-serving" checked="checked"
+                                   aria-label="Serving">
+                            <label class="custom-control-label" for="shop-serving">是否营业</label>
+                        </div>
                     </div>
+
                     <div class="form-group">
                         <label for="recipient-name" class="col-form-label">商户图片:</label>
                         <input type="file" class="form-control" id="recipient-name" name="image"
@@ -249,14 +223,15 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary">确认</button>
+                <button type="button" class="btn btn-primary" id="create-shop-edit">确认</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- 新增菜品弹窗 -->
-<div class="modal fade" id="create-dish-modal" tabindex="-1" role="dialog" aria-hidden="true">
+<!--修改菜品-->
+
+<div class="modal fade" id="change-dish-modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -266,9 +241,9 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form enctype="multipart/form-data">
+                <form id="change-dish-form" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <input type="hidden" name="dish_id" id="dish-edit-id">
+                    <input type="hidden" name="dish_id" id="change-dish-edit-id">
                     <div class="form-group">
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
@@ -311,15 +286,14 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" id="dish-edit">确认</button>
+                <button type="button" class="btn btn-primary" id="change-dish-edit">确认</button>
             </div>
         </div>
     </div>
 </div>
 
-
-<!--修改菜品-->
-<div class="modal fade" id="dishModal" tabindex="-1" role="dialog" aria-hidden="true">
+<!-- 新增菜品弹窗 -->
+<div class="modal fade" id="create-dish-modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -329,60 +303,112 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form id="dish-form">
+                <form id="create-dish-form" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <input type="hidden" name="dish_id" id="dish-edit-id">
+                    <input type="hidden" name="shop_id" id="create-dish-edit-id">
                     <div class="form-group">
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
-                                <div class="input-group-text" name="name"><span>菜名</span></div>
+                                <div class="input-group-text"><span>菜名</span></div>
                             </div>
-                            <input name="name" type="text" class="form-control" aria-label="Name">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <div class="input-group-text" name="price"><span>价格</span></div>
-                            </div>
-                            <input name="price" type="number" class="form-control" aria-label="Price">
+                            <input name="name" type="text" class="form-control" placeholder="留空表示不修改"
+                                   autocomplete="off" aria-label="Name">
                         </div>
                     </div>
                     <div class="form-group">
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
-                                <div class="input-group-text" name="desc"><span>描述</span></div>
+                                <div class="input-group-text"><span>价格</span></div>
                             </div>
-                            <textarea name="desc" class="form-control" aria-label="Description"></textarea>
+                            <input name="price" type="number" class="form-control" placeholder="留空表示不修改"
+                                   autocomplete="off" aria-label="Price">
                         </div>
                     </div>
                     <div class="form-group">
-                        <form enctype="multipart/form-data">
-                            <input name="image" class="file" type="file">
-                        </form>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text"><span>描述</span></div>
+                            </div>
+                            <textarea name="desc" class="form-control" placeholder="留空表示不修改" autocomplete="off"
+                                      aria-label="Description"></textarea>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="dish-serving"
-                                   checked="checked" aria-label="Serving">
-                            <label class="custom-control-label" for="dish-serving">是否有货</label>0
-                        </div>
+                        <input name="image" class="file" type="file" data-show-upload="false"
+                               data-show-preview="false" data-allowed-file-extensions='["jpg", "png", "svg"]'>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" id="dish-edit">确认</button>
+                <button type="button" class="btn btn-primary" id="create-dish-edit">确认</button>
             </div>
         </div>
     </div>
 </div>
 
+<!--shop弹窗修改-->
+<div class="modal fade" id="change-shop-modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">商户信息修改</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="change-shop-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="shop_id" id="change-shop-edit-id">
+                    <div class="form-group" id="change-shop-edit-id">
+                        <label for="recipient-name" class="col-form-label">商户名称:</label>
+                        <input type="text" class="form-control" id="recipient-name" name="name">
+                    </div>
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">商户说明:</label>
+                        <textarea class="form-control" id="message-text" name="desc"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">商户地址:</label>
+                        <input type="text" class="form-control" id="recipient-name" name="addr">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">商户电话号码:</label>
+                        <input type="text" class="form-control" id="recipient-name" name="phone">
+                    </div>
+                    <div class="form-group">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="dish-serving" checked="checked"
+                                   aria-label="Serving">
+                            <label class="custom-control-label" for="dish-serving">是否营业</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="col-form-label">商户图片:</label>
+                        <input type="file" class="form-control" id="recipient-name" name="image"
+                               data-show-upload="false"
+                               data-show-preview="false" data-allowed-file-extensions='["jpg", "png", "svg"]'>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="change-shop-edit" >确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
 <!--弹窗设置订单已送达-->
-<div class="modal fade" id="orderModal" tabindex="-1" role="dialog" aria-labelledby="orderModalLabel"
+<div class="modal fade" id="finish-order-modal" tabindex="-1" role="dialog" aria-labelledby="orderModalLabel"
      aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
+        <div class="modal-content" id="finish-order-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="orderModalLabel">提示</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -394,7 +420,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
-                <a type="button" class="btn btn-primary" href="#">确定</a>
+                <button type="button" class="btn btn-primary" id="finish-order-edit">确定</button>
             </div>
         </div>
     </div>
@@ -402,22 +428,22 @@
 
 
 <script id="dishes-template" type="text/x-jquery-tmpl">
+<div class="card-deck">
     <div class="card" style="margin-bottom: 10px; margin-top: 10px;">
-        <div class="card-body" id="shopCardId">
-            <p class="card-text"><b>菜品名称:</b> ${ usename }.</p>
+        <img src="{% static 'images' %}/${image}" class="card-img" alt="${name}">
+        <div class="card-body">
+            <p class="card-text"><b>菜品名称:</b> ${ name }.</p>
             <p class="card-text"><b>菜品说明:</b> ${ desc }.</p>
             <p class="card-text"><b>菜品单价:</b> ${ price }.</p>
-            <p class="card-text"><b>菜品图片:</b> ${ image }.</p>
-            <button type="button" class="btn btn-outline-info"
+            <button class="btn btn-outline-info"
                 style="float: right;" data-toggle="modal"
-                data-target="#dishModal">修改
+                data-target="#change-dish-modal" id="${dish_id}" shop-id="${shop_id}">修改
+{#                 在触发modal的地方传入相应的id(id="${dish_id}")#}
+
             </button>
         </div>
     </div>
-
-
-
-
+</div>
 </script>
 
 <script id="orders-template" type="text/x-jquery-tmpl">
@@ -425,7 +451,7 @@
         <div class="card-header">
             <h5>有待处理订单</h5>
         </div>
-        <div class="card-body">
+        <div class="card-body" aria-labelledby="dishes-info-card">
             <p class="card-text"><b>用户名：</b>${ username }</p>
             <p class="card-text"><b>电话号码：</b>${ phone }</p>
             <p class="card-text"><b>所购菜品：</b>${ dishes }</p>
@@ -435,10 +461,12 @@
             <p class="card-text"><b>送达时间：</b>${ tm_finished }</p>
             <button type="button" class="btn btn-outline-info"
                     style="float: right;" data-toggle="modal"
-                    data-target="#orderModal">设置为已送达
+                    data-target="#finish-order-modal">设置为已送达
             </button>
         </div>
     </div>
+
+
 </script>
 
 </body>

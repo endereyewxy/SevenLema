@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import shop, register, dish, login, root, orders, shop_info, shop_mine, shop_create
+from .views import shop, register, dish, login, root, orders, shop_mine
 
 urlpatterns = [
     path('', root),

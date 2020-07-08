@@ -62,15 +62,6 @@ def orders(request):
 
 
 @require_GET
-def shop_info(request):
-    ctx = get_login_context(request)
-    if ctx['login']:
-        return render(request, 'shopInfo.html', ctx)
-    else:
-        raise Http404('找不到商户')
-
-
-@require_GET
 def shop_mine(request):
     ctx = get_login_context(request)
     if ctx['login']:
@@ -78,12 +69,5 @@ def shop_mine(request):
     else:
         raise Http404('找不到商户')
 
-@require_GET
-def shop_create(request):
-    ctx = get_login_context(request)
-    if ctx['login']:
-        return render(request, 'shopInfo.html', ctx)
-    else:
-        raise Http404('找不到商户')
 
 
