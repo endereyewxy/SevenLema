@@ -1,8 +1,10 @@
+from math import floor
+
 from django.forms import model_to_dict
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_GET
 
-from SevenLema.utils import require_login, require_post_param, require_get_param, require_image
+from SevenLema.utils import require_login, require_post_param, require_image
 from cmdb.models.shop import Shop
 
 
@@ -25,7 +27,7 @@ def create(request, user, name, image, desc, addr, loc_lng, loc_lat, avg_price, 
         addr     =addr,
         loc_lng  =loc_lng,
         loc_lat  =loc_lat,
-        avg_price=avg_price,
+        avg_price=floor(100 * avg_price),
         sales    =0,
         phone    =phone,
         serving  =True)
