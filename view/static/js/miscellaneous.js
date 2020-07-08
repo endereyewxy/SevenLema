@@ -55,10 +55,13 @@
 
     const animate = (target, effect, finished) => {
         const classes = `animate__animated animate__${effect}`;
-        target.addClass(classes)[0].addEventListener('animationend', () => {
-            target.removeClass(classes);
-            finished && finished(target);
-        });
+        const handler = (dom) => {
+            dom = dom.currentTarget;
+            dom.removeEventListener('animationend', handler);
+            $(dom).removeClass(classes);
+            finished && finished($(dom));
+        };
+        target.addClass(classes).each((_, dom) => dom.addEventListener('animationend', handler));
         return target;
     };
 
