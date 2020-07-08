@@ -60,9 +60,7 @@ def mine(request, user):
 @require_post_param('phone',     None,  False)
 def edit(request, user, shop_id, name, image, desc, addr, loc_lng, loc_lat, avg_price, phone):
     try:
-        shop = Shop.objects.get(id=int(shop_id))
-    except ValueError:
-        return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
+        shop = Shop.objects.get(id=shop_id)
     except Shop.DoesNotExist:
         return JsonResponse({'code': 102, 'msg': '商户不存在'})
     if shop.user_id != user.id:
