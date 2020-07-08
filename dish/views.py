@@ -1,16 +1,13 @@
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 
-from SevenLema.utils import upload_image, check_login_status
+from SevenLema.utils import upload_image, require_login
 from cmdb.models.dish import Dish
 
 
 @require_POST
+@require_login
 def create(request):
-    login, user = check_login_status(request)
-    if not login:
-        return user
-
     shop_id = request.POST.get('shop_id')
     name    = request.POST.get('name')
     image   = request.POST.get('image')
@@ -38,11 +35,8 @@ def create(request):
 
 
 @require_POST
-def edit(request):
-    login, user = check_login_status(request)
-    if not login:
-        return user
-
+@require_login
+def edit(request, user):
     dish_id = request.POST.get('dish_id')
     if dish_id is None:
         return JsonResponse({'code': 101, 'msg': '参数类型不正确'})

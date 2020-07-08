@@ -9,13 +9,17 @@ from django.http import JsonResponse
 from cmdb.models.user import User
 
 
-def check_login_status(request):
-    if 'id' in request.session:
-        try:
-            return True, User.objects.get(id=request.session['id'])
-        except User.DoesNotExist:
-            pass
-    return False, JsonResponse({'code': 103, 'msg': '用户尚未登录'})
+def require_login(view):
+    def wrapper(request, *args, **kwargs):
+        if 'id' in request.session:
+            try:
+                kwargs['user'] = User.objects.get(id=request.session['id'])
+                return view(request, *args, **kwargs)
+            except User.DoesNotExist:
+                pass
+        return JsonResponse({'code': 103, 'msg': '用户尚未登录'})
+
+    return wrapper
 
 
 def upload_image(image):
@@ -35,8 +39,8 @@ def add_page_info(qs, page, limit):
     max_page = 0
     try:
         paginator = Paginator(qs, limit)
-        max_page  = paginator.num_pages
-        qs        = paginator.page(page)
+        max_page = paginator.num_pages
+        qs = paginator.page(page)
     except EmptyPage:
-        qs        = []
+        qs = []
     return qs, max_page

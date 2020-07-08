@@ -2,17 +2,13 @@ from django.forms import model_to_dict
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_GET
 
-from SevenLema.utils import check_login_status, upload_image
+from SevenLema.utils import require_login, upload_image
 from cmdb.models.shop import Shop
 
 
 @require_POST
-def create(request):
-    # Login in check
-    login, user = check_login_status(request)
-    if not login:
-        return user
-
+@require_login
+def create(request, user):
     # Get post parameters
     name      = request.POST.get('name')
     desc      = request.POST.get('desc')
@@ -51,11 +47,8 @@ def create(request):
 
 
 @require_GET
-def mine(request):
-    login, user = check_login_status(request)
-    if not login:
-        return user
-
+@require_login
+def mine(request, user):
     data = []
     for shop in Shop.objects.filter(user=user):
         obj = model_to_dict(shop)
@@ -69,12 +62,8 @@ def mine(request):
 
 
 @require_POST
-def edit(request):
-    # Login in check
-    login, user = check_login_status(request)
-    if not login:
-        return user
-
+@require_login
+def edit(request, user):
     # Get post parameters
     data = request.POST
 

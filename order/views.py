@@ -4,7 +4,7 @@ from django.forms import model_to_dict
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST, require_GET
 
-from SevenLema.utils import check_login_status, add_page_info
+from SevenLema.utils import require_login, add_page_info
 from cmdb.models.dish import Dish
 from cmdb.models.dish_order import DishOrder
 from cmdb.models.order import Order
@@ -12,11 +12,8 @@ from cmdb.models.shop import Shop
 
 
 @require_POST
-def new(request):
-    login, user = check_login_status(request)
-    if not login:
-        return user
-
+@require_login
+def new(request, user):
     # Get post parameters
     shop_id  = request.POST.get('shop_id')
     dish_ids = request.POST.getlist('dish_id[]')
@@ -100,11 +97,8 @@ def order_info(order):
 
 
 @require_GET
-def info(request):
-    login, user = check_login_status(request)
-    if not login:
-        return user
-
+@require_login
+def info(request, user):
     # Get post parameters
     order_id   = request.GET.get('order_id')
     shop_id    = request.GET.get('shop_id')
@@ -153,11 +147,8 @@ def info(request):
 
 
 @require_POST
-def finish(request):
-    login, user = check_login_status(request)
-    if not login:
-        return user
-
+@require_login
+def finish(request, user):
     # Get post parameters
     order_id = request.POST.get('order_id')
     if order_id is None:

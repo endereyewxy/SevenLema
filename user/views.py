@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
+from SevenLema.utils import require_login
 from cmdb.models.user import User
 
 
@@ -58,10 +59,9 @@ def login(request):
 
 
 @require_POST
+@require_login
 @csrf_exempt
-def logout(request):
-    if 'id' in request.session:
-        del request.session['id']
-        return JsonResponse({'code': 0, 'msg': '', 'data': None})
-    else:
-        return JsonResponse({'code': 103, 'msg': '用户尚未登录'})
+def logout(request, user):
+    assert user.id == request.session['id']  # Tell PyCharm that we did use the user parameter
+    del request.session['id']
+    return JsonResponse({'code': 0, 'msg': '', 'data': None})
