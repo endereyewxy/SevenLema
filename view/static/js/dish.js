@@ -32,7 +32,7 @@ function commit_an_order() {
     const button = $(this);
     miscellaneous.loadingButton(button);
     miscellaneous.web.post('/order/new/', data,
-        () => window.location.href = '/',
+        () => window.location.href = '/orders/',
         () => miscellaneous.loadingButton(button));
 }
 
