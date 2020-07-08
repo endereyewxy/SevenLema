@@ -13,12 +13,15 @@ def create(request):
 
     shop_id = request.POST.get('shop_id')
     name    = request.POST.get('name')
-    image   = request.POST.get('image')
+    image   = request.FILES.get('image')
     desc    = request.POST.get('desc')
     price   = request.POST.get('price')
 
     if None in [shop_id, name, image, desc, price]:
         return JsonResponse({'code': 101, 'msg': '参数类型不正确'})
+    ok, image = upload_image(image)
+    if not ok:
+        return image
 
     try:
         dish = Dish.objects.create(
