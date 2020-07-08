@@ -8,6 +8,8 @@ if __name__ == '__main__':
     finished = 0
     for img, url in images:
         if url != '':
+            if url.startswith('//'):
+                url = 'http:' + url
             resp = requests.get(url).content
             with open('../view/static/images/' + img, 'wb') as f:
                 f.write(resp)
