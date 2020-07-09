@@ -51,7 +51,14 @@ function change_shop_info() {
     $('#change-shop-form').addClass('was-validated');
     if (!$('#change-shop-form input:invalid').length) {
         let data = new FormData(document.getElementById('change-shop-form'));
-        $.each(['name', 'desc', 'addr', 'phone'], (_, key) => !data.get(key).length && data.delete(key));
+        $.each(['name', 'desc', 'addr', 'phone', 'avg_price', 'image'], (_, key) => {
+            !data.get(key).length && data.delete(key);
+            return true;
+        });
+        if (!data.get('addr')) {
+            data.delete('loc_lng');
+            data.delete('loc_lat');
+        }
         data.append('serving', $('#shop-serving:checked').length !== 0 ? 'true' : 'false');
         $.ajax({
             url: '/shop/edit/',
@@ -70,7 +77,10 @@ function change_dish_info() {
     $('#change-dish-form').addClass('was-validated');
     if (!$('#change-dish-form input:invalid').length) {
         let data = new FormData(document.getElementById('change-dish-form'));
-        $.each(['name', 'price', 'desc'], (_, key) => !data.get(key).length && data.delete(key));
+        $.each(['name', 'price', 'desc', 'image'], (_, key) => {
+            !data.get(key).length && data.delete(key);
+            return true;
+        });
         data.append('serving', $('#dish-serving:checked').length !== 0 ? 'true' : 'false');
         $.ajax({
             url: '/dish/edit/',
@@ -133,10 +143,11 @@ $(document).ready(() => {
     locator.change(() => {
         loc_lng.val(locator.lng());
         loc_lat.val(locator.lat());
-        $('#locator-addr').text(locator.address()).removeAttr('hidden');
+        $('.locator-addr').text(locator.address()).removeAttr('hidden');
     });
     locator.create();
-    $('#locator-show').click(() => locator.render($('input[name=addr]').val()));
+    $('#locator-show-cr').click(() => locator.render($('#create-shop-modal input[name=addr]').val()));
+    $('#locator-show-ch').click(() => locator.render($('#change-shop-modal input[name=addr]').val()));
     $('#change-dish-commit').click(change_dish_info);
     $('#change-dish-modal').on('show.bs.modal', (evt) => {
         $('#change-dish-id')

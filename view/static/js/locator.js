@@ -102,10 +102,8 @@
         '   </div>' +
         '</div>';
     $('html').append(html_modal);
-    $('#locator-modal').on('shown.bs.modal', async () => {
-        await new Promise(r => setTimeout(r, 150));
-        map.panTo(marker.getPosition());
-    });
+    $('#locator-modal').on('shown.bs.modal',
+        () => setTimeout(() => map.panTo(marker.getPosition()), 150));
 
     let lng, lat, address, map, marker, local_search, on_change = () => undefined;
     const geo_coder = new BMap.Geocoder();

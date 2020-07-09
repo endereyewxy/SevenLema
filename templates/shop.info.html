@@ -118,6 +118,7 @@
             </div>
         </div>
     </div>
+
 </script>
 <div class="modal fade" id="create-shop-modal" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
@@ -149,7 +150,7 @@
                             <input name="addr" type="text" class="form-control" aria-label="addr"
                                    placeholder="点击右侧按钮根据地址定位" required>
                             <div class="input-group-append">
-                                <button class="btn btn-outline-secondary" id="locator-show" type="button"
+                                <button class="btn btn-outline-secondary" type="button" id="locator-show-cr"
                                         data-toggle="tooltip"
                                         data-placement="bottom" title="根据地址定位">
                                     <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-geo-alt"
@@ -163,7 +164,7 @@
                             <div class="invalid-feedback">请输入地址</div>
                         </div>
                     </div>
-                    <div class="alert alert-primary mb-2" role="alert" id="locator-addr" hidden></div>
+                    <div class="alert alert-primary locator-addr mb-2" role="alert" hidden></div>
                     <div class="form-group">
                         <label class="col-form-label">人均消费：</label>
                         <input type="text" class="form-control" name="avg_price" aria-label="Average Price"
@@ -321,6 +322,8 @@
                 <form id="change-shop-form">
                     {% csrf_token %}
                     <input type="hidden" name="shop_id" id="change-shop-id">
+                    <input type="hidden" name="loc_lng">
+                    <input type="hidden" name="loc_lat">
                     <div class="form-group">
                         <label class="col-form-label">商户名称：</label>
                         <input type="text" class="form-control" name="name" aria-label="Name"
@@ -331,11 +334,26 @@
                         <textarea class="form-control" name="desc" aria-label="Description"
                                   placeholder="留空表示不修改"></textarea>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group mb-2">
                         <label class="col-form-label">商户地址：</label>
-                        <input type="text" class="form-control" name="addr" aria-label="Address"
-                               placeholder="留空表示不修改">
+                        <div class="input-group">
+                            <input name="addr" type="text" class="form-control" aria-label="addr"
+                                   placeholder="留空表示不修改，点击右侧按钮根据地址定位">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" id="locator-show-ch"
+                                        data-toggle="tooltip"
+                                        data-placement="bottom" title="根据地址定位">
+                                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-geo-alt"
+                                         fill="currentColor"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd"
+                                              d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
                     </div>
+                    <div class="alert alert-primary locator-addr mb-2" role="alert" hidden></div>
                     <div class="form-group">
                         <label class="col-form-label">人均消费：</label>
                         <input type="text" class="form-control" name="avg_price" aria-label="Average Price"
@@ -407,6 +425,7 @@
             </div>
         </div>
     </div>
+
 </script>
 <script id="orders-template" type="text/x-jquery-tmpl">
     <div class="card">
@@ -427,6 +446,7 @@
             </button>
         </div>
     </div>
+
 </script>
 </body>
 </html>
