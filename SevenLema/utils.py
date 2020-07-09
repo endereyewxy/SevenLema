@@ -1,9 +1,9 @@
 import os
 from hashlib import md5
+from math import ceil
 from uuid import uuid4
 
 from django.conf import settings
-from django.core.paginator import Paginator, EmptyPage
 from django.http import JsonResponse
 
 from cmdb.models.user import User
@@ -80,11 +80,6 @@ def require_image(required=True):
 
 
 def add_page_info(qs, page, limit):
-    max_page = 0
-    try:
-        paginator = Paginator(qs, limit)
-        max_page = paginator.num_pages
-        qs = paginator.page(page)
-    except EmptyPage:
-        qs = []
+    max_page = ceil(len(qs) / limit)
+    qs = qs[(page - 1) * limit:min(len(qs), page * limit)]
     return qs, max_page
