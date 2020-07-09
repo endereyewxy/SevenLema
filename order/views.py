@@ -124,7 +124,7 @@ def info(request, user, order_id, shop_id, page, limit, unfinished):
 
     if unfinished:
         qs = qs.filter(tm_finished=None)
-    qs.order_by('-id')
+    qs.order_by('id')
     qs, max_page = add_page_info(qs, page, limit)
     data = []
     for order in qs:
