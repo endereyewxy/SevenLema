@@ -124,10 +124,11 @@ def info(request, user, order_id, shop_id, page, limit, unfinished):
 
     if unfinished:
         qs = qs.filter(tm_finished=None)
+    qs.order_by('-id')
     qs, max_page = add_page_info(qs, page, limit)
     data = []
     for order in qs:
-        data = [order_info(order)] + data
+        data.append(order_info(order))
     return JsonResponse({'code': 0, 'msg': '', 'page': max_page, 'data': data})
 
 
