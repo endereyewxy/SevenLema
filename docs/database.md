@@ -26,7 +26,7 @@
 | id        | INTEGER      |            | 是       | 主键，自增                 |
 | user_id   | INTEGER      | 所属用户ID | 是       | 表user的外键               |
 | name      | VARCHAR(50)  | 名称       | 是       |                            |
-| image     | CHAR(36)     | 图片       | 是       |                            |
+| image     | CHAR(36)     | 图片       | 是       | static目录下的文件名，包括扩展名 |
 | desc      | TEXT         | 描述       | 是       |                            |
 | addr      | VARCHAR(50)  | 地址       | 是       |                            |
 | loc_lng   | DECIMAL(9,5) | 位置经度   | 是       |                            |
@@ -45,7 +45,7 @@
 | id      | INTEGER     |            | 是       | 主键，自增                 |
 | shop_id | INTEGER     | 所属商户ID | 是       | 表shop的外键               |
 | name    | VARCHAR(50) | 名称       | 是       |                            |
-| image   | CHAR(36)    | 图片       | 是       |                            |
+| image   | CHAR(36)    | 图片       | 是       | static目录下的文件名，包括扩展名 | |
 | desc    | TEXT        | 描述       | 是       |                            |
 | price   | INTEGER     | 单价       | 是       | 单位为分（除100为RMB价格） |
 | sales   | INTEGER     | 销量       | 是       |                            |
