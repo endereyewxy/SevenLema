@@ -26,6 +26,10 @@ $(document).ready(function () {
         get_order() === 'dist' && load_shop();
     });
     default_lng !== undefined ? locator.create(default_lng, default_lat) : locator.create();
-    $('#header-search-button,#dist,#avg_price,#sales').click(load_shop);
+    $('#header-search-button').click(load_shop);
+    $('#dist,#avg_price,#sales').click(() => {
+        pager.currentPage(1);
+        load_shop();
+    });
     load_shop();
 });

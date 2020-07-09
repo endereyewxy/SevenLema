@@ -70,7 +70,7 @@ def shop(request, name, order, page, limit, serving):
         sql = \
             f"SELECT  *, distance(loc_lng, loc_lat, {loc_lng}, {loc_lat}) AS dist " \
             f"FROM cmdb_shop WHERE " \
-            f"name LIKE %{name}% {'AND serving = true' if serving else ''} ORDER BY dist"
+            f"name LIKE '%{name}%' {'AND serving = true ' if serving else ''}ORDER BY dist"
         qs = Shop.objects.raw(sql)
 
     elif order == 'avg_price':
